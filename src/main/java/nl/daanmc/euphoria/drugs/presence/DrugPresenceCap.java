@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 @Mod.EventBusSubscriber
 public class DrugPresenceCap implements IDrugPresenceCap {
-    private HashMap<DrugSubstance, Float> presenceList = new HashMap<DrugSubstance, Float>();
+    private HashMap<DrugSubstance, Float> presenceList = new HashMap<>();
 
     @Override
     public HashMap<DrugSubstance, Float> getPresenceList() {

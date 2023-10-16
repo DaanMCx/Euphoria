@@ -8,8 +8,6 @@ import net.minecraft.world.World;
 import nl.daanmc.euphoria.Elements.Tabs;
 import nl.daanmc.euphoria.drugs.Drug;
 import nl.daanmc.euphoria.drugs.presence.DrugPresence;
-import nl.daanmc.euphoria.drugs.presence.DrugPresenceMsg;
-import nl.daanmc.euphoria.util.PacketHandler;
 
 public class ItemEdibleDrug extends ItemFood implements Drug{
     private DrugPresence[] drugPresences;
@@ -22,10 +20,8 @@ public class ItemEdibleDrug extends ItemFood implements Drug{
 
     @Override
     public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
-        if (worldIn.isRemote && entityLiving instanceof EntityPlayer) {
-            for (DrugPresence presence : drugPresences) {
-                PacketHandler.INSTANCE.sendToServer(new DrugPresenceMsg(presence));
-            }
+        if (entityLiving instanceof EntityPlayer) {
+            DrugPresence.activatePresence(this.drugPresences);
         }
         return super.onItemUseFinish(stack, worldIn, entityLiving);
     }

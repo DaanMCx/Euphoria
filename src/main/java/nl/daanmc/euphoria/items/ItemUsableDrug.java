@@ -12,8 +12,6 @@ import net.minecraft.world.World;
 import nl.daanmc.euphoria.Elements.Tabs;
 import nl.daanmc.euphoria.drugs.Drug;
 import nl.daanmc.euphoria.drugs.presence.DrugPresence;
-import nl.daanmc.euphoria.drugs.presence.DrugPresenceMsg;
-import nl.daanmc.euphoria.util.PacketHandler;
 
 public class ItemUsableDrug extends Item implements Drug {
     private DrugPresence[] drugPresences = null;
@@ -40,16 +38,14 @@ public class ItemUsableDrug extends Item implements Drug {
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
-        return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
+        return new ActionResult<>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
     }
 
     @Override
     public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
         stack.damageItem(1, entityLiving);
-        if (worldIn.isRemote && entityLiving instanceof EntityPlayer) {
-            for (DrugPresence presence : drugPresences) {
-                PacketHandler.INSTANCE.sendToServer(new DrugPresenceMsg(presence));
-            }
+        if (entityLiving instanceof EntityPlayer) {
+            DrugPresence.activatePresence(this.drugPresences);
         }
         return super.onItemUseFinish(stack, worldIn, entityLiving);
     }

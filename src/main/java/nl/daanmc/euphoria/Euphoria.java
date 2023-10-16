@@ -15,25 +15,24 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.RegistryBuilder;
-import net.minecraftforge.registries.IForgeRegistry.DummyFactory;
-import net.minecraftforge.registries.IForgeRegistry.MissingFactory;
 import nl.daanmc.euphoria.Elements.Blocks;
 import nl.daanmc.euphoria.Elements.DrugSubstances;
 import nl.daanmc.euphoria.Elements.Items;
 import nl.daanmc.euphoria.Elements.Tabs;
 import nl.daanmc.euphoria.blocks.BlockDryingTable;
 import nl.daanmc.euphoria.drugs.DrugSubstance;
-import nl.daanmc.euphoria.drugs.presence.*;
+import nl.daanmc.euphoria.drugs.presence.DrugPresence;
+import nl.daanmc.euphoria.drugs.presence.DrugPresenceCap;
+import nl.daanmc.euphoria.drugs.presence.DrugPresenceCapStorage;
+import nl.daanmc.euphoria.drugs.presence.IDrugPresenceCap;
 import nl.daanmc.euphoria.items.ItemEdibleDrug;
 import nl.daanmc.euphoria.items.ItemSmokingTool;
 import nl.daanmc.euphoria.items.ItemUsableDrug;
 import nl.daanmc.euphoria.util.CapabilityHandler;
 import nl.daanmc.euphoria.util.EventHandler;
-import nl.daanmc.euphoria.util.PacketHandler;
+import nl.daanmc.euphoria.util.network.NetworkHandler;
 import nl.daanmc.euphoria.util.proxy.IProxy;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -60,8 +59,7 @@ public class Euphoria {
         CapabilityManager.INSTANCE.register(IDrugPresenceCap.class, new DrugPresenceCapStorage(), DrugPresenceCap::new);
         MinecraftForge.EVENT_BUS.register(new CapabilityHandler());
         MinecraftForge.EVENT_BUS.register(new EventHandler());
-        PacketHandler.INSTANCE.registerMessage(DrugPresenceMsgHandler.class, DrugPresenceMsg.class, 0, Side.SERVER);
-        PacketHandler.INSTANCE.registerMessage(DrugPresenceMsgHandler.class, DrugPresenceMsg.class, 0, Side.CLIENT);
+        NetworkHandler.init();
     }
 
     @Mod.EventHandler
@@ -97,22 +95,14 @@ public class Euphoria {
     
     @SubscribeEvent
     public static void onNewRegistry(RegistryEvent.NewRegistry event) {
-        RegistryBuilder<DrugSubstance> builder = new RegistryBuilder<DrugSubstance>();
+        RegistryBuilder<DrugSubstance> builder = new RegistryBuilder<>();
         ResourceLocation key = new ResourceLocation(MODID, "drug_substance");
         builder.setType(DrugSubstance.class)
-        .setName(key)
-        .setDefaultKey(key)
-        .set(new DummyFactory<DrugSubstance>() {
-            @Override
-            public DrugSubstance createDummy(ResourceLocation key) {
-                return new DrugSubstance.PhantomDrugSubstance().setRegistryName(key);
-            }
-        }).set(new MissingFactory<DrugSubstance>() {
-            @Override
-            public DrugSubstance createMissing(ResourceLocation key, boolean isNetwork) {
-                return new DrugSubstance.PhantomDrugSubstance().setRegistryName(key);
-            }
-        }).create();
+                .setName(key)
+                .setDefaultKey(key)
+                .set(key1 -> new DrugSubstance.PhantomDrugSubstance().setRegistryName(key1))
+                .set((key12, isNetwork) -> new DrugSubstance.PhantomDrugSubstance().setRegistryName(key12))
+                .create();
     }
 
     @SubscribeEvent
@@ -171,4 +161,9 @@ public class Euphoria {
             proxy.registerItemRenderer(Item.getItemFromBlock(block), 0, "inventory");   
         }
     }
+    float startAmount = 100F;
+    int breakdownTime = 1200;
+    int worldTick = 0;
+
+    float amount = (float) (-startAmount / (1 + Math.pow(Math.E, (((Math.exp((-startAmount / (1 - startAmount)) - 1) - 7) * worldTick) / breakdownTime) + 7 )) + startAmount);
 }

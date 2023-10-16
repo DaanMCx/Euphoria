@@ -28,13 +28,13 @@ public class ItemSmokingTool extends Item {
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
-        // TODO: RightClick action
+        //TODO: RightClick action
         return super.onItemRightClick(worldIn, playerIn, handIn);
     }
 
     @Override
     public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
-        // TODO: Implement tool use
+        //TODO: Usage
         return super.onItemUseFinish(stack, worldIn, entityLiving);
     }
 }

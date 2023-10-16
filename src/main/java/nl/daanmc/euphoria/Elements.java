@@ -1,7 +1,5 @@
 package nl.daanmc.euphoria;
 
-import java.util.ArrayList;
-
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -12,6 +10,8 @@ import nl.daanmc.euphoria.drugs.DrugSubstance;
 import nl.daanmc.euphoria.items.ItemEdibleDrug;
 import nl.daanmc.euphoria.items.ItemSmokingTool;
 import nl.daanmc.euphoria.items.ItemUsableDrug;
+
+import java.util.ArrayList;
 
 public class Elements {
     @ObjectHolder(Euphoria.MODID)
@@ -112,7 +112,7 @@ public class Elements {
         public static final DrugSubstance MESCALINE = null; 
     }
 
-    public static ArrayList<DrugSubstance> DRUG_PRESENCE_LIST = new ArrayList<DrugSubstance>();
+    public static ArrayList<DrugSubstance> DRUG_PRESENCE_LIST = new ArrayList<>();
 
     public static class Tabs {
         public static final CreativeTabs EUPHORIA = new CreativeTabs("euphoria") {
