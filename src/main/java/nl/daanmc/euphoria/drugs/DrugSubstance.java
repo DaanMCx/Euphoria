@@ -1,24 +1,24 @@
 package nl.daanmc.euphoria.drugs;
 
-import java.util.HashMap;
-
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import nl.daanmc.euphoria.Elements;
 
+import java.util.HashMap;
+
 public class DrugSubstance extends IForgeRegistryEntry.Impl<DrugSubstance> {
-    public static HashMap<ResourceLocation, DrugSubstance> REGISTRY = new HashMap<ResourceLocation, DrugSubstance>();
-    private float breakdownSpeed;
-    public DrugSubstance(Float breakdownSpeed) {
-        this.breakdownSpeed = breakdownSpeed;
+    public static HashMap<ResourceLocation, DrugSubstance> REGISTRY = new HashMap<>();
+    private final int breakdownTime;
+    public DrugSubstance(int breakdownTime) {
+        this.breakdownTime = breakdownTime;
         Elements.DRUG_PRESENCE_LIST.add(this);
     }
 
-    public float getBreakdownSpeed() {return this.breakdownSpeed;}
+    public int getBreakdownTime() {return this.breakdownTime;}
 
     public static class PhantomDrugSubstance extends DrugSubstance {
         public PhantomDrugSubstance() {
-            super(0F);
+            super(0);
         }
     }
 }

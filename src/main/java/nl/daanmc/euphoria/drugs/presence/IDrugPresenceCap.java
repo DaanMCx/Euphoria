@@ -6,4 +6,6 @@ import java.util.HashMap;
 
 public interface IDrugPresenceCap {
     HashMap<DrugSubstance, Float> getPresenceList();
+    HashMap<DrugSubstance, Long> getBreakdownTickList();
+    HashMap<DrugSubstance, Float> getBreakdownAmountList();
 }

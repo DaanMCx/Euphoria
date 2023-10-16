@@ -19,6 +19,7 @@ public class MsgSendDrugPresenceCap implements IMessage {
         this.capability = cap;
     }
 
+    //TODO: Fix serialization
     @Override
     public void toBytes(ByteBuf buf) {
         HashMap<DrugSubstance, Float> presenceList = this.capability.getPresenceList();
@@ -31,6 +32,7 @@ public class MsgSendDrugPresenceCap implements IMessage {
         });
     }
 
+    //TODO: Fix deserialization
     @Override
     public void fromBytes(ByteBuf buf) {
         int mapSize = buf.readInt();

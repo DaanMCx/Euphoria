@@ -142,13 +142,13 @@ public class Euphoria {
     @SubscribeEvent
     public static void onSubstanceRegister(RegistryEvent.Register<DrugSubstance> event) {
         event.getRegistry().registerAll(
-                new DrugSubstance(0.0004F).setRegistryName("thc"),
-                new DrugSubstance(0.0003F).setRegistryName("cbd"),
-                new DrugSubstance(0.0005F).setRegistryName("alcohol"),
-                new DrugSubstance(0.0005F).setRegistryName("cocaine"),
-                new DrugSubstance(0.0002F).setRegistryName("psilocybin"),
-                new DrugSubstance(0.0005F).setRegistryName("nicotine"),
-                new DrugSubstance(0.0005F).setRegistryName("mescaline")
+                new DrugSubstance(6000).setRegistryName("thc"),
+                new DrugSubstance(7200).setRegistryName("cbd"),
+                new DrugSubstance(12000).setRegistryName("alcohol"),
+                new DrugSubstance(3600).setRegistryName("cocaine"),
+                new DrugSubstance(12000).setRegistryName("psilocybin"),
+                new DrugSubstance(1200).setRegistryName("nicotine"),
+                new DrugSubstance(7200).setRegistryName("mescaline")
         );
     }
     

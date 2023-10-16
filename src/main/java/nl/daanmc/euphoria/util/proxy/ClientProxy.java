@@ -27,22 +27,22 @@ public class ClientProxy implements IProxy {
 
     @Override
     public void activateDrugPresence(DrugPresence presenceIn) {
-        EntityPlayer player = Minecraft.getMinecraft().player;
-        long tick = player.world.getTotalWorldTime();
+        long tick = Minecraft.getMinecraft().player.world.getTotalWorldTime();
         for (int i = 0; i < presenceIn.delay; i++) {
-            EventHandler.pendingTasks.add(new DrugPresenceTask(presenceIn.substance, presenceIn.amount / presenceIn.delay, tick + presenceIn.delay + i, player));
+            EventHandler.pendingTasks.add(new DrugPresenceTask(presenceIn.substance, presenceIn.amount / presenceIn.delay, tick + presenceIn.delay + i));
         }
+        EventHandler.pendingTasks.add(new DrugPresenceTask(presenceIn.substance, tick + (2L * presenceIn.delay) +1L));
         System.out.println("Tasks added");
     }
 
     @Override
     public void activateDrugPresence(DrugPresence[] presencesIn) {
-        EntityPlayer player = Minecraft.getMinecraft().player;
-        long tick = player.world.getTotalWorldTime();
+        long tick = Minecraft.getMinecraft().player.world.getTotalWorldTime();
         for (DrugPresence drugPresenceIn : presencesIn) {
             for (int i = 0; i < drugPresenceIn.delay; i++) {
-                EventHandler.pendingTasks.add(new DrugPresenceTask(drugPresenceIn.substance, drugPresenceIn.amount / drugPresenceIn.delay, tick + drugPresenceIn.delay + i, player));
+                EventHandler.pendingTasks.add(new DrugPresenceTask(drugPresenceIn.substance, drugPresenceIn.amount / drugPresenceIn.delay, tick + drugPresenceIn.delay + i));
             }
+            EventHandler.pendingTasks.add(new DrugPresenceTask(drugPresenceIn.substance, tick + (2L * drugPresenceIn.delay) +1L));
         }
         System.out.println("Tasks added");
     }

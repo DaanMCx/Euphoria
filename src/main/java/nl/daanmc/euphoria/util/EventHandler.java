@@ -6,7 +6,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import nl.daanmc.euphoria.Elements.DrugSubstances;
 import nl.daanmc.euphoria.drugs.presence.DrugPresenceCapProvider;
 
 import java.util.List;
@@ -39,14 +38,29 @@ public class EventHandler {
                 }
 
                 EntityPlayer player = Minecraft.getMinecraft().player;
-                player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getPresenceList().forEach((drugSubstance, presence) -> {
-                    if (presence > 0F) {
-                        player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getPresenceList().put(drugSubstance, presence * ((1 - drugSubstance.getBreakdownSpeed()) + player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getPresenceList().getOrDefault(DrugSubstances.ALCOHOL, 0F) / 100 * drugSubstance.getBreakdownSpeed()));
-                        if (presence < 1F && event.world.getTotalWorldTime() % 100 == 0) {
-                            player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getPresenceList().put(drugSubstance, 0F);
+                player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getBreakdownTickList().forEach((drugSubstance, tick) -> {
+                    if (tick > 0L && tick <= event.world.getTotalWorldTime()) {
+                        float oldAmount = player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getPresenceList().get(drugSubstance);
+                        float A = player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getBreakdownAmountList().get(drugSubstance);
+                        int L = drugSubstance.getBreakdownTime() * (int)(100/player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getBreakdownAmountList().get(drugSubstance));
+                        long X = event.world.getTotalWorldTime() - tick;
+                        player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getPresenceList().put(drugSubstance, (oldAmount>1 ? (float)((-A/(1+Math.pow(Math.E,(((Math.exp((-A/(1-A))-1)-7)*X)/L)+7)))+A) : 0F));
+                        if (player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getPresenceList().get(drugSubstance) == 0F) {
+                            player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getBreakdownTickList().put(drugSubstance, 0L);
                         }
                     }
                 });
+
+
+
+//                player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getPresenceList().forEach((drugSubstance, presence) -> {
+//                    if (presence > 0F) {
+//                        player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getPresenceList().put(drugSubstance, presence * ((1 - drugSubstance.getBreakdownSpeed()) + player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getPresenceList().getOrDefault(DrugSubstances.ALCOHOL, 0F) / 100 * drugSubstance.getBreakdownSpeed()));
+//                        if (presence < 1F && event.world.getTotalWorldTime() % 100 == 0) {
+//                            player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getPresenceList().put(drugSubstance, 0F);
+//                        }
+//                    }
+//                });
 
                 if (event.world.getTotalWorldTime() % 100 == 0) {
                     Minecraft.getMinecraft().player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP,null).getPresenceList().forEach((sub,am)->{System.out.println("DrugPresence "+sub.getRegistryName()+" "+am);});
