@@ -29,6 +29,11 @@ public class DrugPresenceTask implements ScheduledTask {
     }
 
     @Override
+    public Side getSide() {
+        return Side.CLIENT;
+    }
+
+    @Override
     public void execute() {
         EntityPlayer player = Minecraft.getMinecraft().player;
         if (this.startBreakdown) {
@@ -37,6 +42,7 @@ public class DrugPresenceTask implements ScheduledTask {
         } else {
             player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getBreakdownTickList().put(this.drugSubstance, 0L);
             player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getPresenceList().put(this.drugSubstance, Math.min(Math.max(player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getPresenceList().getOrDefault(this.drugSubstance, 0F) + this.amount, 0F), 100F));
+            System.out.println("Added: "+this.drugSubstance.getRegistryName()+" by "+this.amount+" to "+player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getPresenceList().get(this.drugSubstance));
         }
 
     }

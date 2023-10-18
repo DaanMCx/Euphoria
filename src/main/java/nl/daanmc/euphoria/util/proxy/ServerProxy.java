@@ -18,12 +18,6 @@ public class ServerProxy implements IProxy {
     }
 
     @Override
-    public void activateDrugPresence(DrugPresence presenceIn) {}
-
-    @Override
-    public void activateDrugPresence(DrugPresence[] presencesIn) {}
-
-    @Override
     public void preInit(FMLPreInitializationEvent event) {}
 
     @Override

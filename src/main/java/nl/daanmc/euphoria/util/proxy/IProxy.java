@@ -14,6 +14,4 @@ public interface IProxy {
     void postInit(FMLPostInitializationEvent event);
     void registerItemRenderer(Item item, int meta, String id);
     EntityPlayer getPlayerFromContext(MessageContext ctx);
-    void activateDrugPresence(DrugPresence presenceIn);
-    void activateDrugPresence(DrugPresence[] presencesIn);
 }

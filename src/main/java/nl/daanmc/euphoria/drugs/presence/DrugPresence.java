@@ -1,7 +1,11 @@
 package nl.daanmc.euphoria.drugs.presence;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
 import nl.daanmc.euphoria.Euphoria;
 import nl.daanmc.euphoria.drugs.DrugSubstance;
+import nl.daanmc.euphoria.util.EventHandler;
 
 public class DrugPresence {
     public DrugSubstance substance;
@@ -14,11 +18,27 @@ public class DrugPresence {
         this.delay=delay;
     }
 
-    public static void activatePresence(DrugPresence drugPresenceIn) {
-        Euphoria.proxy.activateDrugPresence(drugPresenceIn);
+    public static void activatePresence(DrugPresence presenceIn, World worldIn) {
+        if (worldIn.isRemote) {
+            long tick = Minecraft.getMinecraft().player.world.getTotalWorldTime();
+            for (int i = 0; i < presenceIn.delay; i++) {
+                EventHandler.pendingTasks.add(new DrugPresenceTask(presenceIn.substance, presenceIn.amount / presenceIn.delay, tick + presenceIn.delay + i));
+            }
+            EventHandler.pendingTasks.add(new DrugPresenceTask(presenceIn.substance, tick + (2L * presenceIn.delay) +1L));
+            System.out.println("Tasks added");
+        }
     }
 
-    public static void activatePresence(DrugPresence[] drugPresencesIn) {
-        Euphoria.proxy.activateDrugPresence(drugPresencesIn);
+    public static void activatePresence(DrugPresence[] presencesIn, World worldIn) {
+        if (worldIn.isRemote) {
+            long tick = Minecraft.getMinecraft().player.world.getTotalWorldTime();
+            for (DrugPresence presenceIn : presencesIn) {
+                for (int i = 0; i < presenceIn.delay; i++) {
+                    EventHandler.pendingTasks.add(new DrugPresenceTask(presenceIn.substance, presenceIn.amount / presenceIn.delay, tick + presenceIn.delay + i));
+                }
+                EventHandler.pendingTasks.add(new DrugPresenceTask(presenceIn.substance, tick + (2L * presenceIn.delay) +1L));
+            }
+            System.out.println("Tasks added");
+        }
     }
 }

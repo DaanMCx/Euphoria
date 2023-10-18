@@ -7,6 +7,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import nl.daanmc.euphoria.drugs.presence.DrugPresenceCapProvider;
+import nl.daanmc.euphoria.util.ScheduledTask.Side;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -14,60 +15,53 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Mod.EventBusSubscriber
 public class EventHandler {
     public static List<ScheduledTask> pendingTasks = new CopyOnWriteArrayList<>();
-    //Common
+    //Client
     @SubscribeEvent
-    public static void onWorldTick(TickEvent.WorldTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) {
-            if (event.side.isServer()) {
+    public static void onClientTick(TickEvent.ClientTickEvent event) {
+        if (Minecraft.getMinecraft().world != null) {
+            EntityPlayer player = Minecraft.getMinecraft().player;
+            if (event.phase == TickEvent.Phase.END) {
                 if (!pendingTasks.isEmpty()) {
                     for (ScheduledTask task : pendingTasks) {
-                        if (task.getTick() <= event.world.getTotalWorldTime()) {
-                            task.execute();
-                            pendingTasks.remove(task);
-                        }
-                    }
-                }
-            } else if (event.side.isClient()) {
-                if (!pendingTasks.isEmpty()) {
-                    for (ScheduledTask task : pendingTasks) {
-                        if (task.getTick() <= event.world.getTotalWorldTime()) {
+                        if (task.getTick() <= player.world.getTotalWorldTime() && (task.getSide()==Side.CLIENT || task.getSide()==Side.COMMON)) {
                             task.execute();
                             pendingTasks.remove(task);
                         }
                     }
                 }
 
-                EntityPlayer player = Minecraft.getMinecraft().player;
                 player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getBreakdownTickList().forEach((drugSubstance, tick) -> {
-                    if (tick > 0L && tick <= event.world.getTotalWorldTime()) {
+                    if (tick > 0L && tick <= player.world.getTotalWorldTime()) {
                         float oldAmount = player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getPresenceList().get(drugSubstance);
                         float A = player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getBreakdownAmountList().get(drugSubstance);
                         int L = drugSubstance.getBreakdownTime() * (int)(100/player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getBreakdownAmountList().get(drugSubstance));
-                        long X = event.world.getTotalWorldTime() - tick;
+                        long X = player.world.getTotalWorldTime() - tick;
+                        //Calculate the breakdown S-curve with values above
                         player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getPresenceList().put(drugSubstance, (oldAmount>1 ? (float)((-A/(1+Math.pow(Math.E,(((Math.exp((-A/(1-A))-1)-7)*X)/L)+7)))+A) : 0F));
                         if (player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getPresenceList().get(drugSubstance) == 0F) {
                             player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getBreakdownTickList().put(drugSubstance, 0L);
                         }
+                        System.out.println("S-curve: "+drugSubstance.getRegistryName()+" "+player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getPresenceList().get(drugSubstance));
                     }
                 });
 
-
-
-//                player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getPresenceList().forEach((drugSubstance, presence) -> {
-//                    if (presence > 0F) {
-//                        player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getPresenceList().put(drugSubstance, presence * ((1 - drugSubstance.getBreakdownSpeed()) + player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getPresenceList().getOrDefault(DrugSubstances.ALCOHOL, 0F) / 100 * drugSubstance.getBreakdownSpeed()));
-//                        if (presence < 1F && event.world.getTotalWorldTime() % 100 == 0) {
-//                            player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getPresenceList().put(drugSubstance, 0F);
-//                        }
-//                    }
-//                });
-
-                if (event.world.getTotalWorldTime() % 100 == 0) {
-                    Minecraft.getMinecraft().player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP,null).getPresenceList().forEach((sub,am)->{System.out.println("DrugPresence "+sub.getRegistryName()+" "+am);});
-                }
-
                 //TODO: Update DrugInfluences
             }
+        }
+    }
+    //Server
+    @SubscribeEvent
+    public static void onWorldTick(TickEvent.WorldTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) {
+            if (!pendingTasks.isEmpty()) {
+                for (ScheduledTask task : pendingTasks) {
+                    if (task.getTick() <= event.world.getTotalWorldTime() && (task.getSide()==Side.SERVER || task.getSide()==Side.COMMON)) {
+                        task.execute();
+                        pendingTasks.remove(task);
+                    }
+                }
+            }
+
         }
     }
     //Server

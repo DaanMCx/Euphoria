@@ -22,29 +22,7 @@ public class ClientProxy implements IProxy {
 
     @Override
     public EntityPlayer getPlayerFromContext(MessageContext ctx) {
-        return (ctx.side.isClient() ? Minecraft.getMinecraft().player : Euphoria.proxy.getPlayerFromContext(ctx));
-    }
-
-    @Override
-    public void activateDrugPresence(DrugPresence presenceIn) {
-        long tick = Minecraft.getMinecraft().player.world.getTotalWorldTime();
-        for (int i = 0; i < presenceIn.delay; i++) {
-            EventHandler.pendingTasks.add(new DrugPresenceTask(presenceIn.substance, presenceIn.amount / presenceIn.delay, tick + presenceIn.delay + i));
-        }
-        EventHandler.pendingTasks.add(new DrugPresenceTask(presenceIn.substance, tick + (2L * presenceIn.delay) +1L));
-        System.out.println("Tasks added");
-    }
-
-    @Override
-    public void activateDrugPresence(DrugPresence[] presencesIn) {
-        long tick = Minecraft.getMinecraft().player.world.getTotalWorldTime();
-        for (DrugPresence drugPresenceIn : presencesIn) {
-            for (int i = 0; i < drugPresenceIn.delay; i++) {
-                EventHandler.pendingTasks.add(new DrugPresenceTask(drugPresenceIn.substance, drugPresenceIn.amount / drugPresenceIn.delay, tick + drugPresenceIn.delay + i));
-            }
-            EventHandler.pendingTasks.add(new DrugPresenceTask(drugPresenceIn.substance, tick + (2L * drugPresenceIn.delay) +1L));
-        }
-        System.out.println("Tasks added");
+        return Minecraft.getMinecraft().player;
     }
 
     @Override
@@ -55,5 +33,4 @@ public class ClientProxy implements IProxy {
 
     @Override
     public void postInit(FMLPostInitializationEvent event) {}
-
 }

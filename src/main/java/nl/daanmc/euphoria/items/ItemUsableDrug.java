@@ -45,7 +45,7 @@ public class ItemUsableDrug extends Item implements Drug {
     public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
         stack.damageItem(1, entityLiving);
         if (entityLiving instanceof EntityPlayer) {
-            DrugPresence.activatePresence(this.drugPresences);
+            DrugPresence.activatePresence(this.drugPresences, worldIn);
         }
         return super.onItemUseFinish(stack, worldIn, entityLiving);
     }
