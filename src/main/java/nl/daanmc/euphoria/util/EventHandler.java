@@ -34,9 +34,10 @@ public class EventHandler {
                     if (tick > 0L && tick <= player.world.getTotalWorldTime()) {
                         float oldAmount = player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getPresenceList().get(drugSubstance);
                         float A = player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getBreakdownAmountList().get(drugSubstance);
-                        int L = drugSubstance.getBreakdownTime() * (int)(100/player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getBreakdownAmountList().get(drugSubstance));
+                        int L = drugSubstance.getBreakdownTime() * Math.round(player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getBreakdownAmountList().get(drugSubstance)/100);
                         long X = player.world.getTotalWorldTime() - tick;
                         //Calculate the breakdown S-curve with values above
+                        //TODO: Fix the formula, now factor 3,67 too slow
                         player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getPresenceList().put(drugSubstance, (oldAmount>1 ? (float)((-A/(1+Math.pow(Math.E,(((Math.exp((-A/(1-A))-1)-7)*X)/L)+7)))+A) : 0F));
                         if (player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getPresenceList().get(drugSubstance) == 0F) {
                             player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null).getBreakdownTickList().put(drugSubstance, 0L);
