@@ -5,7 +5,7 @@ import nl.daanmc.euphoria.drugs.DrugSubstance;
 import java.util.HashMap;
 
 public interface IDrugPresenceCap {
-    HashMap<DrugSubstance, Float> getPresenceList();
+    HashMap<DrugSubstance, Float> getDrugPresenceList();
     HashMap<DrugSubstance, Long> getBreakdownTickList();
     HashMap<DrugSubstance, Float> getBreakdownAmountList();
 }

@@ -15,9 +15,9 @@ public class DrugPresenceCapStorage implements Capability.IStorage<IDrugPresence
     public NBTBase writeNBT(Capability<IDrugPresenceCap> capability, IDrugPresenceCap instance, EnumFacing side) {
         final NBTTagCompound tagCompound = new NBTTagCompound();
         Elements.DRUG_PRESENCE_LIST.forEach(drugSubstance -> {
-            tagCompound.setFloat("dpcap:dp:"+drugSubstance.getRegistryName().toString(), instance.getPresenceList().getOrDefault(drugSubstance, 0F));
+            tagCompound.setFloat("dpcap:dp:"+drugSubstance.getRegistryName().toString(), instance.getDrugPresenceList().getOrDefault(drugSubstance, 0F));
             tagCompound.setFloat("dpcap:ba:"+drugSubstance.getRegistryName().toString(), instance.getBreakdownAmountList().getOrDefault(drugSubstance, 0F));
-            tagCompound.setFloat("dpcap:bt:"+drugSubstance.getRegistryName().toString(), instance.getBreakdownTickList().getOrDefault(drugSubstance, 0L));
+            tagCompound.setFloat("dpcap:bt:"+drugSubstance.getRegistryName().toString(), instance.getBreakdownTickList().get(drugSubstance));
         });
         return tagCompound;
     }
@@ -26,7 +26,7 @@ public class DrugPresenceCapStorage implements Capability.IStorage<IDrugPresence
     public void readNBT(Capability<IDrugPresenceCap> capability, IDrugPresenceCap instance, EnumFacing side, NBTBase nbt) {
         final NBTTagCompound tagCompound = (NBTTagCompound) nbt;
         Elements.DRUG_PRESENCE_LIST.forEach(drugSubstance -> {
-            instance.getPresenceList().put(drugSubstance, tagCompound.getFloat("dpcap:dp:"+drugSubstance.getRegistryName().toString()));
+            instance.getDrugPresenceList().put(drugSubstance, tagCompound.getFloat("dpcap:dp:"+drugSubstance.getRegistryName().toString()));
             instance.getBreakdownAmountList().put(drugSubstance, tagCompound.getFloat("dpcap:ba:"+drugSubstance.getRegistryName().toString()));
             instance.getBreakdownTickList().put(drugSubstance, tagCompound.getLong("dpcap:bt:"+drugSubstance.getRegistryName().toString()));
         });

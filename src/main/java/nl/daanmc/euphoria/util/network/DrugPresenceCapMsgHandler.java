@@ -21,13 +21,13 @@ public class DrugPresenceCapMsgHandler {
             if (Euphoria.proxy.getPlayerFromContext(ctx) != null) {
                 IDrugPresenceCap oldCap = Euphoria.proxy.getPlayerFromContext(ctx).getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP, null);
                 IDrugPresenceCap newCap = message.capability;
-                oldCap.getPresenceList().clear();
-                oldCap.getPresenceList().putAll(newCap.getPresenceList());
+                oldCap.getDrugPresenceList().clear();
+                oldCap.getDrugPresenceList().putAll(newCap.getDrugPresenceList());
                 oldCap.getBreakdownAmountList().clear();
                 oldCap.getBreakdownAmountList().putAll(newCap.getBreakdownAmountList());
                 oldCap.getBreakdownTickList().clear();
                 oldCap.getBreakdownTickList().putAll(newCap.getBreakdownTickList());
-                System.out.println("Send msg received; updated THC: "+ oldCap.getPresenceList().get(Elements.DrugSubstances.THC));
+                System.out.println("Send msg received; updated THC: "+ oldCap.getDrugPresenceList().get(Elements.DrugSubstances.THC));
             } else {
                 NetworkHandler.INSTANCE.sendToServer(new MsgReqDrugPresenceCap());
             }

@@ -12,7 +12,7 @@ public class DrugPresenceCap implements IDrugPresenceCap {
     private HashMap<DrugSubstance, Float> breakdownAmountList = new HashMap<>();
 
     @Override
-    public HashMap<DrugSubstance, Float> getPresenceList() {
+    public HashMap<DrugSubstance, Float> getDrugPresenceList() {
         return this.presenceList;
     }
 

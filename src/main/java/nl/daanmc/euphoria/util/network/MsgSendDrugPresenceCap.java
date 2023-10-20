@@ -19,8 +19,8 @@ public class MsgSendDrugPresenceCap implements IMessage {
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(this.capability.getPresenceList().size());
-        this.capability.getPresenceList().forEach((drugSubstance, amount) -> {
+        buf.writeInt(this.capability.getDrugPresenceList().size());
+        this.capability.getDrugPresenceList().forEach((drugSubstance, amount) -> {
             byte[] stringBytes = drugSubstance.getRegistryName().toString().getBytes(CharsetUtil.UTF_8);
             buf.writeInt(stringBytes.length);
             buf.writeBytes(stringBytes);
@@ -39,7 +39,7 @@ public class MsgSendDrugPresenceCap implements IMessage {
             buf.readBytes(stringData);
             DrugSubstance substance = DrugSubstance.REGISTRY.get(new ResourceLocation(new String(stringData, CharsetUtil.UTF_8)));
             float amount = buf.readFloat();
-            this.capability.getPresenceList().put(substance, amount);
+            this.capability.getDrugPresenceList().put(substance, amount);
             amount = buf.readFloat();
             this.capability.getBreakdownAmountList().put(substance, amount);
             long tick = buf.readLong();
