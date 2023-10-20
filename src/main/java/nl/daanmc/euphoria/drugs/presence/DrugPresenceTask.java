@@ -3,9 +3,9 @@ package nl.daanmc.euphoria.drugs.presence;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import nl.daanmc.euphoria.drugs.DrugSubstance;
-import nl.daanmc.euphoria.util.ScheduledTask;
+import nl.daanmc.euphoria.util.IScheduledTask;
 
-public class DrugPresenceTask implements ScheduledTask {
+public class DrugPresenceTask implements IScheduledTask {
     private final DrugSubstance drugSubstance;
     private final float amount;
     private final long tick;
@@ -31,6 +31,11 @@ public class DrugPresenceTask implements ScheduledTask {
     @Override
     public Side getSide() {
         return Side.CLIENT;
+    }
+
+    @Override
+    public boolean isPersistent() {
+        return true;
     }
 
     @Override

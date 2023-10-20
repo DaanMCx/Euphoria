@@ -10,10 +10,10 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import nl.daanmc.euphoria.Elements.Tabs;
-import nl.daanmc.euphoria.drugs.Drug;
+import nl.daanmc.euphoria.drugs.IDrug;
 import nl.daanmc.euphoria.drugs.presence.DrugPresence;
 
-public class ItemUsableDrug extends Item implements Drug {
+public class ItemUsableDrug extends Item implements IDrug {
     private DrugPresence[] drugPresences = null;
     private final int useDuration;
     public ItemUsableDrug(String name, int maxUses, int itemUseDuration) {

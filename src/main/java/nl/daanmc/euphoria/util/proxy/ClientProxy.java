@@ -9,10 +9,6 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import nl.daanmc.euphoria.Euphoria;
-import nl.daanmc.euphoria.drugs.presence.DrugPresence;
-import nl.daanmc.euphoria.drugs.presence.DrugPresenceTask;
-import nl.daanmc.euphoria.util.EventHandler;
 
 public class ClientProxy implements IProxy {
     @Override
@@ -22,7 +18,7 @@ public class ClientProxy implements IProxy {
 
     @Override
     public EntityPlayer getPlayerFromContext(MessageContext ctx) {
-        return Minecraft.getMinecraft().player;
+        return ctx.side.isClient() ? Minecraft.getMinecraft().player : ctx.getServerHandler().player;
     }
 
     @Override

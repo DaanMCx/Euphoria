@@ -6,10 +6,10 @@ import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import nl.daanmc.euphoria.Elements.Tabs;
-import nl.daanmc.euphoria.drugs.Drug;
+import nl.daanmc.euphoria.drugs.IDrug;
 import nl.daanmc.euphoria.drugs.presence.DrugPresence;
 
-public class ItemEdibleDrug extends ItemFood implements Drug{
+public class ItemEdibleDrug extends ItemFood implements IDrug {
     private DrugPresence[] drugPresences;
     public ItemEdibleDrug(String name, int amount, float saturation) {
         super(amount, saturation, false);
