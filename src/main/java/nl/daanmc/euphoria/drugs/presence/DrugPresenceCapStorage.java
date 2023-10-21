@@ -17,7 +17,7 @@ public class DrugPresenceCapStorage implements Capability.IStorage<IDrugPresence
         Elements.DRUG_PRESENCE_LIST.forEach(drugSubstance -> {
             tagCompound.setFloat("dpcap:dp:"+drugSubstance.getRegistryName().toString(), instance.getDrugPresenceList().getOrDefault(drugSubstance, 0F));
             tagCompound.setFloat("dpcap:ba:"+drugSubstance.getRegistryName().toString(), instance.getBreakdownAmountList().getOrDefault(drugSubstance, 0F));
-            tagCompound.setFloat("dpcap:bt:"+drugSubstance.getRegistryName().toString(), instance.getBreakdownTickList().get(drugSubstance));
+            tagCompound.setFloat("dpcap:bt:"+drugSubstance.getRegistryName().toString(), instance.getBreakdownTickList().getOrDefault(drugSubstance, 0L));
         });
         return tagCompound;
     }

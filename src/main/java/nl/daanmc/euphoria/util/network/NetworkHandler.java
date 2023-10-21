@@ -12,5 +12,8 @@ public class NetworkHandler {
         INSTANCE.registerMessage(DrugPresenceCapMsgHandler.ReqDrugPresenceCapMsgHandler.class, MsgReqDrugPresenceCap.class, 0, Side.CLIENT);
         INSTANCE.registerMessage(DrugPresenceCapMsgHandler.SendDrugPresenceCapMsgHandler.class, MsgSendDrugPresenceCap.class, 1, Side.CLIENT);
         INSTANCE.registerMessage(DrugPresenceCapMsgHandler.SendDrugPresenceCapMsgHandler.class, MsgSendDrugPresenceCap.class, 1, Side.SERVER);
+        INSTANCE.registerMessage(ClientInfoMsgHandler.ConfClientInfoMsgHandler.class, MsgConfClientInfo.class, 2, Side.CLIENT);
+        INSTANCE.registerMessage(ClientInfoMsgHandler.SendClientInfoMsgHandler.class, MsgSendClientInfo.class, 3, Side.CLIENT);
+        INSTANCE.registerMessage(ClientInfoMsgHandler.SendClientInfoMsgHandler.class, MsgSendClientInfo.class, 3, Side.SERVER);
     }
 }
