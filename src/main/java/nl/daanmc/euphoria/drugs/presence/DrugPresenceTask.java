@@ -1,11 +1,11 @@
 package nl.daanmc.euphoria.drugs.presence;
 
-import io.netty.util.CharsetUtil;
 import net.minecraft.client.Minecraft;
 import nl.daanmc.euphoria.drugs.DrugSubstance;
 import nl.daanmc.euphoria.util.IScheduledTask;
 
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
 public class DrugPresenceTask implements IScheduledTask {
     private final DrugSubstance drugSubstance;
@@ -52,7 +52,7 @@ public class DrugPresenceTask implements IScheduledTask {
     @Override
     public byte[] serialize() {
         byte typeByte = new Byte("0");
-        byte[] substanceBytes = this.drugSubstance.getRegistryName().toString().getBytes(CharsetUtil.UTF_8);
+        byte[] substanceBytes = this.drugSubstance.getRegistryName().toString().getBytes(StandardCharsets.UTF_8);
         byte startBreakdownByte = this.startBreakdown ? new Byte("1") : new Byte("0");
         return ByteBuffer.allocate(1+substanceBytes.length+4+4+8+1)
                 .put(typeByte)

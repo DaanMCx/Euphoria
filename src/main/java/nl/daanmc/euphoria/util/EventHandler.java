@@ -18,14 +18,17 @@ import nl.daanmc.euphoria.util.network.MsgSendClientInfo;
 import nl.daanmc.euphoria.util.network.MsgSendDrugPresenceCap;
 import nl.daanmc.euphoria.util.network.NetworkHandler;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Mod.EventBusSubscriber
 public class EventHandler {
     public static List<IScheduledTask> pendingTasks = new CopyOnWriteArrayList<>();
     public static long clientPlayerTicks = 0L;
     public static boolean confDisconnectInfo = false;
+
     //Client
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
@@ -56,16 +59,22 @@ public class EventHandler {
                             if (X == 0) {
                                 NetworkHandler.INSTANCE.sendToServer(new MsgSendDrugPresenceCap(dpCap));
                             }
-                            System.out.println("S-curve: "+drugSubstance.getRegistryName()+" "+dpCap.getDrugPresenceList().get(drugSubstance));
+                            if (clientPlayerTicks % 40 == 0) {
+                                System.out.println("S-curve: "+drugSubstance.getRegistryName()+" "+dpCap.getDrugPresenceList().get(drugSubstance));
+                            }
                         }
                     });
                     clientPlayerTicks++;
+                    if (clientPlayerTicks%20==0) {
+                        System.out.println("Client tick "+clientPlayerTicks);
+                    }
                 }
 
                 //TODO: Update DrugInfluences
             }
         }
     }
+
     //Server
     @SubscribeEvent
     public static void onWorldTick(TickEvent.WorldTickEvent event) {
@@ -81,6 +90,7 @@ public class EventHandler {
             //more
         }
     }
+
     //Server
     @SubscribeEvent
     public static void onPlayerSaveToFile(SaveToFile event) {
@@ -88,6 +98,7 @@ public class EventHandler {
         //TODO: Save player's pendingTasks to NBT
 
     }
+
     //Server
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
@@ -97,26 +108,39 @@ public class EventHandler {
             dpCap.getBreakdownTickList().putIfAbsent(drugSubstance, 0L);
             dpCap.getBreakdownAmountList().putIfAbsent(drugSubstance, 0F);
         });
-        NetworkHandler.INSTANCE.sendTo(new MsgSendDrugPresenceCap(dpCap), (EntityPlayerMP) event.player);
+        HashMap<String, byte[]> scheduledTasks = new HashMap<>();
+        for (int i = 0; i < event.player.getEntityData().getInteger("scheduled_tasks:c"); i++) {
+            String key = "scheduled_task:c:"+i;
+            scheduledTasks.put(key, event.player.getEntityData().getByteArray(key));
+        }
+        long clientTicks = event.player.getEntityData().getLong("client_ticks");
+        NetworkHandler.INSTANCE.sendTo(new MsgSendClientInfo(dpCap, scheduledTasks, clientTicks), (EntityPlayerMP) event.player);
         //TODO: Read player's pendingTasks from NBT and send to player
-
     }
+
     //Server
     @SubscribeEvent
     public static void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
         NetworkHandler.INSTANCE.sendTo(new MsgSendDrugPresenceCap(event.player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP,null)), (EntityPlayerMP) event.player);
     }
 
+    //Client
     @SubscribeEvent
-    public static void onClient(GuiScreenEvent.ActionPerformedEvent event) throws InterruptedException {
+    public static void onClientSaveAndQuit(GuiScreenEvent.ActionPerformedEvent event) throws InterruptedException {
         if (event.getGui() instanceof GuiIngameMenu && event.getButton().id == 1) {
-            NetworkHandler.INSTANCE.sendToServer(new MsgSendClientInfo(Minecraft.getMinecraft().player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP,null), clientPlayerTicks));
-            while (!confDisconnectInfo) {
-                System.out.println("sleep");
+            HashMap<String, byte[]> scheduledTasks = new HashMap<>();
+            AtomicInteger count = new AtomicInteger();
+            pendingTasks.forEach(task -> {
+                if (task.isPersistent()) {
+                    scheduledTasks.put("scheduled_task:c:"+count.getAndIncrement(), task.serialize());
+                }
+            });
+            NetworkHandler.INSTANCE.sendToServer(new MsgSendClientInfo(Minecraft.getMinecraft().player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP,null), scheduledTasks, clientPlayerTicks));
+            AtomicInteger timeoutCount = new AtomicInteger(0);
+            while (!confDisconnectInfo && timeoutCount.getAndIncrement() < 500) {
                 Thread.sleep(1L);
             }
             confDisconnectInfo = false;
         }
-
     }
 }

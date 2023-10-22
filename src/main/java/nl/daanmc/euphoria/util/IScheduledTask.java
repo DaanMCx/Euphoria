@@ -1,11 +1,11 @@
 package nl.daanmc.euphoria.util;
 
-import io.netty.util.CharsetUtil;
 import net.minecraft.util.ResourceLocation;
 import nl.daanmc.euphoria.drugs.DrugSubstance;
 import nl.daanmc.euphoria.drugs.presence.DrugPresenceTask;
 
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
 public interface IScheduledTask {
     long getTick();
@@ -21,7 +21,7 @@ public interface IScheduledTask {
             int stringLength = buf.getInt();
             byte[] stringData = new byte[stringLength];
             buf.get(stringData);
-            DrugSubstance substance = DrugSubstance.REGISTRY.get(new ResourceLocation(new String(stringData, CharsetUtil.UTF_8)));
+            DrugSubstance substance = DrugSubstance.REGISTRY.get(new ResourceLocation(new String(stringData, StandardCharsets.UTF_8)));
             float amount = buf.getFloat();
             long tick = buf.getLong();
             byte[] boolData = new byte[1];
@@ -30,6 +30,5 @@ public interface IScheduledTask {
             boolean startBreakdown = boolValue.equals("1");
             return startBreakdown ? new DrugPresenceTask(substance, tick) : new DrugPresenceTask(substance, amount, tick);
         } else {return null;}
-
     }
 }

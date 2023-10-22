@@ -8,14 +8,18 @@ import nl.daanmc.euphoria.drugs.DrugSubstance;
 import nl.daanmc.euphoria.drugs.presence.DrugPresenceCap;
 import nl.daanmc.euphoria.drugs.presence.IDrugPresenceCap;
 
+import java.util.HashMap;
+
 public class MsgSendClientInfo implements IMessage {
     public MsgSendClientInfo() {}
     public IDrugPresenceCap capability = new DrugPresenceCap();
+    public HashMap<String, byte[]> scheduledTasks;
     public long clientTicks;
 
-    public MsgSendClientInfo(IDrugPresenceCap cap, long clientTicks) {
-        this.capability = cap;
-        this.clientTicks = clientTicks;
+    public MsgSendClientInfo(IDrugPresenceCap capabilityIn, HashMap<String, byte[]> scheduledTasks, long clientTicksIn) {
+        this.capability = capabilityIn;
+        this.scheduledTasks = scheduledTasks;
+        this.clientTicks = clientTicksIn;
     }
 
     @Override
@@ -29,6 +33,14 @@ public class MsgSendClientInfo implements IMessage {
             buf.writeFloat(amount);
             buf.writeFloat(this.capability.getBreakdownAmountList().getOrDefault(drugSubstance, 0F));
             buf.writeLong(this.capability.getBreakdownTickList().getOrDefault(drugSubstance, 0L));
+        });
+        buf.writeInt(this.scheduledTasks.size());
+        this.scheduledTasks.forEach((key, value) -> {
+            byte[] stringBytes = key.getBytes(CharsetUtil.UTF_8);
+            buf.writeInt(stringBytes.length);
+            buf.writeBytes(stringBytes);
+            buf.writeInt(value.length);
+            buf.writeBytes(value);
         });
     }
 
@@ -47,6 +59,16 @@ public class MsgSendClientInfo implements IMessage {
             this.capability.getBreakdownAmountList().put(substance, amount);
             long tick = buf.readLong();
             this.capability.getBreakdownTickList().put(substance, tick);
+        }
+        mapSize = buf.readInt();
+        for (int i = 0; i < mapSize; i++) {
+            int length = buf.readInt();
+            byte[] keyData = new byte[length];
+            buf.readBytes(keyData);
+            length = buf.readInt();
+            byte[] value = new byte[length];
+            buf.readBytes(value);
+            this.scheduledTasks.put(new String(keyData, CharsetUtil.UTF_8), value);
         }
     }
 }

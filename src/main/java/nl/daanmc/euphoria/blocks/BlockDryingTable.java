@@ -41,7 +41,7 @@ public class BlockDryingTable extends Block {
 
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        DrugPresence.activatePresence(new DrugPresence(DrugSubstances.THC, 50, 20), worldIn);
+        DrugPresence.activatePresence(new DrugPresence(DrugSubstances.THC, 30, 2400), worldIn);
         return true;
     }
 }
