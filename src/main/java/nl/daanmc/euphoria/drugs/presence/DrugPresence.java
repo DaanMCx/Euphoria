@@ -22,9 +22,9 @@ public class DrugPresence {
         if (worldIn.isRemote) {
             long tick = EventHandler.clientPlayerTicks;
             for (int i = 0; i < presenceIn.delay; i++) {
-                EventHandler.pendingTasks.add(new DrugPresenceTask(presenceIn.substance, presenceIn.amount / presenceIn.delay, tick + presenceIn.delay + i));
+                EventHandler.clientTasks.add(new DrugPresenceTask(presenceIn.substance, presenceIn.amount / presenceIn.delay, tick + presenceIn.delay + i));
             }
-            EventHandler.pendingTasks.add(new DrugPresenceTask(presenceIn.substance, tick + (2L * presenceIn.delay) +1));
+            EventHandler.clientTasks.add(new DrugPresenceTask(presenceIn.substance, tick + (2L * presenceIn.delay) +1));
             activePresences.put(presenceIn, tick);
             System.out.println(presenceIn.substance.getRegistryName()+" tasks added +breakdown "+ (tick + (2 * presenceIn.delay) +1));
         }
@@ -35,9 +35,9 @@ public class DrugPresence {
             long tick = EventHandler.clientPlayerTicks;
             for (DrugPresence presenceIn : presencesIn) {
                 for (int i = 0; i < presenceIn.delay; i++) {
-                    EventHandler.pendingTasks.add(new DrugPresenceTask(presenceIn.substance, presenceIn.amount / presenceIn.delay, tick + presenceIn.delay + i));
+                    EventHandler.clientTasks.add(new DrugPresenceTask(presenceIn.substance, presenceIn.amount / presenceIn.delay, tick + presenceIn.delay + i));
                 }
-                EventHandler.pendingTasks.add(new DrugPresenceTask(presenceIn.substance, tick + (2L * presenceIn.delay) +1L));
+                EventHandler.clientTasks.add(new DrugPresenceTask(presenceIn.substance, tick + (2L * presenceIn.delay) +1L));
                 activePresences.put(presenceIn, tick);
                 System.out.println(presenceIn.substance.getRegistryName()+" tasks added +breakdown "+tick + (2L * presenceIn.delay) +1L);
             }
@@ -46,9 +46,9 @@ public class DrugPresence {
 
     public void activate(long tick) {
         for (int i = 0; i < this.delay; i++) {
-            EventHandler.pendingTasks.add(new DrugPresenceTask(this.substance, this.amount / this.delay, tick + this.delay + i));
+            EventHandler.clientTasks.add(new DrugPresenceTask(this.substance, this.amount / this.delay, tick + this.delay + i));
         }
-        EventHandler.pendingTasks.add(new DrugPresenceTask(this.substance, tick + (2L * this.delay) +1));
+        EventHandler.clientTasks.add(new DrugPresenceTask(this.substance, tick + (2L * this.delay) +1));
         activePresences.put(this, tick);
     }
 }

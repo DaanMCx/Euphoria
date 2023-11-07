@@ -4,9 +4,6 @@ import net.minecraft.client.Minecraft;
 import nl.daanmc.euphoria.drugs.DrugSubstance;
 import nl.daanmc.euphoria.util.IScheduledTask;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-
 public class DrugPresenceTask implements IScheduledTask {
     private final DrugSubstance drugSubstance;
     private final float amount;
@@ -31,11 +28,6 @@ public class DrugPresenceTask implements IScheduledTask {
     }
 
     @Override
-    public boolean isPersistent() {
-        return true;
-    }
-
-    @Override
     public void execute() {
         IDrugPresenceCap dpCap = Minecraft.getMinecraft().player.getCapability(DrugPresenceCap.Provider.CAP,null);
         if (this.startBreakdown) {
@@ -47,20 +39,5 @@ public class DrugPresenceTask implements IScheduledTask {
             System.out.println("Added: "+this.drugSubstance.getRegistryName()+" by "+this.amount+" to "+dpCap.getDrugPresenceList().get(this.drugSubstance));
         }
 
-    }
-
-    @Override
-    public byte[] serialize() {
-        byte typeByte = new Byte("0");
-        byte[] substanceBytes = this.drugSubstance.getRegistryName().toString().getBytes(StandardCharsets.UTF_8);
-        byte startBreakdownByte = this.startBreakdown ? new Byte("1") : new Byte("0");
-        return ByteBuffer.allocate(1+substanceBytes.length+4+4+8+1)
-                .put(typeByte)
-                .putInt(substanceBytes.length)
-                .put(substanceBytes)
-                .putFloat(this.amount)
-                .putLong(this.tick)
-                .put(startBreakdownByte)
-                .array();
     }
 }

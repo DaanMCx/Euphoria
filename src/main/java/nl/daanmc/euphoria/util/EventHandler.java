@@ -29,7 +29,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Mod.EventBusSubscriber
 public class EventHandler {
-    public static List<IScheduledTask> pendingTasks = new CopyOnWriteArrayList<>();
+    public static List<IScheduledTask> clientTasks = new CopyOnWriteArrayList<>();
+    public static List<IScheduledTask> serverTasks = new CopyOnWriteArrayList<>();
     public static long clientPlayerTicks = 0L;
     public static boolean confDisconnectInfo = false;
 
@@ -43,11 +44,11 @@ public class EventHandler {
                 NetworkHandler.INSTANCE.sendToServer(new MsgConfClientInfo(false));
             }
             //Execute tasks
-            if (!pendingTasks.isEmpty()) {
-                for (IScheduledTask task : pendingTasks) {
+            if (!clientTasks.isEmpty()) {
+                for (IScheduledTask task : clientTasks) {
                     if (task.getTick() <= clientPlayerTicks) {
                         task.execute();
-                        pendingTasks.remove(task);
+                        clientTasks.remove(task);
                     }
                 }
             }
@@ -78,7 +79,7 @@ public class EventHandler {
                 }
             });
             //Active sync DrugPresenceCap to server each 5 seconds
-            if (clientPlayerTicks%100==0 && clientPlayerTicks > 0L) {
+            if (clientPlayerTicks%100 == 0 && clientPlayerTicks > 0L) {
                 NetworkHandler.INSTANCE.sendToServer(new MsgDrugPresenceCap(dpCap));
                 System.out.println("Client tick "+clientPlayerTicks);
             }
@@ -91,11 +92,11 @@ public class EventHandler {
     @SubscribeEvent
     public static void onWorldTick(TickEvent.WorldTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
-            if (!pendingTasks.isEmpty()) {
-                for (IScheduledTask task : pendingTasks) {
+            if (!serverTasks.isEmpty()) {
+                for (IScheduledTask task : serverTasks) {
                     if (task.getTick() <= event.world.getTotalWorldTime()) {
                         task.execute();
-                        pendingTasks.remove(task);
+                        serverTasks.remove(task);
                     }
                 }
             }

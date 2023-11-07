@@ -84,9 +84,8 @@ public class NetworkHandler {
                 }
             } else { //Client
                 EventHandler.clientPlayerTicks = message.clientTicks > 0 ? message.clientTicks : 1;
-                if (!message.activePresences.isEmpty()) {
-                    message.activePresences.forEach((DrugPresence::activate));
-                }
+                System.out.println("Message received with AP size "+message.activePresences.size());
+                message.activePresences.forEach((DrugPresence::activate));
             }
             System.out.println("MsgSendClientInfo received; updated THC: "+ oldCap.getDrugPresenceList().get(Elements.DrugSubstances.THC));
             return new MsgConfClientInfo(true);

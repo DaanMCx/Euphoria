@@ -14,7 +14,7 @@ import java.util.HashMap;
 public class MsgSendClientInfo implements IMessage {
     public MsgSendClientInfo() {}
     public IDrugPresenceCap capability = new DrugPresenceCap();
-    public HashMap<DrugPresence, Long> activePresences;
+    public HashMap<DrugPresence, Long> activePresences = new HashMap<>();
     public long clientTicks;
 
     public MsgSendClientInfo(IDrugPresenceCap capabilityIn, HashMap<DrugPresence, Long> activePresences, long clientTicksIn) {
@@ -37,6 +37,8 @@ public class MsgSendClientInfo implements IMessage {
         });
         buf.writeInt(activePresences.size());
         activePresences.forEach(((presence, tick) -> {
+            System.out.println(presence == null);
+            System.out.println(presence.substance == null);
             byte[] stringBytes = presence.substance.getRegistryName().toString().getBytes(CharsetUtil.UTF_8);
             buf.writeInt(stringBytes.length);
             buf.writeBytes(stringBytes);
