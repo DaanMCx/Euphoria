@@ -37,7 +37,7 @@ public class DrugPresenceTask implements IScheduledTask {
 
     @Override
     public void execute() {
-        IDrugPresenceCap dpCap = Minecraft.getMinecraft().player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP,null);
+        IDrugPresenceCap dpCap = Minecraft.getMinecraft().player.getCapability(DrugPresenceCap.Provider.CAP,null);
         if (this.startBreakdown) {
             dpCap.getBreakdownTickList().put(this.drugSubstance, this.tick);
             dpCap.getBreakdownAmountList().put(this.drugSubstance, dpCap.getDrugPresenceList().get(this.drugSubstance));

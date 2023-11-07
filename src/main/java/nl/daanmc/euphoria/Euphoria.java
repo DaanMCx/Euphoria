@@ -24,12 +24,10 @@ import nl.daanmc.euphoria.blocks.BlockDryingTable;
 import nl.daanmc.euphoria.drugs.DrugSubstance;
 import nl.daanmc.euphoria.drugs.presence.DrugPresence;
 import nl.daanmc.euphoria.drugs.presence.DrugPresenceCap;
-import nl.daanmc.euphoria.drugs.presence.DrugPresenceCapStorage;
 import nl.daanmc.euphoria.drugs.presence.IDrugPresenceCap;
 import nl.daanmc.euphoria.items.ItemEdibleDrug;
 import nl.daanmc.euphoria.items.ItemSmokingTool;
 import nl.daanmc.euphoria.items.ItemUsableDrug;
-import nl.daanmc.euphoria.util.CapabilityHandler;
 import nl.daanmc.euphoria.util.EventHandler;
 import nl.daanmc.euphoria.util.network.NetworkHandler;
 import nl.daanmc.euphoria.util.proxy.IProxy;
@@ -56,8 +54,7 @@ public class Euphoria {
     
     @Mod.EventHandler
     void preInit(FMLPreInitializationEvent event) {
-        CapabilityManager.INSTANCE.register(IDrugPresenceCap.class, new DrugPresenceCapStorage(), DrugPresenceCap::new);
-        MinecraftForge.EVENT_BUS.register(new CapabilityHandler());
+        CapabilityManager.INSTANCE.register(IDrugPresenceCap.class, new DrugPresenceCap.Storage(), DrugPresenceCap::new);
         MinecraftForge.EVENT_BUS.register(new EventHandler());
         NetworkHandler.init();
     }
@@ -70,7 +67,6 @@ public class Euphoria {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         Elements.DRUG_PRESENCE_LIST.forEach((substance) -> DrugSubstance.REGISTRY.put(substance.getRegistryName(), substance));
-
         Items.DRIED_RED_MUSHROOM.attachPresences(new DrugPresence[] {
             new DrugPresence(DrugSubstances.PSILOCYBIN, 20F, 2000)
         });
@@ -161,9 +157,4 @@ public class Euphoria {
             proxy.registerItemRenderer(Item.getItemFromBlock(block), 0, "inventory");   
         }
     }
-    float startAmount = 100F;
-    int breakdownTime = 1200;
-    int worldTick = 0;
-
-    float amount = (float) (-startAmount / (1 + Math.pow(Math.E, (((Math.exp((-startAmount / (1 - startAmount)) - 1) - 7) * worldTick) / breakdownTime) + 7 )) + startAmount);
 }

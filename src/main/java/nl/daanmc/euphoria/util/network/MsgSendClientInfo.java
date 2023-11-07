@@ -5,6 +5,7 @@ import io.netty.util.CharsetUtil;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import nl.daanmc.euphoria.drugs.DrugSubstance;
+import nl.daanmc.euphoria.drugs.presence.DrugPresence;
 import nl.daanmc.euphoria.drugs.presence.DrugPresenceCap;
 import nl.daanmc.euphoria.drugs.presence.IDrugPresenceCap;
 
@@ -13,12 +14,12 @@ import java.util.HashMap;
 public class MsgSendClientInfo implements IMessage {
     public MsgSendClientInfo() {}
     public IDrugPresenceCap capability = new DrugPresenceCap();
-    public HashMap<String, byte[]> scheduledTasks;
+    public HashMap<DrugPresence, Long> activePresences;
     public long clientTicks;
 
-    public MsgSendClientInfo(IDrugPresenceCap capabilityIn, HashMap<String, byte[]> scheduledTasks, long clientTicksIn) {
+    public MsgSendClientInfo(IDrugPresenceCap capabilityIn, HashMap<DrugPresence, Long> activePresences, long clientTicksIn) {
         this.capability = capabilityIn;
-        this.scheduledTasks = scheduledTasks;
+        this.activePresences = activePresences;
         this.clientTicks = clientTicksIn;
     }
 
@@ -34,14 +35,15 @@ public class MsgSendClientInfo implements IMessage {
             buf.writeFloat(capability.getBreakdownAmountList().getOrDefault(drugSubstance, 0F));
             buf.writeLong(capability.getBreakdownTickList().getOrDefault(drugSubstance, 0L));
         });
-        buf.writeInt(scheduledTasks.size());
-        scheduledTasks.forEach((key, value) -> {
-            byte[] stringBytes = key.getBytes(CharsetUtil.UTF_8);
+        buf.writeInt(activePresences.size());
+        activePresences.forEach(((presence, tick) -> {
+            byte[] stringBytes = presence.substance.getRegistryName().toString().getBytes(CharsetUtil.UTF_8);
             buf.writeInt(stringBytes.length);
             buf.writeBytes(stringBytes);
-            buf.writeInt(value.length);
-            buf.writeBytes(value);
-        });
+            buf.writeFloat(presence.amount);
+            buf.writeInt(presence.delay);
+            buf.writeLong(tick);
+        }));
     }
 
     @Override
@@ -63,12 +65,13 @@ public class MsgSendClientInfo implements IMessage {
         mapSize = buf.readInt();
         for (int i = 0; i < mapSize; i++) {
             int length = buf.readInt();
-            byte[] keyData = new byte[length];
-            buf.readBytes(keyData);
-            length = buf.readInt();
-            byte[] value = new byte[length];
-            buf.readBytes(value);
-            scheduledTasks.put(new String(keyData, CharsetUtil.UTF_8), value);
+            byte[] stringData = new byte[length];
+            buf.readBytes(stringData);
+            DrugSubstance substance = DrugSubstance.REGISTRY.get(new ResourceLocation(new String(stringData, CharsetUtil.UTF_8)));
+            float amount = buf.readFloat();
+            int delay = buf.readInt();
+            long tick = buf.readLong();
+            activePresences.put(new DrugPresence(substance, amount, delay), tick);
         }
     }
 }

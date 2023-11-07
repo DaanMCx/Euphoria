@@ -4,7 +4,10 @@ import net.minecraft.world.World;
 import nl.daanmc.euphoria.drugs.DrugSubstance;
 import nl.daanmc.euphoria.util.EventHandler;
 
+import java.util.HashMap;
+
 public class DrugPresence {
+    public static HashMap<DrugPresence, Long> activePresences = new HashMap<>();
     public DrugSubstance substance;
     public float amount;
     public int delay;
@@ -21,8 +24,9 @@ public class DrugPresence {
             for (int i = 0; i < presenceIn.delay; i++) {
                 EventHandler.pendingTasks.add(new DrugPresenceTask(presenceIn.substance, presenceIn.amount / presenceIn.delay, tick + presenceIn.delay + i));
             }
-            EventHandler.pendingTasks.add(new DrugPresenceTask(presenceIn.substance, tick + (2L * presenceIn.delay) +1L));
-            System.out.println("Tasks added");
+            EventHandler.pendingTasks.add(new DrugPresenceTask(presenceIn.substance, tick + (2L * presenceIn.delay) +1));
+            activePresences.put(presenceIn, tick);
+            System.out.println(presenceIn.substance.getRegistryName()+" tasks added +breakdown "+ (tick + (2 * presenceIn.delay) +1));
         }
     }
 
@@ -34,9 +38,17 @@ public class DrugPresence {
                     EventHandler.pendingTasks.add(new DrugPresenceTask(presenceIn.substance, presenceIn.amount / presenceIn.delay, tick + presenceIn.delay + i));
                 }
                 EventHandler.pendingTasks.add(new DrugPresenceTask(presenceIn.substance, tick + (2L * presenceIn.delay) +1L));
-                System.out.println(presenceIn.substance.getRegistryName()+" task added +breakdown "+tick + (2L * presenceIn.delay) +1L);
+                activePresences.put(presenceIn, tick);
+                System.out.println(presenceIn.substance.getRegistryName()+" tasks added +breakdown "+tick + (2L * presenceIn.delay) +1L);
             }
-
         }
+    }
+
+    public void activate(long tick) {
+        for (int i = 0; i < this.delay; i++) {
+            EventHandler.pendingTasks.add(new DrugPresenceTask(this.substance, this.amount / this.delay, tick + this.delay + i));
+        }
+        EventHandler.pendingTasks.add(new DrugPresenceTask(this.substance, tick + (2L * this.delay) +1));
+        activePresences.put(this, tick);
     }
 }
