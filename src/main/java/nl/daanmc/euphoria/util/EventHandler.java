@@ -13,9 +13,9 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import nl.daanmc.euphoria.Elements;
 import nl.daanmc.euphoria.drugs.presence.DrugPresenceCapProvider;
 import nl.daanmc.euphoria.drugs.presence.IDrugPresenceCap;
-import nl.daanmc.euphoria.util.network.MsgReqDrugPresenceCap;
+import nl.daanmc.euphoria.util.network.MsgConfClientInfo;
+import nl.daanmc.euphoria.util.network.MsgDrugPresenceCap;
 import nl.daanmc.euphoria.util.network.MsgSendClientInfo;
-import nl.daanmc.euphoria.util.network.MsgSendDrugPresenceCap;
 import nl.daanmc.euphoria.util.network.NetworkHandler;
 
 import java.util.HashMap;
@@ -33,45 +33,45 @@ public class EventHandler {
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
         EntityPlayer player = Minecraft.getMinecraft().player;
-        if (player != null) {
-            if (event.phase == TickEvent.Phase.END) {
-                if (!pendingTasks.isEmpty()) {
-                    for (IScheduledTask task : pendingTasks) {
-                        if (task.getTick() <= clientPlayerTicks) {
-                            task.execute();
-                            pendingTasks.remove(task);
-                        }
-                    }
-                }
-                //Calculating the breakdown S-curve
-                if (!Minecraft.getMinecraft().isGamePaused()) {
-                    IDrugPresenceCap dpCap = player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP,null);
-                    dpCap.getBreakdownTickList().forEach((drugSubstance, tick) -> {
-                        if (tick > 0L && tick <= clientPlayerTicks) {
-                            float oldAmount = dpCap.getDrugPresenceList().get(drugSubstance);
-                            float A = dpCap.getBreakdownAmountList().get(drugSubstance);
-                            int L = Math.round(drugSubstance.getBreakdownTime() * (dpCap.getBreakdownAmountList().get(drugSubstance)/100));
-                            long X = clientPlayerTicks - tick;
-                            dpCap.getDrugPresenceList().put(drugSubstance, (oldAmount>1 ? (float)((-A/(1+Math.exp((((Math.log((-A/(1-A))-1)-7)*X)/L)+7)))+A) : 0F));
-                            if (dpCap.getDrugPresenceList().get(drugSubstance) == 0F) {
-                                dpCap.getBreakdownTickList().put(drugSubstance, 0L);
-                            }
-                            if (X == 0) {
-                                NetworkHandler.INSTANCE.sendToServer(new MsgSendDrugPresenceCap(dpCap));
-                            }
-                            if (clientPlayerTicks % 40 == 0) {
-                                System.out.println("S-curve: "+drugSubstance.getRegistryName()+" "+dpCap.getDrugPresenceList().get(drugSubstance));
-                            }
-                        }
-                    });
-                    clientPlayerTicks++;
-                    if (clientPlayerTicks%20==0) {
-                        System.out.println("Client tick "+clientPlayerTicks);
-                    }
-                }
-
-                //TODO: Update DrugInfluences
+        if (event.phase == TickEvent.Phase.END && player != null && !Minecraft.getMinecraft().isGamePaused()) {
+            //Request client info if this is initial player tick
+            if (clientPlayerTicks == 0L) {
+                NetworkHandler.INSTANCE.sendToServer(new MsgConfClientInfo(false));
             }
+            //Execute tasks
+            if (!pendingTasks.isEmpty()) {
+                for (IScheduledTask task : pendingTasks) {
+                    if (task.getTick() <= clientPlayerTicks) {
+                        task.execute();
+                        pendingTasks.remove(task);
+                    }
+                }
+            }
+            //Calculate the breakdown S-curve
+            IDrugPresenceCap dpCap = player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP,null);
+            dpCap.getBreakdownTickList().forEach((drugSubstance, tick) -> {
+                if (tick > 0L && tick <= clientPlayerTicks) {
+                    float oldAmount = dpCap.getDrugPresenceList().get(drugSubstance);
+                    float A = dpCap.getBreakdownAmountList().get(drugSubstance);
+                    int L = Math.round(drugSubstance.getBreakdownTime() * (dpCap.getBreakdownAmountList().get(drugSubstance)/100));
+                    long X = clientPlayerTicks - tick;
+                    dpCap.getDrugPresenceList().put(drugSubstance, (oldAmount>1 ? (float)((-A/(1+Math.exp((((Math.log((-A/(1-A))-1)-7)*X)/L)+7)))+A) : 0F));
+                    if (dpCap.getDrugPresenceList().get(drugSubstance) == 0F) {
+                        dpCap.getBreakdownTickList().put(drugSubstance, 0L);
+                    }
+                    if (X == 0) {
+                        NetworkHandler.INSTANCE.sendToServer(new MsgDrugPresenceCap(dpCap));
+                    }
+                    if (clientPlayerTicks % 40 == 0) {
+                        System.out.println("S-curve: "+drugSubstance.getRegistryName()+" "+dpCap.getDrugPresenceList().get(drugSubstance));
+                    }
+                }
+            });
+            clientPlayerTicks++;
+            if (clientPlayerTicks%50==0) {
+                System.out.println("Client tick "+clientPlayerTicks);
+            }
+            //TODO: Update DrugInfluences
         }
     }
 
@@ -94,7 +94,6 @@ public class EventHandler {
     //Server
     @SubscribeEvent
     public static void onPlayerSaveToFile(SaveToFile event) {
-        NetworkHandler.INSTANCE.sendTo(new MsgReqDrugPresenceCap(), (EntityPlayerMP) event.getEntityPlayer());
         //TODO: Save player's pendingTasks to NBT
 
     }
@@ -108,20 +107,20 @@ public class EventHandler {
             dpCap.getBreakdownTickList().putIfAbsent(drugSubstance, 0L);
             dpCap.getBreakdownAmountList().putIfAbsent(drugSubstance, 0F);
         });
-        HashMap<String, byte[]> scheduledTasks = new HashMap<>();
-        for (int i = 0; i < event.player.getEntityData().getInteger("scheduled_tasks:c"); i++) {
-            String key = "scheduled_task:c:"+i;
-            scheduledTasks.put(key, event.player.getEntityData().getByteArray(key));
-        }
-        long clientTicks = event.player.getEntityData().getLong("client_ticks");
-        NetworkHandler.INSTANCE.sendTo(new MsgSendClientInfo(dpCap, scheduledTasks, clientTicks), (EntityPlayerMP) event.player);
+//        HashMap<String, byte[]> scheduledTasks = new HashMap<>();
+//        for (int i = 0; i < event.player.getEntityData().getInteger("scheduled_tasks:c"); i++) {
+//            String key = "scheduled_task:c:"+i;
+//            scheduledTasks.put(key, event.player.getEntityData().getByteArray(key));
+//        }
+//        long clientTicks = event.player.getEntityData().getLong("client_ticks");
+//        NetworkHandler.INSTANCE.sendTo(new MsgSendClientInfo(dpCap, scheduledTasks, clientTicks), (EntityPlayerMP) event.player);
         //TODO: Read player's pendingTasks from NBT and send to player
     }
 
     //Server
     @SubscribeEvent
     public static void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
-        NetworkHandler.INSTANCE.sendTo(new MsgSendDrugPresenceCap(event.player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP,null)), (EntityPlayerMP) event.player);
+        NetworkHandler.INSTANCE.sendTo(new MsgDrugPresenceCap(event.player.getCapability(DrugPresenceCapProvider.DRUG_PRESENCE_CAP,null)), (EntityPlayerMP) event.player);
     }
 
     //Client
@@ -141,6 +140,7 @@ public class EventHandler {
                 Thread.sleep(1L);
             }
             confDisconnectInfo = false;
+            clientPlayerTicks = 0L;
         }
     }
 }

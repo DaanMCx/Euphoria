@@ -34,7 +34,7 @@ public class DrugPresence {
                     EventHandler.pendingTasks.add(new DrugPresenceTask(presenceIn.substance, presenceIn.amount / presenceIn.delay, tick + presenceIn.delay + i));
                 }
                 EventHandler.pendingTasks.add(new DrugPresenceTask(presenceIn.substance, tick + (2L * presenceIn.delay) +1L));
-                System.out.println(presenceIn.substance.getRegistryName()+" tasks added +breakdown "+tick + (2L * presenceIn.delay) +1L);
+                System.out.println(presenceIn.substance.getRegistryName()+" task added +breakdown "+tick + (2L * presenceIn.delay) +1L);
             }
 
         }

@@ -9,11 +9,11 @@ public class NetworkHandler {
     public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(Euphoria.MODID);
 
     public static void init() {
-        INSTANCE.registerMessage(DrugPresenceCapMsgHandler.ReqDrugPresenceCapMsgHandler.class, MsgReqDrugPresenceCap.class, 0, Side.CLIENT);
-        INSTANCE.registerMessage(DrugPresenceCapMsgHandler.SendDrugPresenceCapMsgHandler.class, MsgSendDrugPresenceCap.class, 1, Side.CLIENT);
-        INSTANCE.registerMessage(DrugPresenceCapMsgHandler.SendDrugPresenceCapMsgHandler.class, MsgSendDrugPresenceCap.class, 1, Side.SERVER);
-        INSTANCE.registerMessage(ClientInfoMsgHandler.ConfClientInfoMsgHandler.class, MsgConfClientInfo.class, 2, Side.CLIENT);
-        INSTANCE.registerMessage(ClientInfoMsgHandler.SendClientInfoMsgHandler.class, MsgSendClientInfo.class, 3, Side.CLIENT);
-        INSTANCE.registerMessage(ClientInfoMsgHandler.SendClientInfoMsgHandler.class, MsgSendClientInfo.class, 3, Side.SERVER);
+        INSTANCE.registerMessage(DrugPresenceCapMH.class, MsgDrugPresenceCap.class, 0, Side.CLIENT);
+        INSTANCE.registerMessage(DrugPresenceCapMH.class, MsgDrugPresenceCap.class, 0, Side.SERVER);
+        INSTANCE.registerMessage(ClientInfoMH.SendClientInfoMH.class, MsgSendClientInfo.class, 2, Side.CLIENT);
+        INSTANCE.registerMessage(ClientInfoMH.SendClientInfoMH.class, MsgSendClientInfo.class, 2, Side.SERVER);
+        INSTANCE.registerMessage(ClientInfoMH.ConfClientInfoMH.class, MsgConfClientInfo.class, 1, Side.CLIENT);
+        INSTANCE.registerMessage(ClientInfoMH.ConfClientInfoMH.class, MsgConfClientInfo.class, 1, Side.SERVER);
     }
 }

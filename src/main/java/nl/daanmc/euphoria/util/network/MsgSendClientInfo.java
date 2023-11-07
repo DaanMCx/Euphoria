@@ -24,18 +24,18 @@ public class MsgSendClientInfo implements IMessage {
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeLong(this.clientTicks);
-        buf.writeInt(this.capability.getDrugPresenceList().size());
-        this.capability.getDrugPresenceList().forEach((drugSubstance, amount) -> {
+        buf.writeLong(clientTicks);
+        buf.writeInt(capability.getDrugPresenceList().size());
+        capability.getDrugPresenceList().forEach((drugSubstance, amount) -> {
             byte[] stringBytes = drugSubstance.getRegistryName().toString().getBytes(CharsetUtil.UTF_8);
             buf.writeInt(stringBytes.length);
             buf.writeBytes(stringBytes);
             buf.writeFloat(amount);
-            buf.writeFloat(this.capability.getBreakdownAmountList().getOrDefault(drugSubstance, 0F));
-            buf.writeLong(this.capability.getBreakdownTickList().getOrDefault(drugSubstance, 0L));
+            buf.writeFloat(capability.getBreakdownAmountList().getOrDefault(drugSubstance, 0F));
+            buf.writeLong(capability.getBreakdownTickList().getOrDefault(drugSubstance, 0L));
         });
-        buf.writeInt(this.scheduledTasks.size());
-        this.scheduledTasks.forEach((key, value) -> {
+        buf.writeInt(scheduledTasks.size());
+        scheduledTasks.forEach((key, value) -> {
             byte[] stringBytes = key.getBytes(CharsetUtil.UTF_8);
             buf.writeInt(stringBytes.length);
             buf.writeBytes(stringBytes);
@@ -46,7 +46,7 @@ public class MsgSendClientInfo implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        this.clientTicks = buf.readLong();
+        clientTicks = buf.readLong();
         int mapSize = buf.readInt();
         for (int i = 0; i < mapSize; i++) {
             int stringLength = buf.readInt();
@@ -54,11 +54,11 @@ public class MsgSendClientInfo implements IMessage {
             buf.readBytes(stringData);
             DrugSubstance substance = DrugSubstance.REGISTRY.get(new ResourceLocation(new String(stringData, CharsetUtil.UTF_8)));
             float amount = buf.readFloat();
-            this.capability.getDrugPresenceList().put(substance, amount);
+            capability.getDrugPresenceList().put(substance, amount);
             amount = buf.readFloat();
-            this.capability.getBreakdownAmountList().put(substance, amount);
+            capability.getBreakdownAmountList().put(substance, amount);
             long tick = buf.readLong();
-            this.capability.getBreakdownTickList().put(substance, tick);
+            capability.getBreakdownTickList().put(substance, tick);
         }
         mapSize = buf.readInt();
         for (int i = 0; i < mapSize; i++) {
@@ -68,7 +68,7 @@ public class MsgSendClientInfo implements IMessage {
             length = buf.readInt();
             byte[] value = new byte[length];
             buf.readBytes(value);
-            this.scheduledTasks.put(new String(keyData, CharsetUtil.UTF_8), value);
+            scheduledTasks.put(new String(keyData, CharsetUtil.UTF_8), value);
         }
     }
 }

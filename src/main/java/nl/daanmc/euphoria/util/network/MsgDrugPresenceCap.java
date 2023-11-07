@@ -8,12 +8,12 @@ import nl.daanmc.euphoria.drugs.DrugSubstance;
 import nl.daanmc.euphoria.drugs.presence.DrugPresenceCap;
 import nl.daanmc.euphoria.drugs.presence.IDrugPresenceCap;
 
-public class MsgSendDrugPresenceCap implements IMessage {
-    public MsgSendDrugPresenceCap() {}
+public class MsgDrugPresenceCap implements IMessage {
+    public MsgDrugPresenceCap() {}
 
     public IDrugPresenceCap capability = new DrugPresenceCap();
 
-    public MsgSendDrugPresenceCap(IDrugPresenceCap cap) {
+    public MsgDrugPresenceCap(IDrugPresenceCap cap) {
         this.capability = cap;
     }
 
