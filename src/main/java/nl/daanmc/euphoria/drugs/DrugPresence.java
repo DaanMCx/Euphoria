@@ -1,7 +1,10 @@
 package nl.daanmc.euphoria.drugs;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.World;
 import nl.daanmc.euphoria.util.EventHandler;
+import nl.daanmc.euphoria.util.capabilities.DrugCap;
+import nl.daanmc.euphoria.util.capabilities.IDrugCap;
 
 import java.util.HashMap;
 
@@ -19,25 +22,27 @@ public class DrugPresence {
 
     public static void activatePresence(DrugPresence presenceIn, World worldIn) {
         if (worldIn.isRemote) {
-            long tick = EventHandler.clientPlayerTicks;
+            IDrugCap drugCap = Minecraft.getMinecraft().player.getCapability(DrugCap.Provider.CAP, null);
+            long tick = drugCap.getClientTicks();
             for (int i = 0; i < presenceIn.delay; i++) {
                 EventHandler.clientTasks.add(new DrugPresenceTask(presenceIn.substance, presenceIn.amount / presenceIn.delay, tick + presenceIn.delay + i));
             }
             EventHandler.clientTasks.add(new DrugPresenceTask(presenceIn.substance, tick + (2L * presenceIn.delay) +1));
-            activePresences.put(presenceIn, tick);
+            drugCap.getActivePresences().put(presenceIn, tick);
             System.out.println(presenceIn.substance.getRegistryName()+" tasks added +breakdown "+ (tick + (2 * presenceIn.delay) +1));
         }
     }
 
     public static void activatePresence(DrugPresence[] presencesIn, World worldIn) {
         if (worldIn.isRemote) {
-            long tick = EventHandler.clientPlayerTicks;
+            IDrugCap drugCap = Minecraft.getMinecraft().player.getCapability(DrugCap.Provider.CAP, null);
+            long tick = drugCap.getClientTicks();
             for (DrugPresence presenceIn : presencesIn) {
                 for (int i = 0; i < presenceIn.delay; i++) {
                     EventHandler.clientTasks.add(new DrugPresenceTask(presenceIn.substance, presenceIn.amount / presenceIn.delay, tick + presenceIn.delay + i));
                 }
                 EventHandler.clientTasks.add(new DrugPresenceTask(presenceIn.substance, tick + (2L * presenceIn.delay) +1L));
-                activePresences.put(presenceIn, tick);
+                drugCap.getActivePresences().put(presenceIn, tick);
                 System.out.println(presenceIn.substance.getRegistryName()+" tasks added +breakdown "+tick + (2L * presenceIn.delay) +1L);
             }
         }
@@ -48,6 +53,6 @@ public class DrugPresence {
             EventHandler.clientTasks.add(new DrugPresenceTask(this.substance, this.amount / this.delay, tick + this.delay + i));
         }
         EventHandler.clientTasks.add(new DrugPresenceTask(this.substance, tick + (2L * this.delay) +1));
-        activePresences.put(this, tick);
+        Minecraft.getMinecraft().player.getCapability(DrugCap.Provider.CAP, null).getActivePresences().put(this, tick);
     }
 }

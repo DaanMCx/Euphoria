@@ -37,11 +37,6 @@ public class DrugCap implements IDrugCap {
     }
 
     @Override
-    public void tickClient() {
-        clientTicks += 1;
-    }
-
-    @Override
     public HashMap<DrugSubstance, Float> getDrugs() {
         return drugList;
     }

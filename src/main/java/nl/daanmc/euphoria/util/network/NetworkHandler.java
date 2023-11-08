@@ -22,20 +22,38 @@ public class NetworkHandler {
     public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(Euphoria.MODID);
 
     public static void init() {
-        INSTANCE.registerMessage(DrugPresenceCapMH.class, MsgSyncDrugCap.class, 0, Side.CLIENT);
-        INSTANCE.registerMessage(DrugPresenceCapMH.class, MsgSyncDrugCap.class, 0, Side.SERVER);
+        INSTANCE.registerMessage(ReqDrugCapMH.class, MsgReqDrugCap.class, 0, Side.CLIENT);
+        INSTANCE.registerMessage(ReqDrugCapMH.class, MsgReqDrugCap.class, 0, Side.SERVER);
+        INSTANCE.registerMessage(SyncDrugCapMH.class, MsgSyncDrugCap.class, 1, Side.CLIENT);
+        INSTANCE.registerMessage(SyncDrugCapMH.class, MsgSyncDrugCap.class, 1, Side.SERVER);
+
         INSTANCE.registerMessage(SendClientInfoMH.class, MsgSendClientInfo.class, 2, Side.CLIENT);
         INSTANCE.registerMessage(SendClientInfoMH.class, MsgSendClientInfo.class, 2, Side.SERVER);
-        INSTANCE.registerMessage(ConfClientInfoMH.class, MsgConfClientInfo.class, 1, Side.CLIENT);
-        INSTANCE.registerMessage(ConfClientInfoMH.class, MsgConfClientInfo.class, 1, Side.SERVER);
+        INSTANCE.registerMessage(ConfClientInfoMH.class, MsgConfClientInfo.class, 3, Side.CLIENT);
+        INSTANCE.registerMessage(ConfClientInfoMH.class, MsgConfClientInfo.class, 3, Side.SERVER);
     }
 
-    public static class DrugPresenceCapMH implements IMessageHandler<MsgSyncDrugCap, MsgSyncDrugCap> {
+    public static class ReqDrugCapMH implements IMessageHandler<MsgReqDrugCap, MsgSyncDrugCap> {
+        @Override
+        public MsgSyncDrugCap onMessage(MsgReqDrugCap message, MessageContext ctx) {
+            IDrugCap drugCap = Euphoria.proxy.getPlayerFromContext(ctx).getCapability(DrugCap.Provider.CAP, null);
+            if (ctx.side.isClient() && !(drugCap.getClientTicks() > 0L)) {
+                return null;
+            } else {
+                return new MsgSyncDrugCap(drugCap);
+            }
+        }
+    }
+
+    public static class SyncDrugCapMH implements IMessageHandler<MsgSyncDrugCap, MsgSyncDrugCap> {
         @Override
         public MsgSyncDrugCap onMessage(MsgSyncDrugCap message, MessageContext ctx) {
             if (Euphoria.proxy.getPlayerFromContext(ctx) != null) {
                 IDrugCap oldCap = Euphoria.proxy.getPlayerFromContext(ctx).getCapability(DrugCap.Provider.CAP, null);
                 IDrugCap newCap = message.capability;
+                oldCap.setClientTicks(Math.max(newCap.getClientTicks(), 1L));
+                oldCap.getActivePresences().clear();
+                oldCap.getActivePresences().putAll(newCap.getActivePresences());
                 oldCap.getDrugs().clear();
                 oldCap.getDrugs().putAll(newCap.getDrugs());
                 oldCap.getBreakdownAmounts().clear();
@@ -46,6 +64,8 @@ public class NetworkHandler {
             return null;
         }
     }
+
+
 
     public static class SendClientInfoMH implements IMessageHandler<MsgSendClientInfo, MsgConfClientInfo> {
         @Override
