@@ -28,8 +28,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class EventHandler {
     public static List<IScheduledTask> clientTasks = new CopyOnWriteArrayList<>();
     public static List<IScheduledTask> serverTasks = new CopyOnWriteArrayList<>();
-    public static long clientPlayerTicks = 0L;
-    public static boolean confDisconnectInfo = false;
 
     //Client
     @SubscribeEvent
@@ -111,7 +109,7 @@ public class EventHandler {
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         IDrugCap drugCap = event.player.getCapability(DrugCap.Provider.CAP,null);
-        Elements.DRUG_SUBSTANCE_LIST.forEach(drugSubstance -> {
+        Elements.SUBSTANCES.forEach(drugSubstance -> {
             drugCap.getDrugs().putIfAbsent(drugSubstance, 0F);
             drugCap.getBreakdownTicks().putIfAbsent(drugSubstance, 0L);
             drugCap.getBreakdownAmounts().putIfAbsent(drugSubstance, 0F);
@@ -129,14 +127,7 @@ public class EventHandler {
     public static void onClientSaveAndQuit(GuiScreenEvent.ActionPerformedEvent event) throws InterruptedException {
         if (event.getGui() instanceof GuiIngameMenu && event.getButton().id == 1) {
             //Send client info to server and wait until confirmed
-            confDisconnectInfo = false;
             NetworkHandler.INSTANCE.sendToServer(new MsgSyncDrugCap(Minecraft.getMinecraft().player.getCapability(DrugCap.Provider.CAP, null)));
-//            AtomicInteger timeoutCount = new AtomicInteger(0);
-//            while (!confDisconnectInfo && timeoutCount.getAndIncrement() < 500) {
-//                Thread.sleep(1L);
-//                System.out.println("SLEEPING 1MS");
-//            }
-//            confDisconnectInfo = false;
         }
     }
 

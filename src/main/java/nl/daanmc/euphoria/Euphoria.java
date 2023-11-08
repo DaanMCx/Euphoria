@@ -34,6 +34,8 @@ import nl.daanmc.euphoria.util.proxy.IProxy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Arrays;
+
 
 @Mod(modid = Euphoria.MODID, name = Euphoria.NAME, version = Euphoria.VERSION, acceptedMinecraftVersions = Euphoria.MCVERSION)
 @EventBusSubscriber
@@ -51,7 +53,6 @@ public class Euphoria {
     public static IProxy proxy;
 
     //CommonProxy methods here
-    
     @Mod.EventHandler
     void preInit(FMLPreInitializationEvent event) {
         CapabilityManager.INSTANCE.register(IDrugCap.class, new DrugCap.Storage(), DrugCap::new);
@@ -66,7 +67,7 @@ public class Euphoria {
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-        Elements.DRUG_SUBSTANCE_LIST.forEach((substance) -> DrugSubstance.REGISTRY.put(substance.getRegistryName(), substance));
+        Elements.SUBSTANCES.forEach((substance) -> DrugSubstance.REGISTRY.put(substance.getRegistryName(), substance));
         Items.DRIED_RED_MUSHROOM.attachPresences(new DrugPresence[] {
             new DrugPresence(DrugSubstances.PSILOCYBIN, 20F, 2000)
         });
@@ -103,7 +104,7 @@ public class Euphoria {
 
     @SubscribeEvent
     public static void onItemRegister(RegistryEvent.Register<Item> event) {
-        event.getRegistry().registerAll(
+        Item[] ITEMS = {
                 new Item().setRegistryName("cannabis_bud").setTranslationKey("cannabis_bud").setCreativeTab(Tabs.EUPHORIA),
                 new Item().setRegistryName("cannabis_bud_dried").setTranslationKey("cannabis_bud_dried").setCreativeTab(Tabs.EUPHORIA),
                 new Item().setRegistryName("cannabis_leaf").setTranslationKey("cannabis_leaf").setCreativeTab(Tabs.EUPHORIA),
@@ -125,14 +126,18 @@ public class Euphoria {
                 new ItemEdibleDrug("suspicious_muffin", 4, 5F),
                 new ItemEdibleDrug("dried_red_mushroom", 2, 3F),
                 new ItemBlock(Blocks.DRYING_TABLE).setRegistryName(Blocks.DRYING_TABLE.getRegistryName())
-        );
+        };
+        event.getRegistry().registerAll(ITEMS);
+        Elements.ITEMS.addAll(Arrays.asList(ITEMS));
     }
 
     @SubscribeEvent
     public static void onBlockRegister(RegistryEvent.Register<Block> event) {
-        event.getRegistry().registerAll(
+        Block[] BLOCKS = {
                 new BlockDryingTable()
-        );
+        };
+        event.getRegistry().registerAll(BLOCKS);
+        Elements.BLOCKS.addAll(Arrays.asList(BLOCKS));
     }
 
     @SubscribeEvent
@@ -150,10 +155,10 @@ public class Euphoria {
     
     @SubscribeEvent
     public static void onModelRegister(ModelRegistryEvent event) {
-        for (Item item : Elements.ITEM_LIST) {
+        for (Item item : Elements.ITEMS) {
             proxy.registerItemRenderer(item, 0, "inventory");
         }
-        for (Block block : Elements.BLOCK_LIST) {
+        for (Block block : Elements.BLOCKS) {
             proxy.registerItemRenderer(Item.getItemFromBlock(block), 0, "inventory");   
         }
     }

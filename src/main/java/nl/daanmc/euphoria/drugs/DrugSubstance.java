@@ -11,7 +11,7 @@ public class DrugSubstance extends IForgeRegistryEntry.Impl<DrugSubstance> {
     private final int breakdownTime;
     public DrugSubstance(int breakdownTime) {
         this.breakdownTime = breakdownTime;
-        Elements.DRUG_SUBSTANCE_LIST.add(this);
+        Elements.SUBSTANCES.add(this);
     }
 
     public int getBreakdownTime() {return this.breakdownTime;}
