@@ -1,7 +1,6 @@
-package nl.daanmc.euphoria.drugs.presence;
+package nl.daanmc.euphoria.drugs;
 
 import net.minecraft.world.World;
-import nl.daanmc.euphoria.drugs.DrugSubstance;
 import nl.daanmc.euphoria.util.EventHandler;
 
 import java.util.HashMap;

@@ -22,9 +22,9 @@ import nl.daanmc.euphoria.Elements.Items;
 import nl.daanmc.euphoria.Elements.Tabs;
 import nl.daanmc.euphoria.blocks.BlockDryingTable;
 import nl.daanmc.euphoria.drugs.DrugSubstance;
-import nl.daanmc.euphoria.drugs.presence.DrugPresence;
-import nl.daanmc.euphoria.drugs.presence.DrugPresenceCap;
-import nl.daanmc.euphoria.drugs.presence.IDrugPresenceCap;
+import nl.daanmc.euphoria.util.capabilities.DrugCap;
+import nl.daanmc.euphoria.drugs.DrugPresence;
+import nl.daanmc.euphoria.util.capabilities.IDrugCap;
 import nl.daanmc.euphoria.items.ItemEdibleDrug;
 import nl.daanmc.euphoria.items.ItemSmokingTool;
 import nl.daanmc.euphoria.items.ItemUsableDrug;
@@ -54,7 +54,7 @@ public class Euphoria {
     
     @Mod.EventHandler
     void preInit(FMLPreInitializationEvent event) {
-        CapabilityManager.INSTANCE.register(IDrugPresenceCap.class, new DrugPresenceCap.Storage(), DrugPresenceCap::new);
+        CapabilityManager.INSTANCE.register(IDrugCap.class, new DrugCap.Storage(), DrugCap::new);
         MinecraftForge.EVENT_BUS.register(new EventHandler());
         NetworkHandler.init();
     }
@@ -66,7 +66,7 @@ public class Euphoria {
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-        Elements.DRUG_PRESENCE_LIST.forEach((substance) -> DrugSubstance.REGISTRY.put(substance.getRegistryName(), substance));
+        Elements.DRUG_SUBSTANCE_LIST.forEach((substance) -> DrugSubstance.REGISTRY.put(substance.getRegistryName(), substance));
         Items.DRIED_RED_MUSHROOM.attachPresences(new DrugPresence[] {
             new DrugPresence(DrugSubstances.PSILOCYBIN, 20F, 2000)
         });

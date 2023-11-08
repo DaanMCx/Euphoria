@@ -5,28 +5,28 @@ import io.netty.util.CharsetUtil;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import nl.daanmc.euphoria.drugs.DrugSubstance;
-import nl.daanmc.euphoria.drugs.presence.DrugPresenceCap;
-import nl.daanmc.euphoria.drugs.presence.IDrugPresenceCap;
+import nl.daanmc.euphoria.util.capabilities.DrugCap;
+import nl.daanmc.euphoria.util.capabilities.IDrugCap;
 
-public class MsgDrugPresenceCap implements IMessage {
-    public MsgDrugPresenceCap() {}
+public class MsgSyncDrugCap implements IMessage {
+    public MsgSyncDrugCap() {}
 
-    public IDrugPresenceCap capability = new DrugPresenceCap();
+    public IDrugCap capability = new DrugCap();
 
-    public MsgDrugPresenceCap(IDrugPresenceCap cap) {
+    public MsgSyncDrugCap(IDrugCap cap) {
         this.capability = cap;
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(this.capability.getDrugPresenceList().size());
-        this.capability.getDrugPresenceList().forEach((drugSubstance, amount) -> {
+        buf.writeInt(this.capability.getDrugs().size());
+        this.capability.getDrugs().forEach((drugSubstance, amount) -> {
             byte[] stringBytes = drugSubstance.getRegistryName().toString().getBytes(CharsetUtil.UTF_8);
             buf.writeInt(stringBytes.length);
             buf.writeBytes(stringBytes);
             buf.writeFloat(amount);
-            buf.writeFloat(this.capability.getBreakdownAmountList().getOrDefault(drugSubstance, 0F));
-            buf.writeLong(this.capability.getBreakdownTickList().getOrDefault(drugSubstance, 0L));
+            buf.writeFloat(this.capability.getBreakdownAmounts().getOrDefault(drugSubstance, 0F));
+            buf.writeLong(this.capability.getBreakdownTicks().getOrDefault(drugSubstance, 0L));
         });
     }
 
@@ -39,11 +39,11 @@ public class MsgDrugPresenceCap implements IMessage {
             buf.readBytes(stringData);
             DrugSubstance substance = DrugSubstance.REGISTRY.get(new ResourceLocation(new String(stringData, CharsetUtil.UTF_8)));
             float amount = buf.readFloat();
-            this.capability.getDrugPresenceList().put(substance, amount);
+            this.capability.getDrugs().put(substance, amount);
             amount = buf.readFloat();
-            this.capability.getBreakdownAmountList().put(substance, amount);
+            this.capability.getBreakdownAmounts().put(substance, amount);
             long tick = buf.readLong();
-            this.capability.getBreakdownTickList().put(substance, tick);
+            this.capability.getBreakdownTicks().put(substance, tick);
         }
     }
 }

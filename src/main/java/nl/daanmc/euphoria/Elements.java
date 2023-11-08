@@ -13,7 +13,7 @@ import nl.daanmc.euphoria.items.ItemUsableDrug;
 
 import java.util.ArrayList;
 
-public class Elements {
+public final class Elements {
     @ObjectHolder(Euphoria.MODID)
     public static class Items {
         @ObjectHolder("cannabis_bud")
@@ -112,7 +112,7 @@ public class Elements {
         public static final DrugSubstance MESCALINE = null; 
     }
 
-    public static ArrayList<DrugSubstance> DRUG_PRESENCE_LIST = new ArrayList<>();
+    public static ArrayList<DrugSubstance> DRUG_SUBSTANCE_LIST = new ArrayList<>();
 
     public static class Tabs {
         public static final CreativeTabs EUPHORIA = new CreativeTabs("euphoria") {

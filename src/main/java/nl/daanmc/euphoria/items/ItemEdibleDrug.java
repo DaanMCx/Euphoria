@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import nl.daanmc.euphoria.Elements.Tabs;
 import nl.daanmc.euphoria.drugs.IDrug;
-import nl.daanmc.euphoria.drugs.presence.DrugPresence;
+import nl.daanmc.euphoria.drugs.DrugPresence;
 
 public class ItemEdibleDrug extends ItemFood implements IDrug {
     private DrugPresence[] drugPresences;

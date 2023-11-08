@@ -10,9 +10,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import nl.daanmc.euphoria.Elements;
 import nl.daanmc.euphoria.Euphoria;
 import nl.daanmc.euphoria.drugs.DrugSubstance;
-import nl.daanmc.euphoria.drugs.presence.DrugPresence;
-import nl.daanmc.euphoria.drugs.presence.DrugPresenceCap;
-import nl.daanmc.euphoria.drugs.presence.IDrugPresenceCap;
+import nl.daanmc.euphoria.util.capabilities.DrugCap;
+import nl.daanmc.euphoria.drugs.DrugPresence;
+import nl.daanmc.euphoria.util.capabilities.IDrugCap;
 import nl.daanmc.euphoria.util.EventHandler;
 
 import java.util.HashMap;
@@ -22,26 +22,26 @@ public class NetworkHandler {
     public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(Euphoria.MODID);
 
     public static void init() {
-        INSTANCE.registerMessage(DrugPresenceCapMH.class, MsgDrugPresenceCap.class, 0, Side.CLIENT);
-        INSTANCE.registerMessage(DrugPresenceCapMH.class, MsgDrugPresenceCap.class, 0, Side.SERVER);
+        INSTANCE.registerMessage(DrugPresenceCapMH.class, MsgSyncDrugCap.class, 0, Side.CLIENT);
+        INSTANCE.registerMessage(DrugPresenceCapMH.class, MsgSyncDrugCap.class, 0, Side.SERVER);
         INSTANCE.registerMessage(SendClientInfoMH.class, MsgSendClientInfo.class, 2, Side.CLIENT);
         INSTANCE.registerMessage(SendClientInfoMH.class, MsgSendClientInfo.class, 2, Side.SERVER);
         INSTANCE.registerMessage(ConfClientInfoMH.class, MsgConfClientInfo.class, 1, Side.CLIENT);
         INSTANCE.registerMessage(ConfClientInfoMH.class, MsgConfClientInfo.class, 1, Side.SERVER);
     }
 
-    public static class DrugPresenceCapMH implements IMessageHandler<MsgDrugPresenceCap, MsgDrugPresenceCap> {
+    public static class DrugPresenceCapMH implements IMessageHandler<MsgSyncDrugCap, MsgSyncDrugCap> {
         @Override
-        public MsgDrugPresenceCap onMessage(MsgDrugPresenceCap message, MessageContext ctx) {
+        public MsgSyncDrugCap onMessage(MsgSyncDrugCap message, MessageContext ctx) {
             if (Euphoria.proxy.getPlayerFromContext(ctx) != null) {
-                IDrugPresenceCap oldCap = Euphoria.proxy.getPlayerFromContext(ctx).getCapability(DrugPresenceCap.Provider.CAP, null);
-                IDrugPresenceCap newCap = message.capability;
-                oldCap.getDrugPresenceList().clear();
-                oldCap.getDrugPresenceList().putAll(newCap.getDrugPresenceList());
-                oldCap.getBreakdownAmountList().clear();
-                oldCap.getBreakdownAmountList().putAll(newCap.getBreakdownAmountList());
-                oldCap.getBreakdownTickList().clear();
-                oldCap.getBreakdownTickList().putAll(newCap.getBreakdownTickList());
+                IDrugCap oldCap = Euphoria.proxy.getPlayerFromContext(ctx).getCapability(DrugCap.Provider.CAP, null);
+                IDrugCap newCap = message.capability;
+                oldCap.getDrugs().clear();
+                oldCap.getDrugs().putAll(newCap.getDrugs());
+                oldCap.getBreakdownAmounts().clear();
+                oldCap.getBreakdownAmounts().putAll(newCap.getBreakdownAmounts());
+                oldCap.getBreakdownTicks().clear();
+                oldCap.getBreakdownTicks().putAll(newCap.getBreakdownTicks());
             }
             return null;
         }
@@ -51,14 +51,14 @@ public class NetworkHandler {
         @Override
         public MsgConfClientInfo onMessage(MsgSendClientInfo message, MessageContext ctx) {
             EntityPlayer player = Euphoria.proxy.getPlayerFromContext(ctx);
-            IDrugPresenceCap oldCap = player.getCapability(DrugPresenceCap.Provider.CAP, null);
-            IDrugPresenceCap newCap = message.capability;
-            oldCap.getDrugPresenceList().clear();
-            oldCap.getDrugPresenceList().putAll(newCap.getDrugPresenceList());
-            oldCap.getBreakdownAmountList().clear();
-            oldCap.getBreakdownAmountList().putAll(newCap.getBreakdownAmountList());
-            oldCap.getBreakdownTickList().clear();
-            oldCap.getBreakdownTickList().putAll(newCap.getBreakdownTickList());
+            IDrugCap oldCap = player.getCapability(DrugCap.Provider.CAP, null);
+            IDrugCap newCap = message.capability;
+            oldCap.getDrugs().clear();
+            oldCap.getDrugs().putAll(newCap.getDrugs());
+            oldCap.getBreakdownAmounts().clear();
+            oldCap.getBreakdownAmounts().putAll(newCap.getBreakdownAmounts());
+            oldCap.getBreakdownTicks().clear();
+            oldCap.getBreakdownTicks().putAll(newCap.getBreakdownTicks());
 
             if (ctx.side.isServer()) { //Server
                 player.getEntityData().setLong("client_ticks", message.clientTicks);
@@ -87,7 +87,7 @@ public class NetworkHandler {
                 System.out.println("Message received with AP size "+message.activePresences.size());
                 message.activePresences.forEach((DrugPresence::activate));
             }
-            System.out.println("MsgSendClientInfo received; updated THC: "+ oldCap.getDrugPresenceList().get(Elements.DrugSubstances.THC));
+            System.out.println("MsgSendClientInfo received; updated THC: "+ oldCap.getDrugs().get(Elements.DrugSubstances.THC));
             return new MsgConfClientInfo(true);
         }
     }
@@ -125,7 +125,7 @@ public class NetworkHandler {
                     }
                     clientTicks = player.getEntityData().getLong("client_ticks");
                 }
-                return new MsgSendClientInfo(player.getCapability(DrugPresenceCap.Provider.CAP, null), activePresences, clientTicks);
+                return new MsgSendClientInfo(player.getCapability(DrugCap.Provider.CAP, null), activePresences, clientTicks);
             }
         }
     }

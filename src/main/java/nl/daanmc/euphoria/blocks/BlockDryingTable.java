@@ -12,7 +12,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import nl.daanmc.euphoria.Elements.DrugSubstances;
 import nl.daanmc.euphoria.Elements.Tabs;
-import nl.daanmc.euphoria.drugs.presence.DrugPresence;
+import nl.daanmc.euphoria.drugs.DrugPresence;
 
 public class BlockDryingTable extends Block {
     public BlockDryingTable() {

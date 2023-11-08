@@ -6,7 +6,6 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import nl.daanmc.euphoria.drugs.presence.DrugPresence;
 
 public class ServerProxy implements IProxy {
     @Override

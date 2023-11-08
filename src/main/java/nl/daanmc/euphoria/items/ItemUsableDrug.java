@@ -11,7 +11,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import nl.daanmc.euphoria.Elements.Tabs;
 import nl.daanmc.euphoria.drugs.IDrug;
-import nl.daanmc.euphoria.drugs.presence.DrugPresence;
+import nl.daanmc.euphoria.drugs.DrugPresence;
 
 public class ItemUsableDrug extends Item implements IDrug {
     private DrugPresence[] drugPresences = null;
