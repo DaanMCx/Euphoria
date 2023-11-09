@@ -15,19 +15,23 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import nl.daanmc.euphoria.Elements;
 import nl.daanmc.euphoria.Euphoria;
+import nl.daanmc.euphoria.drugs.DrugPresence;
 import nl.daanmc.euphoria.util.capabilities.DrugCap;
 import nl.daanmc.euphoria.util.capabilities.IDrugCap;
-import nl.daanmc.euphoria.util.network.MsgReqDrugCap;
+import nl.daanmc.euphoria.util.network.MsgReqConfDrugCap;
+import nl.daanmc.euphoria.util.network.MsgReqConfDrugCap.Type;
 import nl.daanmc.euphoria.util.network.MsgSyncDrugCap;
 import nl.daanmc.euphoria.util.network.NetworkHandler;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Mod.EventBusSubscriber
 public class EventHandler {
-    public static List<IScheduledTask> clientTasks = new CopyOnWriteArrayList<>();
     public static List<IScheduledTask> serverTasks = new CopyOnWriteArrayList<>();
+    public static boolean confCap = true;
 
     //Client
     @SubscribeEvent
@@ -35,25 +39,27 @@ public class EventHandler {
         EntityPlayer player = Minecraft.getMinecraft().player;
         if (event.phase == TickEvent.Phase.END && player != null && !Minecraft.getMinecraft().isGamePaused()) {
             IDrugCap drugCap = player.getCapability(DrugCap.Provider.CAP, null);
-            //Request client info if this is initial player tick
+            //Request DrugCap if this is initial player tick
             if (drugCap.getClientTicks() == 0L) {
-                NetworkHandler.INSTANCE.sendToServer(new MsgReqDrugCap());
+                NetworkHandler.INSTANCE.sendToServer(new MsgReqConfDrugCap(Type.REQUEST_INITIAL));
             }
             //Execute tasks
-            if (!clientTasks.isEmpty()) {
-                for (IScheduledTask task : clientTasks) {
+            if (!drugCap.getClientTasks().isEmpty()) {
+                for (IScheduledTask task : drugCap.getClientTasks()) {
                     if (task.getTick() <= drugCap.getClientTicks()) {
                         task.execute();
-                        clientTasks.remove(task);
+                        drugCap.getClientTasks().remove(task);
                     }
                 }
             }
             //Filter activePresences for relevancy
+            ArrayList<DrugPresence> toRemove = new ArrayList<>();
             drugCap.getActivePresences().forEach((drugPresence, tick) -> {
                 if (tick + 2 * drugPresence.delay + 1 < drugCap.getClientTicks()) {
-                    drugCap.getActivePresences().remove(drugPresence);
+                    toRemove.add(drugPresence);
                 }
             });
+            toRemove.forEach(drugPresence -> drugCap.getActivePresences().remove(drugPresence));
             //Calculate the breakdown S-curve
             drugCap.getBreakdownTicks().forEach((drugSubstance, tick) -> {
                 if (tick > 0L && tick <= drugCap.getClientTicks()) {
@@ -102,7 +108,7 @@ public class EventHandler {
     //Server
     @SubscribeEvent
     public static void onPlayerSaveToFile(SaveToFile event) {
-        NetworkHandler.INSTANCE.sendTo(new MsgReqDrugCap(), (EntityPlayerMP) event.getEntityPlayer());
+        NetworkHandler.INSTANCE.sendTo(new MsgReqConfDrugCap(Type.REQUEST), (EntityPlayerMP) event.getEntityPlayer());
     }
 
     //Server
@@ -126,11 +132,18 @@ public class EventHandler {
     @SubscribeEvent
     public static void onClientSaveAndQuit(GuiScreenEvent.ActionPerformedEvent event) throws InterruptedException {
         if (event.getGui() instanceof GuiIngameMenu && event.getButton().id == 1) {
-            //Send client info to server and wait until confirmed
             NetworkHandler.INSTANCE.sendToServer(new MsgSyncDrugCap(Minecraft.getMinecraft().player.getCapability(DrugCap.Provider.CAP, null)));
+            //Send client info to server and wait until confirmed
+            confCap = false;
+            AtomicInteger timeoutCount = new AtomicInteger(0);
+            while (!confCap && timeoutCount.getAndIncrement() < 500) {
+                Thread.sleep(1L);
+                System.out.println("SLEEPING 1MS");
+            }
         }
     }
 
+    //Common
     @SubscribeEvent
     public void attachCapability(AttachCapabilitiesEvent<Entity> event) {
         if(!(event.getObject() instanceof EntityPlayer)) return;

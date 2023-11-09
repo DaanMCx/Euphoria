@@ -13,18 +13,24 @@ public class MsgSyncDrugCap implements IMessage {
     public MsgSyncDrugCap() {}
 
     public IDrugCap capability = new DrugCap();
+    public boolean isInitialSync;
 
-    public MsgSyncDrugCap(IDrugCap cap) {
-        this.capability = cap;
+    public MsgSyncDrugCap(IDrugCap capability) {
+        this.capability = capability;
+        this.isInitialSync = false;
+    }
+
+    public MsgSyncDrugCap(IDrugCap capability, boolean isInitialSync) {
+        this.capability = capability;
+        this.isInitialSync = isInitialSync;
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
+        buf.writeByte(isInitialSync ? 1 : 0);
         buf.writeLong(capability.getClientTicks());
         buf.writeInt(capability.getActivePresences().size());
         capability.getActivePresences().forEach(((presence, tick) -> {
-            System.out.println(presence == null);
-            System.out.println(presence.substance == null);
             byte[] stringBytes = presence.substance.getRegistryName().toString().getBytes(CharsetUtil.UTF_8);
             buf.writeInt(stringBytes.length);
             buf.writeBytes(stringBytes);
@@ -32,20 +38,22 @@ public class MsgSyncDrugCap implements IMessage {
             buf.writeInt(presence.delay);
             buf.writeLong(tick);
         }));
-        buf.writeInt(this.capability.getDrugs().size());
-        this.capability.getDrugs().forEach((drugSubstance, amount) -> {
+        buf.writeInt(capability.getDrugs().size());
+        capability.getDrugs().forEach((drugSubstance, amount) -> {
             byte[] stringBytes = drugSubstance.getRegistryName().toString().getBytes(CharsetUtil.UTF_8);
             buf.writeInt(stringBytes.length);
             buf.writeBytes(stringBytes);
             buf.writeFloat(amount);
-            buf.writeFloat(this.capability.getBreakdownAmounts().getOrDefault(drugSubstance, 0F));
-            buf.writeLong(this.capability.getBreakdownTicks().getOrDefault(drugSubstance, 0L));
+            buf.writeFloat(capability.getBreakdownAmounts().getOrDefault(drugSubstance, 0F));
+            buf.writeLong(capability.getBreakdownTicks().getOrDefault(drugSubstance, 0L));
         });
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
+        isInitialSync = buf.readByte() == 1;
         capability.setClientTicks(buf.readLong());
+        capability.getActivePresences().clear();
         int mapSize = buf.readInt();
         for (int i = 0; i < mapSize; i++) {
             int length = buf.readInt();
@@ -64,11 +72,11 @@ public class MsgSyncDrugCap implements IMessage {
             buf.readBytes(stringData);
             DrugSubstance substance = DrugSubstance.REGISTRY.get(new ResourceLocation(new String(stringData, CharsetUtil.UTF_8)));
             float amount = buf.readFloat();
-            this.capability.getDrugs().put(substance, amount);
+            capability.getDrugs().put(substance, amount);
             amount = buf.readFloat();
-            this.capability.getBreakdownAmounts().put(substance, amount);
+            capability.getBreakdownAmounts().put(substance, amount);
             long tick = buf.readLong();
-            this.capability.getBreakdownTicks().put(substance, tick);
+            capability.getBreakdownTicks().put(substance, tick);
         }
     }
 }

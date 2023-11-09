@@ -12,15 +12,18 @@ import net.minecraftforge.fml.common.Mod;
 import nl.daanmc.euphoria.Elements;
 import nl.daanmc.euphoria.drugs.DrugSubstance;
 import nl.daanmc.euphoria.drugs.DrugPresence;
+import nl.daanmc.euphoria.util.IScheduledTask;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Mod.EventBusSubscriber
 public class DrugCap implements IDrugCap {
     private long clientTicks = 0L;
+    private final ArrayList<IScheduledTask> clientTasks = new ArrayList<>();
     private final HashMap<DrugSubstance, Float> drugList = new HashMap<>();
     private final HashMap<DrugSubstance, Long> breakdownTickList = new HashMap<>();
     private final HashMap<DrugSubstance, Float> breakdownAmountList = new HashMap<>();
@@ -34,6 +37,11 @@ public class DrugCap implements IDrugCap {
     @Override
     public void setClientTicks(long ticks) {
         clientTicks = ticks;
+    }
+
+    @Override
+    public ArrayList<IScheduledTask> getClientTasks() {
+        return clientTasks;
     }
 
     @Override
@@ -117,7 +125,7 @@ public class DrugCap implements IDrugCap {
             final NBTTagCompound tag = (NBTTagCompound) nbt;
             instance.setClientTicks(tag.getLong("dpcap:ct"));
             if (tag.hasKey("dpcap:ap")) {
-                for (int i = 0; i < tag.getInteger("dpcap:ap"); i++) {
+                for (int i = 1; i <= tag.getInteger("dpcap:ap"); i++) {
                     DrugSubstance substance = DrugSubstance.REGISTRY.get(new ResourceLocation(tag.getString("dpcap:ap:"+i+":s")));
                     float amount = tag.getFloat("dpcap:ap:"+i+":a");
                     int delay = tag.getInteger("dpcap:ap:"+i+":d");

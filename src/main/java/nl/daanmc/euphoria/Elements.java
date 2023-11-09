@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public final class Elements {
     @ObjectHolder(Euphoria.MODID)
-    public static class Items {
+    public static final class Items {
         public static final Item CANNABIS_BUD = null;
         public static final Item CANNABIS_BUD_DRIED = null;
         public static final Item CANNABIS_LEAF = null;
@@ -41,13 +41,13 @@ public final class Elements {
     public static ArrayList<Item> ITEMS = new ArrayList<>();
 
     @ObjectHolder(Euphoria.MODID)
-    public static class Blocks {
+    public static final class Blocks {
         public static final Block DRYING_TABLE = null;
     }
     public static ArrayList<Block> BLOCKS = new ArrayList<>();
 
     @ObjectHolder(Euphoria.MODID)
-    public static class DrugSubstances {
+    public static final class DrugSubstances {
         public static final DrugSubstance THC = null;
         public static final DrugSubstance CBD = null;
         public static final DrugSubstance ALCOHOL = null;
