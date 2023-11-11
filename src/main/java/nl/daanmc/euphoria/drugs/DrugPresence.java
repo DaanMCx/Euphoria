@@ -16,42 +16,44 @@ public class DrugPresence {
         this.delay=delay;
     }
 
-    public static void activatePresence(DrugPresence presenceIn, World worldIn) {
+    public static void activatePresence(DrugPresence presence, World worldIn) {
         if (worldIn.isRemote) {
             IDrugCap drugCap = Minecraft.getMinecraft().player.getCapability(DrugCap.Provider.CAP, null);
-            long tick = drugCap.getClientTicks();
-            for (int i = 0; i < presenceIn.delay; i++) {
-                drugCap.getClientTasks().add(new DrugPresenceTask(presenceIn.substance, presenceIn.amount / presenceIn.delay, tick + Math.floorDiv(presenceIn.delay, 2) + i));
+            long tick = drugCap.getClientTick();
+            for (int i = 0; i < presence.delay; i++) {
+                drugCap.addClientTask(new DrugPresenceTask(presence.substance, presence.amount / presence.delay), tick + Math.floorDiv(presence.delay, 2) + i);
             }
-            drugCap.getClientTasks().add(new DrugPresenceTask(presenceIn.substance, tick + (2L * presenceIn.delay) +1));
-            drugCap.getActivePresences().put(presenceIn, tick);
+            drugCap.addClientTask(new DrugBreakdownTask(presence.substance), tick + Math.floorDiv(3*presence.delay, 2) +1);
+            drugCap.getActivePresences().put(presence, tick);
             //TODO remove
-            System.out.println(presenceIn.substance.getRegistryName()+" tasks added +breakdown "+ (tick + (2 * presenceIn.delay) +1));
+            System.out.println(presence.substance.getRegistryName()+" tasks added +breakdown "+ (tick + Math.floorDiv(3*presence.delay, 2) +1));
         }
     }
 
-    public static void activatePresence(DrugPresence[] presencesIn, World worldIn) {
+    public static void activatePresence(DrugPresence[] presences, World worldIn) {
         if (worldIn.isRemote) {
             IDrugCap drugCap = Minecraft.getMinecraft().player.getCapability(DrugCap.Provider.CAP, null);
-            long tick = drugCap.getClientTicks();
-            for (DrugPresence presenceIn : presencesIn) {
-                for (int i = 0; i < presenceIn.delay; i++) {
-                    drugCap.getClientTasks().add(new DrugPresenceTask(presenceIn.substance, presenceIn.amount / presenceIn.delay, tick + (presenceIn.delay / 2) + i));
+            long tick = drugCap.getClientTick();
+            for (DrugPresence presence : presences) {
+                for (int i = 0; i < presence.delay; i++) {
+                    drugCap.addClientTask(new DrugPresenceTask(presence.substance, presence.amount / presence.delay), tick + Math.floorDiv(presence.delay, 2) + i);
                 }
-                drugCap.getClientTasks().add(new DrugPresenceTask(presenceIn.substance, tick + (2L * presenceIn.delay) +1L));
-                drugCap.getActivePresences().put(presenceIn, tick);
+                drugCap.addClientTask(new DrugBreakdownTask(presence.substance), tick + Math.floorDiv(3*presence.delay, 2) +1);
+                drugCap.getActivePresences().put(presence, tick);
                 //TODO remove
-                System.out.println(presenceIn.substance.getRegistryName()+" tasks added +breakdown "+tick + (2L * presenceIn.delay) +1L);
+                System.out.println(presence.substance.getRegistryName()+" tasks added +breakdown "+tick + Math.floorDiv(3*presence.delay, 2) +1L);
             }
         }
     }
 
     public void activate(long tick) {
         IDrugCap drugCap = Minecraft.getMinecraft().player.getCapability(DrugCap.Provider.CAP, null);
-        for (int i = 0; i < this.delay; i++) {
-            drugCap.getClientTasks().add(new DrugPresenceTask(this.substance, this.amount / this.delay, tick + (this.delay / 2) + i));
+        for (int i = 0; i < delay; i++) {
+            drugCap.addClientTask(new DrugPresenceTask(substance, amount / delay), tick + Math.floorDiv(delay, 2) + i);
         }
-        drugCap.getClientTasks().add(new DrugPresenceTask(this.substance, tick + (2L * this.delay) +1));
+        drugCap.addClientTask(new DrugBreakdownTask(substance), tick + Math.floorDiv(3*delay, 2) +1);
         drugCap.getActivePresences().put(this, tick);
+        //TODO remove
+        System.out.println(substance.getRegistryName()+" tasks added +breakdown "+tick + Math.floorDiv(3*delay, 2) +1L);
     }
 }

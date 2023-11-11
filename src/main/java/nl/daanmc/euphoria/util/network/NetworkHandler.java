@@ -29,7 +29,7 @@ public final class NetworkHandler {
             System.out.println(message.type+" received");
 
             IDrugCap drugCap = Euphoria.proxy.getPlayerFromContext(ctx).getCapability(DrugCap.Provider.CAP, null);
-            if (ctx.side.isClient() && !(drugCap.getClientTicks() > 0L)) {
+            if (ctx.side.isClient() && !(drugCap.getClientTick() > 0L)) {
                 return null;
             } else {
                 if (message.type == Type.CONFIRM) {
@@ -51,7 +51,7 @@ public final class NetworkHandler {
             if (Euphoria.proxy.getPlayerFromContext(ctx) != null) {
                 IDrugCap oldCap = Euphoria.proxy.getPlayerFromContext(ctx).getCapability(DrugCap.Provider.CAP, null);
                 IDrugCap newCap = message.capability;
-                oldCap.setClientTicks(Math.max(newCap.getClientTicks(), 1L));
+                oldCap.setClientTick(Math.max(newCap.getClientTick(), 1L));
                 oldCap.getDrugs().clear();
                 oldCap.getDrugs().putAll(newCap.getDrugs());
                 oldCap.getBreakdownAmounts().clear();

@@ -1,6 +1,5 @@
 package nl.daanmc.euphoria.util;
 
-public interface IScheduledTask {
-    long getTick();
+public interface ITask {
     void execute();
 }

@@ -12,35 +12,60 @@ import net.minecraftforge.fml.common.Mod;
 import nl.daanmc.euphoria.Elements;
 import nl.daanmc.euphoria.drugs.DrugSubstance;
 import nl.daanmc.euphoria.drugs.DrugPresence;
-import nl.daanmc.euphoria.util.IScheduledTask;
+import nl.daanmc.euphoria.util.ITask;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Mod.EventBusSubscriber
 public class DrugCap implements IDrugCap {
-    private long clientTicks = 0L;
-    private final ArrayList<IScheduledTask> clientTasks = new ArrayList<>();
+    private long clientTick = 0L;
+    private final ArrayList<ITask> oldClientTasks = new ArrayList<>();
+    private final ConcurrentHashMap<Long, ArrayList<ITask>> clientTasks = new ConcurrentHashMap<>();
     private final HashMap<DrugSubstance, Float> drugList = new HashMap<>();
     private final HashMap<DrugSubstance, Long> breakdownTickList = new HashMap<>();
     private final HashMap<DrugSubstance, Float> breakdownAmountList = new HashMap<>();
     private final HashMap<DrugPresence, Long> activePresenceList = new HashMap<>();
 
     @Override
-    public long getClientTicks() {
-        return clientTicks;
+    public long getClientTick() {
+        return clientTick;
     }
 
     @Override
-    public void setClientTicks(long ticks) {
-        clientTicks = ticks;
+    public void doClientTick() {
+        clientTick++;
     }
 
     @Override
-    public ArrayList<IScheduledTask> getClientTasks() {
+    public void setClientTick(long ticks) {
+        clientTick = ticks;
+    }
+
+    @Override
+    public void addClientTask(ITask task, long tick) {
+        if (clientTasks.containsKey(tick)) {
+            clientTasks.get(tick).add(task);
+        } else {
+            clientTasks.put(tick, new ArrayList<>(Collections.singletonList(task)));
+        }
+    }
+
+    @Override
+    public void executeClientTasks() {
+        if (clientTasks.containsKey(clientTick)) {
+            clientTasks.get(clientTick).forEach(ITask::execute);
+            clientTasks.remove(clientTick);
+        }
+    }
+
+    @Override
+    public ConcurrentHashMap<Long, ArrayList<ITask>> getClientTasks() {
         return clientTasks;
     }
 
@@ -103,7 +128,7 @@ public class DrugCap implements IDrugCap {
         @Override
         public NBTBase writeNBT(Capability<IDrugCap> capability, IDrugCap instance, EnumFacing side) {
             final NBTTagCompound tag = new NBTTagCompound();
-            tag.setLong("dpcap:ct", instance.getClientTicks());
+            tag.setLong("dpcap:ct", instance.getClientTick());
             AtomicInteger count = new AtomicInteger();
             instance.getActivePresences().forEach((presence, tick) -> {
                 tag.setString("dpcap:ap:"+count.incrementAndGet()+":s", presence.substance.getRegistryName().toString());
@@ -123,7 +148,7 @@ public class DrugCap implements IDrugCap {
         @Override
         public void readNBT(Capability<IDrugCap> capability, IDrugCap instance, EnumFacing side, NBTBase nbt) {
             final NBTTagCompound tag = (NBTTagCompound) nbt;
-            instance.setClientTicks(tag.getLong("dpcap:ct"));
+            instance.setClientTick(tag.getLong("dpcap:ct"));
             if (tag.hasKey("dpcap:ap")) {
                 for (int i = 1; i <= tag.getInteger("dpcap:ap"); i++) {
                     DrugSubstance substance = DrugSubstance.REGISTRY.get(new ResourceLocation(tag.getString("dpcap:ap:"+i+":s")));

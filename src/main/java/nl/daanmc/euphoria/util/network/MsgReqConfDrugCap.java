@@ -13,20 +13,36 @@ public class MsgReqConfDrugCap implements IMessage {
         this.type = type;
     }
 
+    private void setType(Type typeIn) {
+        type = typeIn;
+    }
+
     @Override
     public void toBytes(ByteBuf buf) {
         switch (type) {
-            case REQUEST_INITIAL: buf.writeByte(0);
-            case REQUEST: buf.writeByte(1);
-            case CONFIRM: buf.writeByte(2);
+            case REQUEST_INITIAL:
+                buf.writeByte(0);
+                break;
+            case REQUEST:
+                buf.writeByte(1);
+                break;
+            case CONFIRM:
+                buf.writeByte(2);
+                break;
         }
     }
     @Override
     public void fromBytes(ByteBuf buf) {
         switch (buf.readByte()) {
-            case 0: type = Type.REQUEST_INITIAL;
-            case 1: type = Type.REQUEST;
-            case 2: type = Type.CONFIRM;
+            case 0:
+                setType(Type.REQUEST_INITIAL);
+                break;
+            case 1:
+                setType(Type.REQUEST);
+                break;
+            case 2:
+                setType(Type.CONFIRM);
+                break;
         }
     }
 }

@@ -24,13 +24,10 @@ import nl.daanmc.euphoria.util.network.MsgSyncDrugCap;
 import nl.daanmc.euphoria.util.network.NetworkHandler;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Mod.EventBusSubscriber
 public class EventHandler {
-    public static List<IScheduledTask> serverTasks = new CopyOnWriteArrayList<>();
     public static boolean confCap = true;
 
     //Client
@@ -40,68 +37,44 @@ public class EventHandler {
         if (event.phase == TickEvent.Phase.END && player != null && !Minecraft.getMinecraft().isGamePaused()) {
             IDrugCap drugCap = player.getCapability(DrugCap.Provider.CAP, null);
             //Request DrugCap if this is initial player tick
-            if (drugCap.getClientTicks() == 0L) {
+            if (drugCap.getClientTick() == 0L) {
                 NetworkHandler.INSTANCE.sendToServer(new MsgReqConfDrugCap(Type.REQUEST_INITIAL));
             }
             //Execute tasks
-            if (!drugCap.getClientTasks().isEmpty()) {
-                for (IScheduledTask task : drugCap.getClientTasks()) {
-                    if (task.getTick() <= drugCap.getClientTicks()) {
-                        task.execute();
-                        drugCap.getClientTasks().remove(task);
-                    }
-                }
-            }
+            drugCap.executeClientTasks();
             //Filter activePresences for relevancy
-            ArrayList<DrugPresence> toRemove = new ArrayList<>();
+            ArrayList<DrugPresence> oldPresences = new ArrayList<>();
             drugCap.getActivePresences().forEach((drugPresence, tick) -> {
-                if (tick + 2 * drugPresence.delay + 1 < drugCap.getClientTicks()) {
-                    toRemove.add(drugPresence);
+                if (tick + 2 * drugPresence.delay + 1 < drugCap.getClientTick()) {
+                    oldPresences.add(drugPresence);
                 }
             });
-            toRemove.forEach(drugPresence -> drugCap.getActivePresences().remove(drugPresence));
+            oldPresences.forEach(drugPresence -> drugCap.getActivePresences().remove(drugPresence));
             //Calculate the breakdown S-curve
             drugCap.getBreakdownTicks().forEach((drugSubstance, tick) -> {
-                if (tick > 0L && tick <= drugCap.getClientTicks()) {
+                if (tick > 0L && tick <= drugCap.getClientTick()) {
                     float oldAmount = drugCap.getDrugs().get(drugSubstance);
                     float A = drugCap.getBreakdownAmounts().get(drugSubstance);
                     int L = Math.round(drugSubstance.getBreakdownTime() * (drugCap.getBreakdownAmounts().get(drugSubstance)/100));
-                    long X = drugCap.getClientTicks() - tick;
+                    long X = drugCap.getClientTick() - tick;
                     drugCap.getDrugs().put(drugSubstance, (oldAmount > 1 ? (float) ((-A / (1 + Math.exp((((Math.log((-A / (1 - A)) -1) -7) * X) / L) +7))) +A) : 0F));
                     if (drugCap.getDrugs().get(drugSubstance) == 0F) {
                         drugCap.getBreakdownTicks().put(drugSubstance, 0L);
                     }
-//                    if (X == 0) {
-//                        NetworkHandler.INSTANCE.sendToServer(new MsgSyncDrugCap(drugCap));
-//                    }
-                    if (drugCap.getClientTicks() % 40 == 0) {
+                    //TODO remove
+                    if (drugCap.getClientTick() % 40 == 0) {
                         System.out.println("S-curve: "+drugSubstance.getRegistryName()+" "+drugCap.getDrugs().get(drugSubstance));
                     }
                 }
             });
             //Active sync DrugCap to server each 5 seconds
-            if (drugCap.getClientTicks()%100 == 0 && drugCap.getClientTicks() > 0L) {
+            if (drugCap.getClientTick()%100 == 0 && drugCap.getClientTick() > 0L) {
                 NetworkHandler.INSTANCE.sendToServer(new MsgSyncDrugCap(drugCap));
-                System.out.println("Client tick "+drugCap.getClientTicks());
+                //TODO remove
+                System.out.println("Client tick "+drugCap.getClientTick());
             }
-            drugCap.setClientTicks(drugCap.getClientTicks() + 1);
+            drugCap.doClientTick();
             //TODO: Update DrugInfluences
-        }
-    }
-
-    //Server
-    @SubscribeEvent
-    public static void onWorldTick(TickEvent.WorldTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) {
-            if (!serverTasks.isEmpty()) {
-                for (IScheduledTask task : serverTasks) {
-                    if (task.getTick() <= event.world.getTotalWorldTime()) {
-                        task.execute();
-                        serverTasks.remove(task);
-                    }
-                }
-            }
-            //more
         }
     }
 
@@ -133,7 +106,7 @@ public class EventHandler {
     public static void onClientSaveAndQuit(GuiScreenEvent.ActionPerformedEvent event) throws InterruptedException {
         if (event.getGui() instanceof GuiIngameMenu && event.getButton().id == 1) {
             NetworkHandler.INSTANCE.sendToServer(new MsgSyncDrugCap(Minecraft.getMinecraft().player.getCapability(DrugCap.Provider.CAP, null)));
-            //Send client info to server and wait until confirmed
+            //Send DrugCap to server and wait until confirmed
             confCap = false;
             AtomicInteger timeoutCount = new AtomicInteger(0);
             while (!confCap && timeoutCount.getAndIncrement() < 500) {
