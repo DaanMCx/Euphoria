@@ -25,7 +25,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Mod.EventBusSubscriber
 public class DrugCap implements IDrugCap {
     private long clientTick = 0L;
-    private final ArrayList<ITask> oldClientTasks = new ArrayList<>();
     private final ConcurrentHashMap<Long, ArrayList<ITask>> clientTasks = new ConcurrentHashMap<>();
     private final HashMap<DrugSubstance, Float> drugList = new HashMap<>();
     private final HashMap<DrugSubstance, Long> breakdownTickList = new HashMap<>();
@@ -49,10 +48,11 @@ public class DrugCap implements IDrugCap {
 
     @Override
     public void addClientTask(ITask task, long tick) {
-        if (clientTasks.containsKey(tick)) {
-            clientTasks.get(tick).add(task);
+        long realTick = Math.max(tick, clientTick+1);
+        if (clientTasks.containsKey(realTick)) {
+            clientTasks.get(realTick).add(task);
         } else {
-            clientTasks.put(tick, new ArrayList<>(Collections.singletonList(task)));
+            clientTasks.put(realTick, new ArrayList<>(Collections.singletonList(task)));
         }
     }
 

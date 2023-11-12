@@ -18,7 +18,7 @@ public class DrugPresence {
 
     public static void activatePresence(DrugPresence presence, World worldIn) {
         if (worldIn.isRemote) {
-            IDrugCap drugCap = Minecraft.getMinecraft().player.getCapability(DrugCap.Provider.CAP, null);
+            IDrugCap drugCap = Minecraft.getMinecraft().player.getCapability(DrugCap.Provider.CAP,null);
             long tick = drugCap.getClientTick();
             for (int i = 0; i < presence.delay; i++) {
                 drugCap.addClientTask(new DrugPresenceTask(presence.substance, presence.amount / presence.delay), tick + Math.floorDiv(presence.delay, 2) + i);
@@ -30,11 +30,13 @@ public class DrugPresence {
         }
     }
 
-    public static void activatePresence(DrugPresence[] presences, World worldIn) {
+    public static void activate(IDrug fromDrug, World worldIn) {
         if (worldIn.isRemote) {
-            IDrugCap drugCap = Minecraft.getMinecraft().player.getCapability(DrugCap.Provider.CAP, null);
+            IDrugCap drugCap = Minecraft.getMinecraft().player.getCapability(DrugCap.Provider.CAP,null);
+            DrugPresence[] presences = fromDrug.getDrugPresences();
             long tick = drugCap.getClientTick();
             for (DrugPresence presence : presences) {
+//                int incubationTime = Math.round(presence.delay * IDrug.delayModifiers.get(fromDrug.getConsumptionType()));
                 for (int i = 0; i < presence.delay; i++) {
                     drugCap.addClientTask(new DrugPresenceTask(presence.substance, presence.amount / presence.delay), tick + Math.floorDiv(presence.delay, 2) + i);
                 }
@@ -46,14 +48,21 @@ public class DrugPresence {
         }
     }
 
-    public void activate(long tick) {
-        IDrugCap drugCap = Minecraft.getMinecraft().player.getCapability(DrugCap.Provider.CAP, null);
-        for (int i = 0; i < delay; i++) {
-            drugCap.addClientTask(new DrugPresenceTask(substance, amount / delay), tick + Math.floorDiv(delay, 2) + i);
+    public void activate(long aTick) {
+        IDrugCap drugCap = Minecraft.getMinecraft().player.getCapability(DrugCap.Provider.CAP,null);
+        long tick = drugCap.getClientTick();
+        if (tick >= aTick) {
+            for (int i = 0; i < aTick+Math.floorDiv(3*delay, 2)-tick; i++) {
+                drugCap.addClientTask(new DrugPresenceTask(substance, amount / delay), tick + i + 1);
+            }
+        } else {
+            for (int i = 0; i < aTick+Math.floorDiv(3*delay, 2)-tick; i++) {
+                drugCap.addClientTask(new DrugPresenceTask(substance, amount / delay), aTick + Math.floorDiv(delay, 2) + i);
+            }
         }
-        drugCap.addClientTask(new DrugBreakdownTask(substance), tick + Math.floorDiv(3*delay, 2) +1);
-        drugCap.getActivePresences().put(this, tick);
+        drugCap.addClientTask(new DrugBreakdownTask(substance), aTick + Math.floorDiv(3*delay, 2) +1);
+        drugCap.getActivePresences().put(this, aTick);
         //TODO remove
-        System.out.println(substance.getRegistryName()+" tasks added +breakdown "+tick + Math.floorDiv(3*delay, 2) +1L);
+        System.out.println(substance.getRegistryName()+" tasks added +breakdown "+(aTick + Math.floorDiv(3*delay, 2) +1L));
     }
 }
