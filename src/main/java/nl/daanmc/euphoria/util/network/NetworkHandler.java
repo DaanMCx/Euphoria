@@ -25,9 +25,6 @@ public final class NetworkHandler {
     public static class ReqConfDrugCapMH implements IMessageHandler<MsgReqConfDrugCap, MsgSyncDrugCap> {
         @Override
         public MsgSyncDrugCap onMessage(MsgReqConfDrugCap message, MessageContext ctx) {
-            //TODO remove
-            System.out.println(message.type+" received");
-
             IDrugCap drugCap = Euphoria.proxy.getPlayerFromContext(ctx).getCapability(DrugCap.Provider.CAP, null);
             if (ctx.side.isClient() && !(drugCap.getClientTick() > 0L)) {
                 return null;
@@ -45,9 +42,6 @@ public final class NetworkHandler {
     public static class SyncDrugCapMH implements IMessageHandler<MsgSyncDrugCap, MsgReqConfDrugCap> {
         @Override
         public MsgReqConfDrugCap onMessage(MsgSyncDrugCap message, MessageContext ctx) {
-            //TODO remove
-            System.out.println("SYNC received");
-
             if (Euphoria.proxy.getPlayerFromContext(ctx) != null) {
                 IDrugCap oldCap = Euphoria.proxy.getPlayerFromContext(ctx).getCapability(DrugCap.Provider.CAP, null);
                 IDrugCap newCap = message.capability;

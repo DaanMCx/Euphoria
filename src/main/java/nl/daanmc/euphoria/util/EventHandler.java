@@ -68,11 +68,14 @@ public class EventHandler {
                 }
             });
             //Active sync DrugCap to server each 5 seconds
-            if (drugCap.getClientTick()%100 == 0 && drugCap.getClientTick() > 0L) {
+            if (drugCap.getClientTick()%200 == 0 && drugCap.getClientTick() > 0L) {
                 NetworkHandler.INSTANCE.sendToServer(new MsgSyncDrugCap(drugCap));
-                //TODO remove
+            }
+            //TODO remove
+            if (drugCap.getClientTick()%100 == 0) {
                 System.out.println("Client tick "+drugCap.getClientTick());
             }
+
             drugCap.doClientTick();
             //TODO: Update DrugInfluences
         }
