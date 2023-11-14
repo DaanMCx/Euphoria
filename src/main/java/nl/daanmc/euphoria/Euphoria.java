@@ -19,14 +19,15 @@ import net.minecraftforge.registries.RegistryBuilder;
 import nl.daanmc.euphoria.Elements.Blocks;
 import nl.daanmc.euphoria.Elements.Tabs;
 import nl.daanmc.euphoria.blocks.BlockDryingTable;
-import nl.daanmc.euphoria.util.DrugSubstance;
 import nl.daanmc.euphoria.items.ItemDrug;
 import nl.daanmc.euphoria.items.ItemEdibleDrug;
 import nl.daanmc.euphoria.items.ItemSmokingTool;
+import nl.daanmc.euphoria.util.DrugPresence;
+import nl.daanmc.euphoria.util.DrugSubstance;
 import nl.daanmc.euphoria.util.EventHandler;
+import nl.daanmc.euphoria.util.NetworkHandler;
 import nl.daanmc.euphoria.util.capabilities.DrugCap;
 import nl.daanmc.euphoria.util.capabilities.IDrugCap;
-import nl.daanmc.euphoria.util.NetworkHandler;
 import nl.daanmc.euphoria.util.proxy.IProxy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -64,6 +65,8 @@ public final class Euphoria {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         Elements.SUBSTANCES.forEach((substance) -> DrugSubstance.REGISTRY.put(substance.getRegistryName(), substance));
+        Elements.Blocks.DRYING_TABLE.attachDrugPresence(new DrugPresence(Elements.DrugSubstances.THC,20,500,1500));
+        Elements.Items.COCAINE.attachDrugPresence(new DrugPresence(Elements.DrugSubstances.COCAINE, 20, 100, 500));
     }
     
     @SubscribeEvent

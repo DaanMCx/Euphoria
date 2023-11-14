@@ -9,8 +9,6 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import nl.daanmc.euphoria.Elements;
-import nl.daanmc.euphoria.util.DrugPresence;
 
 public class ClientProxy implements IProxy {
     @Override
@@ -30,7 +28,5 @@ public class ClientProxy implements IProxy {
     public void init(FMLInitializationEvent event) {}
 
     @Override
-    public void postInit(FMLPostInitializationEvent event) {
-        Elements.Blocks.DRYING_TABLE.attachDrugPresence(new DrugPresence(Elements.DrugSubstances.THC,20,500,1500));
-    }
+    public void postInit(FMLPostInitializationEvent event) {}
 }

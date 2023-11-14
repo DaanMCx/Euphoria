@@ -11,9 +11,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import nl.daanmc.euphoria.Elements.Tabs;
+import nl.daanmc.euphoria.util.DrugPresence;
 import nl.daanmc.euphoria.util.IDrug;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class BlockDryingTable extends Block implements IDrug {
+    private final HashMap<String, ArrayList<DrugPresence>> presenceTable = new HashMap<>();
     public BlockDryingTable() {
         super(Material.WOOD);
         setTranslationKey("drying_table");
@@ -42,6 +47,11 @@ public class BlockDryingTable extends Block implements IDrug {
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         this.activateDrugPresences(playerIn);
         return true;
+    }
+
+    @Override
+    public HashMap<String, ArrayList<DrugPresence>> getPresenceTable() {
+        return presenceTable;
     }
 
     @Override

@@ -7,10 +7,10 @@ import nl.daanmc.euphoria.util.tasks.DrugBreakdownTask;
 import nl.daanmc.euphoria.util.tasks.DrugPresenceTask;
 
 public class DrugPresence {
-    public final DrugSubstance substance;
-    public final float amount;
-    public final int incubation;
-    public final int delay;
+    public DrugSubstance substance;
+    public float amount;
+    public int incubation;
+    public int delay;
 
     /**
      * Package of properties that describes how a given DrugSubstance's presence level should be increased after using a certain drug. It is automatically converted into the required drug tasks upon activation.
@@ -33,6 +33,7 @@ public class DrugPresence {
     void activate(long aTick) {
         IDrugCap drugCap = Minecraft.getMinecraft().player.getCapability(DrugCap.Provider.CAP,null);
         long tick = drugCap.getClientTick();
+        System.out.println("IDrug activating s: "+substance.getRegistryName()+"; a: "+amount+"; i: "+incubation+"; d: "+delay);
         if (tick < aTick+incubation+delay) {
             for (long i = Math.max(aTick+incubation-tick, 0); i < aTick+incubation+delay-tick; i++) {
                 drugCap.addClientTask(new DrugPresenceTask(substance, amount / delay), tick + i + 1);

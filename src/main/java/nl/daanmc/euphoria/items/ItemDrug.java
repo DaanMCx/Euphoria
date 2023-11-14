@@ -10,9 +10,14 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import nl.daanmc.euphoria.Elements.Tabs;
+import nl.daanmc.euphoria.util.DrugPresence;
 import nl.daanmc.euphoria.util.IDrug;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class ItemDrug extends Item implements IDrug {
+    private final HashMap<String, ArrayList<DrugPresence>> presenceTable = new HashMap<>();
     private final int useDuration;
     public ItemDrug(String name, int maxUses, int itemUseDuration) {
         setTranslationKey(name);
@@ -36,6 +41,7 @@ public class ItemDrug extends Item implements IDrug {
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+        this.activateDrugPresences(playerIn);
         return new ActionResult<>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
     }
 
@@ -46,6 +52,11 @@ public class ItemDrug extends Item implements IDrug {
             this.activateDrugPresences((EntityPlayer) entityLiving);
         }
         return super.onItemUseFinish(stack, worldIn, entityLiving);
+    }
+
+    @Override
+    public HashMap<String, ArrayList<DrugPresence>> getPresenceTable() {
+        return presenceTable;
     }
 
     @Override
