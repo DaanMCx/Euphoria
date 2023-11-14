@@ -1,4 +1,4 @@
-package nl.daanmc.euphoria.util.network;
+package nl.daanmc.euphoria.util.messages;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;

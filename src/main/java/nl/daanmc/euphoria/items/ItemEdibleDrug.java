@@ -6,7 +6,7 @@ import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import nl.daanmc.euphoria.Elements.Tabs;
-import nl.daanmc.euphoria.drugs.IDrug;
+import nl.daanmc.euphoria.util.IDrug;
 
 public class ItemEdibleDrug extends ItemFood implements IDrug {
     public ItemEdibleDrug(String name, int amount, float saturation) {

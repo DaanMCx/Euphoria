@@ -10,9 +10,9 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.fml.common.Mod;
 import nl.daanmc.euphoria.Elements;
-import nl.daanmc.euphoria.drugs.DrugSubstance;
-import nl.daanmc.euphoria.drugs.DrugPresence;
-import nl.daanmc.euphoria.util.ITask;
+import nl.daanmc.euphoria.util.DrugSubstance;
+import nl.daanmc.euphoria.util.DrugPresence;
+import nl.daanmc.euphoria.util.tasks.ITask;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

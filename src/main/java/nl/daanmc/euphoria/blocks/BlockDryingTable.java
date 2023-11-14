@@ -11,7 +11,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import nl.daanmc.euphoria.Elements.Tabs;
-import nl.daanmc.euphoria.drugs.IDrug;
+import nl.daanmc.euphoria.util.IDrug;
 
 public class BlockDryingTable extends Block implements IDrug {
     public BlockDryingTable() {

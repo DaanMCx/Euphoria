@@ -15,13 +15,11 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import nl.daanmc.euphoria.Elements;
 import nl.daanmc.euphoria.Euphoria;
-import nl.daanmc.euphoria.drugs.DrugPresence;
 import nl.daanmc.euphoria.util.capabilities.DrugCap;
 import nl.daanmc.euphoria.util.capabilities.IDrugCap;
-import nl.daanmc.euphoria.util.network.MsgReqConfDrugCap;
-import nl.daanmc.euphoria.util.network.MsgReqConfDrugCap.Type;
-import nl.daanmc.euphoria.util.network.MsgSyncDrugCap;
-import nl.daanmc.euphoria.util.network.NetworkHandler;
+import nl.daanmc.euphoria.util.messages.MsgReqConfDrugCap;
+import nl.daanmc.euphoria.util.messages.MsgReqConfDrugCap.Type;
+import nl.daanmc.euphoria.util.messages.MsgSyncDrugCap;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;

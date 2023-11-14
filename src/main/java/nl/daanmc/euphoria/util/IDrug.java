@@ -1,4 +1,4 @@
-package nl.daanmc.euphoria.drugs;
+package nl.daanmc.euphoria.util;
 
 import net.minecraft.entity.player.EntityPlayer;
 import nl.daanmc.euphoria.util.capabilities.DrugCap;

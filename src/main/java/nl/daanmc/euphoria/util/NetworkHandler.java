@@ -1,4 +1,4 @@
-package nl.daanmc.euphoria.util.network;
+package nl.daanmc.euphoria.util;
 
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -6,11 +6,11 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import nl.daanmc.euphoria.Euphoria;
-import nl.daanmc.euphoria.drugs.DrugPresence;
-import nl.daanmc.euphoria.util.EventHandler;
 import nl.daanmc.euphoria.util.capabilities.DrugCap;
 import nl.daanmc.euphoria.util.capabilities.IDrugCap;
-import nl.daanmc.euphoria.util.network.MsgReqConfDrugCap.Type;
+import nl.daanmc.euphoria.util.messages.MsgReqConfDrugCap;
+import nl.daanmc.euphoria.util.messages.MsgReqConfDrugCap.Type;
+import nl.daanmc.euphoria.util.messages.MsgSyncDrugCap;
 
 public final class NetworkHandler {
     public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(Euphoria.MODID);

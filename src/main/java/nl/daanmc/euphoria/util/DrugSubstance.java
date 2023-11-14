@@ -1,4 +1,4 @@
-package nl.daanmc.euphoria.drugs;
+package nl.daanmc.euphoria.util;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistryEntry;

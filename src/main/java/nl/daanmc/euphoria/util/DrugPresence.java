@@ -1,8 +1,10 @@
-package nl.daanmc.euphoria.drugs;
+package nl.daanmc.euphoria.util;
 
 import net.minecraft.client.Minecraft;
 import nl.daanmc.euphoria.util.capabilities.DrugCap;
 import nl.daanmc.euphoria.util.capabilities.IDrugCap;
+import nl.daanmc.euphoria.util.tasks.DrugBreakdownTask;
+import nl.daanmc.euphoria.util.tasks.DrugPresenceTask;
 
 public class DrugPresence {
     public final DrugSubstance substance;
@@ -28,7 +30,7 @@ public class DrugPresence {
         this.delay=delay;
     }
 
-    public void activate(long aTick) {
+    void activate(long aTick) {
         IDrugCap drugCap = Minecraft.getMinecraft().player.getCapability(DrugCap.Provider.CAP,null);
         long tick = drugCap.getClientTick();
         if (tick < aTick+incubation+delay) {

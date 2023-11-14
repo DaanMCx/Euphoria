@@ -1,7 +1,7 @@
-package nl.daanmc.euphoria.drugs;
+package nl.daanmc.euphoria.util.tasks;
 
 import net.minecraft.client.Minecraft;
-import nl.daanmc.euphoria.util.ITask;
+import nl.daanmc.euphoria.util.DrugSubstance;
 import nl.daanmc.euphoria.util.capabilities.DrugCap;
 import nl.daanmc.euphoria.util.capabilities.IDrugCap;
 

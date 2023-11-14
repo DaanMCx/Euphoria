@@ -1,8 +1,8 @@
 package nl.daanmc.euphoria.util.capabilities;
 
-import nl.daanmc.euphoria.drugs.DrugSubstance;
-import nl.daanmc.euphoria.drugs.DrugPresence;
-import nl.daanmc.euphoria.util.ITask;
+import nl.daanmc.euphoria.util.DrugSubstance;
+import nl.daanmc.euphoria.util.DrugPresence;
+import nl.daanmc.euphoria.util.tasks.ITask;
 
 import java.util.ArrayList;
 import java.util.HashMap;

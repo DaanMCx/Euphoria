@@ -1,11 +1,11 @@
-package nl.daanmc.euphoria.util.network;
+package nl.daanmc.euphoria.util.messages;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.util.CharsetUtil;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import nl.daanmc.euphoria.drugs.DrugPresence;
-import nl.daanmc.euphoria.drugs.DrugSubstance;
+import nl.daanmc.euphoria.util.DrugPresence;
+import nl.daanmc.euphoria.util.DrugSubstance;
 import nl.daanmc.euphoria.util.capabilities.DrugCap;
 import nl.daanmc.euphoria.util.capabilities.IDrugCap;
 

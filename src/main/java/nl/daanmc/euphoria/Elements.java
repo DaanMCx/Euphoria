@@ -7,7 +7,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import nl.daanmc.euphoria.blocks.BlockDryingTable;
-import nl.daanmc.euphoria.drugs.DrugSubstance;
+import nl.daanmc.euphoria.util.DrugSubstance;
 import nl.daanmc.euphoria.items.ItemDrug;
 import nl.daanmc.euphoria.items.ItemEdibleDrug;
 import nl.daanmc.euphoria.items.ItemSmokingTool;
