@@ -6,10 +6,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import nl.daanmc.euphoria.blocks.BlockDryingTable;
 import nl.daanmc.euphoria.drugs.DrugSubstance;
+import nl.daanmc.euphoria.items.ItemDrug;
 import nl.daanmc.euphoria.items.ItemEdibleDrug;
 import nl.daanmc.euphoria.items.ItemSmokingTool;
-import nl.daanmc.euphoria.items.ItemUsableDrug;
 
 import java.util.ArrayList;
 
@@ -30,10 +31,10 @@ public final class Elements {
         public static final Item TOBACCO_SEEDS = null;
         public static final ItemSmokingTool BONG = null;
         public static final ItemSmokingTool SMOKING_PIPE = null;
-        public static final ItemUsableDrug CIGAR = null;
-        public static final ItemUsableDrug CIGARETTE = null;
-        public static final ItemUsableDrug JOINT = null;
-        public static final ItemUsableDrug COCAINE = null;
+        public static final ItemDrug CIGAR = null;
+        public static final ItemDrug CIGARETTE = null;
+        public static final ItemDrug JOINT = null;
+        public static final ItemDrug COCAINE = null;
         public static final ItemEdibleDrug SUSPICIOUS_MUFFIN = null;
         public static final ItemEdibleDrug DRIED_RED_MUSHROOM = null;
         public static final ItemBlock DRYING_TABLE = null;
@@ -42,7 +43,7 @@ public final class Elements {
 
     @ObjectHolder(Euphoria.MODID)
     public static final class Blocks {
-        public static final Block DRYING_TABLE = null;
+        public static final BlockDryingTable DRYING_TABLE = null;
     }
     public static ArrayList<Block> BLOCKS = new ArrayList<>();
 

@@ -133,6 +133,7 @@ public class DrugCap implements IDrugCap {
             instance.getActivePresences().forEach((presence, tick) -> {
                 tag.setString("dpcap:ap:"+count.incrementAndGet()+":s", presence.substance.getRegistryName().toString());
                 tag.setFloat("dpcap:ap:"+count.get()+":a", presence.amount);
+                tag.setInteger("dpcap:ap:"+count.get()+":i", presence.incubation);
                 tag.setInteger("dpcap:ap:"+count.get()+":d", presence.delay);
                 tag.setLong("dpcap:ap:"+count.get()+":t", tick);
             });
@@ -153,9 +154,10 @@ public class DrugCap implements IDrugCap {
                 for (int i = 1; i <= tag.getInteger("dpcap:ap"); i++) {
                     DrugSubstance substance = DrugSubstance.REGISTRY.get(new ResourceLocation(tag.getString("dpcap:ap:"+i+":s")));
                     float amount = tag.getFloat("dpcap:ap:"+i+":a");
+                    int incubation = tag.getInteger("dpcap:ap:"+i+":i");
                     int delay = tag.getInteger("dpcap:ap:"+i+":d");
                     long tick = tag.getLong("dpcap:ap:"+i+":t");
-                    instance.getActivePresences().put(new DrugPresence(substance, amount, delay), tick);
+                    instance.getActivePresences().put(new DrugPresence(substance, amount, incubation, delay), tick);
                 }
             }
             Elements.SUBSTANCES.forEach(drugSubstance -> {

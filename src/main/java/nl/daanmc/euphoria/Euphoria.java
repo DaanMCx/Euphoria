@@ -17,18 +17,15 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.registries.RegistryBuilder;
 import nl.daanmc.euphoria.Elements.Blocks;
-import nl.daanmc.euphoria.Elements.DrugSubstances;
-import nl.daanmc.euphoria.Elements.Items;
 import nl.daanmc.euphoria.Elements.Tabs;
 import nl.daanmc.euphoria.blocks.BlockDryingTable;
 import nl.daanmc.euphoria.drugs.DrugSubstance;
-import nl.daanmc.euphoria.util.capabilities.DrugCap;
-import nl.daanmc.euphoria.drugs.DrugPresence;
-import nl.daanmc.euphoria.util.capabilities.IDrugCap;
+import nl.daanmc.euphoria.items.ItemDrug;
 import nl.daanmc.euphoria.items.ItemEdibleDrug;
 import nl.daanmc.euphoria.items.ItemSmokingTool;
-import nl.daanmc.euphoria.items.ItemUsableDrug;
 import nl.daanmc.euphoria.util.EventHandler;
+import nl.daanmc.euphoria.util.capabilities.DrugCap;
+import nl.daanmc.euphoria.util.capabilities.IDrugCap;
 import nl.daanmc.euphoria.util.network.NetworkHandler;
 import nl.daanmc.euphoria.util.proxy.IProxy;
 import org.apache.logging.log4j.LogManager;
@@ -67,26 +64,6 @@ public final class Euphoria {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         Elements.SUBSTANCES.forEach((substance) -> DrugSubstance.REGISTRY.put(substance.getRegistryName(), substance));
-        Items.DRIED_RED_MUSHROOM.attachPresences(new DrugPresence[] {
-            new DrugPresence(DrugSubstances.PSILOCYBIN, 20F, 2000)
-        });
-        Items.SUSPICIOUS_MUFFIN.attachPresences(new DrugPresence[] {
-            new DrugPresence(DrugSubstances.THC, 30F, 2000),
-            new DrugPresence(DrugSubstances.CBD, 30F, 2000)
-        });
-        Items.COCAINE.attachPresences(new DrugPresence[] {
-            new DrugPresence(DrugSubstances.COCAINE, 10F, 100)
-        });
-        Items.CIGAR.attachPresences(new DrugPresence[] {
-            new DrugPresence(DrugSubstances.NICOTINE, 10F, 100)
-        });
-        Items.CIGARETTE.attachPresences(new DrugPresence[] {
-            new DrugPresence(DrugSubstances.NICOTINE, 10F, 100)
-        });
-        Items.JOINT.attachPresences(new DrugPresence[] {
-            new DrugPresence(DrugSubstances.THC, 10F, 200),
-            new DrugPresence(DrugSubstances.CBD, 10F, 200)
-        });
     }
     
     @SubscribeEvent
@@ -118,10 +95,10 @@ public final class Euphoria {
                 new Item().setRegistryName("tobacco_seeds").setTranslationKey("tobacco_seeds").setCreativeTab(Tabs.EUPHORIA),
                 new ItemSmokingTool("bong", 2, 64),
                 new ItemSmokingTool("smoking_pipe", 8, 24),
-                new ItemUsableDrug("cigar", 20, 18),
-                new ItemUsableDrug("cigarette", 10, 18),
-                new ItemUsableDrug("joint", 10, 24),
-                new ItemUsableDrug("cocaine", 5, 5),
+                new ItemDrug("cigar", 20, 18),
+                new ItemDrug("cigarette", 10, 18),
+                new ItemDrug("joint", 10, 24),
+                new ItemDrug("cocaine", 5, 5),
                 new ItemEdibleDrug("suspicious_muffin", 4, 5F),
                 new ItemEdibleDrug("dried_red_mushroom", 2, 3F),
                 new ItemBlock(Blocks.DRYING_TABLE).setRegistryName(Blocks.DRYING_TABLE.getRegistryName())

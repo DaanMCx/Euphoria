@@ -35,6 +35,7 @@ public class MsgSyncDrugCap implements IMessage {
             buf.writeInt(stringBytes.length);
             buf.writeBytes(stringBytes);
             buf.writeFloat(presence.amount);
+            buf.writeInt(presence.incubation);
             buf.writeInt(presence.delay);
             buf.writeLong(tick);
         }));
@@ -61,9 +62,10 @@ public class MsgSyncDrugCap implements IMessage {
             buf.readBytes(stringData);
             DrugSubstance substance = DrugSubstance.REGISTRY.get(new ResourceLocation(new String(stringData, CharsetUtil.UTF_8)));
             float amount = buf.readFloat();
+            int incubation = buf.readInt();
             int delay = buf.readInt();
             long tick = buf.readLong();
-            capability.getActivePresences().put(new DrugPresence(substance, amount, delay), tick);
+            capability.getActivePresences().put(new DrugPresence(substance, amount, incubation, delay), tick);
         }
         mapSize = buf.readInt();
         for (int i = 0; i < mapSize; i++) {

@@ -10,11 +10,10 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import nl.daanmc.euphoria.Elements.DrugSubstances;
 import nl.daanmc.euphoria.Elements.Tabs;
-import nl.daanmc.euphoria.drugs.DrugPresence;
+import nl.daanmc.euphoria.drugs.IDrug;
 
-public class BlockDryingTable extends Block {
+public class BlockDryingTable extends Block implements IDrug {
     public BlockDryingTable() {
         super(Material.WOOD);
         setTranslationKey("drying_table");
@@ -41,7 +40,12 @@ public class BlockDryingTable extends Block {
 
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        DrugPresence.activatePresence(new DrugPresence(DrugSubstances.THC, 30, 2400), worldIn);
+        this.activateDrugPresences(playerIn);
         return true;
+    }
+
+    @Override
+    public boolean isSmokable() {
+        return false;
     }
 }

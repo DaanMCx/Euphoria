@@ -9,8 +9,8 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import nl.daanmc.euphoria.drugs.IDrug;
-import nl.daanmc.euphoria.drugs.IDrug.ConsumptionType;
+import nl.daanmc.euphoria.Elements;
+import nl.daanmc.euphoria.drugs.DrugPresence;
 
 public class ClientProxy implements IProxy {
     @Override
@@ -27,16 +27,10 @@ public class ClientProxy implements IProxy {
     public void preInit(FMLPreInitializationEvent event) {}
 
     @Override
-    public void init(FMLInitializationEvent event) {
-        IDrug.delayModifiers.put(ConsumptionType.EAT, 0.8F);
-        IDrug.delayModifiers.put(ConsumptionType.DRINK, 0.5F);
-        IDrug.delayModifiers.put(ConsumptionType.SMOKE, 0.15F);
-        IDrug.delayModifiers.put(ConsumptionType.SNORT, 0.05F);
-        IDrug.delayModifiers.put(ConsumptionType.INJECT, 0.1F);
-        IDrug.delayModifiers.put(ConsumptionType.SWALLOW, 0.7F);
-        IDrug.delayModifiers.put(ConsumptionType.TAKE, 0F);
-    }
+    public void init(FMLInitializationEvent event) {}
 
     @Override
-    public void postInit(FMLPostInitializationEvent event) {}
+    public void postInit(FMLPostInitializationEvent event) {
+        Elements.Blocks.DRYING_TABLE.attachDrugPresence(new DrugPresence(Elements.DrugSubstances.THC,20,500,1500));
+    }
 }

@@ -11,12 +11,10 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import nl.daanmc.euphoria.Elements.Tabs;
 import nl.daanmc.euphoria.drugs.IDrug;
-import nl.daanmc.euphoria.drugs.DrugPresence;
 
-public class ItemUsableDrug extends Item implements IDrug {
-    private DrugPresence[] drugPresences = null;
+public class ItemDrug extends Item implements IDrug {
     private final int useDuration;
-    public ItemUsableDrug(String name, int maxUses, int itemUseDuration) {
+    public ItemDrug(String name, int maxUses, int itemUseDuration) {
         setTranslationKey(name);
         setRegistryName(name);
         setCreativeTab(Tabs.EUPHORIA);
@@ -45,23 +43,13 @@ public class ItemUsableDrug extends Item implements IDrug {
     public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
         stack.damageItem(1, entityLiving);
         if (entityLiving instanceof EntityPlayer) {
-            DrugPresence.activate(this, worldIn);
+            this.activateDrugPresences((EntityPlayer) entityLiving);
         }
         return super.onItemUseFinish(stack, worldIn, entityLiving);
     }
 
     @Override
-    public ConsumptionType getConsumptionType() {
-        return ConsumptionType.TAKE;
+    public boolean isSmokable() {
+        return false;
     }
-
-    @Override
-    public DrugPresence[] getDrugPresences() {
-        return this.drugPresences;
-    }
-
-    @Override
-    public void attachPresences(DrugPresence[] presences) {
-        this.drugPresences = presences;
-    }    
 }

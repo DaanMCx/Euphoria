@@ -7,10 +7,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import nl.daanmc.euphoria.Elements.Tabs;
 import nl.daanmc.euphoria.drugs.IDrug;
-import nl.daanmc.euphoria.drugs.DrugPresence;
 
 public class ItemEdibleDrug extends ItemFood implements IDrug {
-    private DrugPresence[] drugPresences;
     public ItemEdibleDrug(String name, int amount, float saturation) {
         super(amount, saturation, false);
         this.setCreativeTab(Tabs.EUPHORIA);
@@ -21,23 +19,13 @@ public class ItemEdibleDrug extends ItemFood implements IDrug {
     @Override
     public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
         if (entityLiving instanceof EntityPlayer) {
-            DrugPresence.activate(this, worldIn);
+            this.activateDrugPresences((EntityPlayer) entityLiving);
         }
         return super.onItemUseFinish(stack, worldIn, entityLiving);
     }
 
     @Override
-    public ConsumptionType getConsumptionType() {
-        return ConsumptionType.EAT;
-    }
-
-    @Override
-    public DrugPresence[] getDrugPresences() {
-        return this.drugPresences;
-    }
-
-    @Override
-    public void attachPresences(DrugPresence[] presencesIn) {
-        this.drugPresences = presencesIn;
+    public boolean isSmokable() {
+        return false;
     }
 }
