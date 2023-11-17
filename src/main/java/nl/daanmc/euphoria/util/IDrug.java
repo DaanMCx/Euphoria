@@ -1,7 +1,9 @@
 package nl.daanmc.euphoria.util;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import nl.daanmc.euphoria.util.capabilities.DrugCap;
+import nl.daanmc.euphoria.util.messages.MsgDrugPresence;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,11 +60,15 @@ public interface IDrug {
      */
     default void activateDrugPresences(EntityPlayer player) {
         HashMap<String, ArrayList<DrugPresence>> table = this.getPresenceTable();
-        if (player.world.isRemote && table.containsKey("")) {
-            table.get("").forEach(presence -> {
-                presence.activate(player.getCapability(DrugCap.Provider.CAP,null).getClientTick());
-                System.out.println("IDrug activating s: "+presence.substance.getRegistryName()+"; a: "+presence.amount+"; i: "+presence.incubation+"; d: "+presence.delay);
-            });
+        long tick = player.getCapability(DrugCap.Provider.CAP,null).getClientTick();
+        if (table.containsKey("")) {
+            if (player.world.isRemote) {
+                table.get("").forEach(presence -> {
+                    presence.activate(tick);
+                });
+            } else {
+                NetworkHandler.INSTANCE.sendTo(new MsgDrugPresence(tick, table.get("")), (EntityPlayerMP) player);
+            }
         }
     }
 
@@ -73,8 +79,15 @@ public interface IDrug {
      */
     default void activateDrugPresences(String type, EntityPlayer player) {
         HashMap<String, ArrayList<DrugPresence>> table = this.getPresenceTable();
-        if (player.world.isRemote && table.containsKey(type)) {
-            table.get(type).forEach(presence -> presence.activate(player.getCapability(DrugCap.Provider.CAP,null).getClientTick()));
+        long tick = player.getCapability(DrugCap.Provider.CAP,null).getClientTick();
+        if (table.containsKey(type)) {
+            if (player.world.isRemote) {
+                table.get(type).forEach(presence -> {
+                    presence.activate(tick);
+                });
+            } else {
+                NetworkHandler.INSTANCE.sendTo(new MsgDrugPresence(tick, table.get(type)), (EntityPlayerMP) player);
+            }
         }
     }
 

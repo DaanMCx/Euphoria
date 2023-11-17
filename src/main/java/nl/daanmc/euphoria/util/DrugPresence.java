@@ -6,6 +6,8 @@ import nl.daanmc.euphoria.util.capabilities.IDrugCap;
 import nl.daanmc.euphoria.util.tasks.DrugBreakdownTask;
 import nl.daanmc.euphoria.util.tasks.DrugPresenceTask;
 
+import java.util.Objects;
+
 public class DrugPresence {
     public DrugSubstance substance;
     public float amount;
@@ -43,5 +45,13 @@ public class DrugPresence {
             //TODO remove
             System.out.println(substance.getRegistryName()+" tasks added +breakdown "+(aTick + incubation + delay +1));
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DrugPresence that = (DrugPresence) o;
+        return Float.compare(amount, that.amount) == 0 && incubation == that.incubation && delay == that.delay && Objects.equals(substance, that.substance);
     }
 }

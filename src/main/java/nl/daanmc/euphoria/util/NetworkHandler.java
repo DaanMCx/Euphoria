@@ -1,5 +1,6 @@
 package nl.daanmc.euphoria.util;
 
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -8,9 +9,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import nl.daanmc.euphoria.Euphoria;
 import nl.daanmc.euphoria.util.capabilities.DrugCap;
 import nl.daanmc.euphoria.util.capabilities.IDrugCap;
+import nl.daanmc.euphoria.util.messages.MsgDrugPresence;
 import nl.daanmc.euphoria.util.messages.MsgReqConfDrugCap;
 import nl.daanmc.euphoria.util.messages.MsgReqConfDrugCap.Type;
 import nl.daanmc.euphoria.util.messages.MsgSyncDrugCap;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 public final class NetworkHandler {
     public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(Euphoria.MODID);
@@ -20,6 +24,7 @@ public final class NetworkHandler {
         INSTANCE.registerMessage(ReqConfDrugCapMH.class, MsgReqConfDrugCap.class, 0, Side.SERVER);
         INSTANCE.registerMessage(SyncDrugCapMH.class, MsgSyncDrugCap.class, 1, Side.CLIENT);
         INSTANCE.registerMessage(SyncDrugCapMH.class, MsgSyncDrugCap.class, 1, Side.SERVER);
+        INSTANCE.registerMessage(DrugPresenceMH.class, MsgDrugPresence.class, 2, Side.CLIENT);
     }
 
     public static class ReqConfDrugCapMH implements IMessageHandler<MsgReqConfDrugCap, MsgSyncDrugCap> {
@@ -60,6 +65,26 @@ public final class NetworkHandler {
                 }
             }
             return ctx.side.isServer() ? new MsgReqConfDrugCap(Type.CONFIRM) : null;
+        }
+    }
+
+    public static class DrugPresenceMH implements IMessageHandler<MsgDrugPresence,MsgDrugPresence> {
+        @Override
+        public MsgDrugPresence onMessage(MsgDrugPresence message, MessageContext ctx) {
+            AtomicInteger presencesFound = new AtomicInteger();
+            Minecraft.getMinecraft().player.getCapability(DrugCap.Provider.CAP,null).getActivePresences().forEach((presence, tick) -> {
+                if (tick == message.tick) {
+                    message.presenceList.forEach(newPresence -> {
+                        if (newPresence.equals(presence)) {
+                            presencesFound.incrementAndGet();
+                        }
+                    });
+                }
+            });
+            if (presencesFound.get() < message.presenceList.size()) {
+                message.presenceList.forEach(drugPresence -> drugPresence.activate(message.tick));
+            }
+            return null;
         }
     }
 }
