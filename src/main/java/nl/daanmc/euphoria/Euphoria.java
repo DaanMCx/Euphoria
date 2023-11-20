@@ -65,7 +65,6 @@ public final class Euphoria {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         Elements.SUBSTANCES.forEach((substance) -> DrugSubstance.REGISTRY.put(substance.getRegistryName(), substance));
-        Elements.Blocks.DRYING_TABLE.attachDrugPresence(new DrugPresence(Elements.DrugSubstances.THC,20,500,1500));
         Elements.Items.COCAINE.attachDrugPresence(new DrugPresence(Elements.DrugSubstances.COCAINE, 20, 100, 500));
     }
     
@@ -98,10 +97,10 @@ public final class Euphoria {
                 new Item().setRegistryName("tobacco_seeds").setTranslationKey("tobacco_seeds").setCreativeTab(Tabs.EUPHORIA),
                 new ItemSmokingTool("bong", 2, 64),
                 new ItemSmokingTool("smoking_pipe", 8, 24),
-                new ItemDrug("cigar", 20, 18),
-                new ItemDrug("cigarette", 10, 18),
-                new ItemDrug("joint", 10, 24),
-                new ItemDrug("cocaine", 5, 5),
+                new ItemDrug("cigar", 20, 18, true),
+                new ItemDrug("cigarette", 10, 18, true),
+                new ItemDrug("joint", 10, 24, true),
+                new ItemDrug("cocaine", 5, 40, false),
                 new ItemEdibleDrug("suspicious_muffin", 4, 5F),
                 new ItemEdibleDrug("dried_red_mushroom", 2, 3F),
                 new ItemBlock(Blocks.DRYING_TABLE).setRegistryName(Blocks.DRYING_TABLE.getRegistryName())

@@ -5,10 +5,10 @@ import nl.daanmc.euphoria.util.DrugSubstance;
 import nl.daanmc.euphoria.util.capabilities.DrugCap;
 import nl.daanmc.euphoria.util.capabilities.IDrugCap;
 
-public class DrugBreakdownTask implements ITask {
+public class TaskDrugBreakdown implements ITask {
     private final DrugSubstance drugSubstance;
 
-    public DrugBreakdownTask(DrugSubstance drugSubstance) {
+    public TaskDrugBreakdown(DrugSubstance drugSubstance) {
         this.drugSubstance = drugSubstance;
     }
 

@@ -3,8 +3,8 @@ package nl.daanmc.euphoria.util;
 import net.minecraft.client.Minecraft;
 import nl.daanmc.euphoria.util.capabilities.DrugCap;
 import nl.daanmc.euphoria.util.capabilities.IDrugCap;
-import nl.daanmc.euphoria.util.tasks.DrugBreakdownTask;
-import nl.daanmc.euphoria.util.tasks.DrugPresenceTask;
+import nl.daanmc.euphoria.util.tasks.TaskDrugBreakdown;
+import nl.daanmc.euphoria.util.tasks.TaskDrugPresence;
 
 import java.util.Objects;
 
@@ -38,9 +38,9 @@ public class DrugPresence {
         System.out.println("IDrug activating s: "+substance.getRegistryName()+"; a: "+amount+"; i: "+incubation+"; d: "+delay);
         if (tick < aTick+incubation+delay) {
             for (long i = Math.max(aTick+incubation-tick, 0); i < aTick+incubation+delay-tick; i++) {
-                drugCap.addClientTask(new DrugPresenceTask(substance, amount / delay), tick + i + 1);
+                drugCap.addClientTask(new TaskDrugPresence(substance, amount / delay), tick + i + 1);
             }
-            drugCap.addClientTask(new DrugBreakdownTask(substance), aTick + incubation + delay +1);
+            drugCap.addClientTask(new TaskDrugBreakdown(substance), aTick + incubation + delay +1);
             drugCap.getActivePresences().put(this, aTick);
             //TODO remove
             System.out.println(substance.getRegistryName()+" tasks added +breakdown "+(aTick + incubation + delay +1));

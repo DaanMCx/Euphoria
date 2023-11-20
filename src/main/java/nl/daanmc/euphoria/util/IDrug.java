@@ -59,14 +59,16 @@ public interface IDrug {
      * @param player The player on which to activate the attached default {@code DrugPresence}(s).
      * @param serverOnly Put {@code true} if method is called on the server side only, put {@code false} if method is called on both sides or client side only.
      */
-    default void activateDrug(EntityPlayer player, boolean serverOnly) {
+    default void activateDrug(EntityPlayer player, float multiplier, boolean serverOnly) {
         HashMap<String, ArrayList<DrugPresence>> table = this.getPresenceTable();
         if (table.containsKey("")) {
+            ArrayList<DrugPresence> presences = new ArrayList<>(table.get("").size());
+            table.get("").forEach(presence -> presences.add(new DrugPresence(presence.substance, presence.amount*multiplier, presence.incubation, Math.round(presence.delay*multiplier))));
             if (serverOnly) {
-                NetworkHandler.INSTANCE.sendTo(new MsgDrugPresence(table.get("")), (EntityPlayerMP) player);
+                NetworkHandler.INSTANCE.sendTo(new MsgDrugPresence(presences), (EntityPlayerMP) player);
             } else {
                 if (player.world.isRemote) {
-                    table.get("").forEach(presence -> {
+                    presences.forEach(presence -> {
                         presence.activate(player.getCapability(DrugCap.Provider.CAP,null).getClientTick());
                     });
                 }
@@ -80,14 +82,16 @@ public interface IDrug {
      * @param player The player on which to activate the attached specified {@code DrugPresence}(s).
      * @param serverOnly Put {@code true} if method is called on the server side only, put {@code false} if method is called on both sides or client side only.
      */
-    default void activateDrug(String type, EntityPlayer player, boolean serverOnly) {
+    default void activateDrug(String type, EntityPlayer player, float multiplier, boolean serverOnly) {
         HashMap<String, ArrayList<DrugPresence>> table = this.getPresenceTable();
         if (table.containsKey(type)) {
+            ArrayList<DrugPresence> presences = new ArrayList<>(table.get(type).size());
+            table.get(type).forEach(presence -> presences.add(new DrugPresence(presence.substance, presence.amount*multiplier, presence.incubation, Math.round(presence.delay*multiplier))));
             if (serverOnly) {
-                NetworkHandler.INSTANCE.sendTo(new MsgDrugPresence(table.get(type)), (EntityPlayerMP) player);
+                NetworkHandler.INSTANCE.sendTo(new MsgDrugPresence(presences), (EntityPlayerMP) player);
             } else {
                 if (player.world.isRemote) {
-                    table.get(type).forEach(presence -> {
+                    presences.forEach(presence -> {
                         presence.activate(player.getCapability(DrugCap.Provider.CAP,null).getClientTick());
                     });
                 }

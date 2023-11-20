@@ -24,7 +24,7 @@ public class ItemEdibleDrug extends ItemFood implements IDrug {
     @Override
     public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
         if (entityLiving instanceof EntityPlayer) {
-            activateDrug((EntityPlayer) entityLiving,false);
+            activateDrug((EntityPlayer) entityLiving,1F,false);
         }
         return super.onItemUseFinish(stack, worldIn, entityLiving);
     }
