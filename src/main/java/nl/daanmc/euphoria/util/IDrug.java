@@ -55,40 +55,44 @@ public interface IDrug {
     }
 
     /**
-     * DON'T OVERRIDE
+     * DON'T OVERRIDE | Activates the drug's attached default effects
      * @param player The player on which to activate the attached default {@code DrugPresence}(s).
+     * @param serverOnly Put {@code true} if method is called on the server side only, put {@code false} if method is called on both sides or client side only.
      */
-    default void activateDrugPresences(EntityPlayer player) {
+    default void activateDrug(EntityPlayer player, boolean serverOnly) {
         HashMap<String, ArrayList<DrugPresence>> table = this.getPresenceTable();
-        long tick = player.getCapability(DrugCap.Provider.CAP,null).getClientTick();
         if (table.containsKey("")) {
-            if (player.world.isRemote) {
-                table.get("").forEach(presence -> {
-                    presence.activate(tick);
-                });
+            if (serverOnly) {
+                NetworkHandler.INSTANCE.sendTo(new MsgDrugPresence(table.get("")), (EntityPlayerMP) player);
             } else {
-                NetworkHandler.INSTANCE.sendTo(new MsgDrugPresence(tick, table.get("")), (EntityPlayerMP) player);
+                if (player.world.isRemote) {
+                    table.get("").forEach(presence -> {
+                        presence.activate(player.getCapability(DrugCap.Provider.CAP,null).getClientTick());
+                    });
+                }
             }
-        }
+        } else System.out.println("Drug "+this+" does not have any default DrugPresences attached.");
     }
 
     /**
-     * DON'T OVERRIDE
+     * DON'T OVERRIDE | Activates the drug's attached specified effects
      * @param type A tag which you can use to specify which presence(s) you wish to activate. Use only if you set up your drug to activate different presences for different situations.
      * @param player The player on which to activate the attached specified {@code DrugPresence}(s).
+     * @param serverOnly Put {@code true} if method is called on the server side only, put {@code false} if method is called on both sides or client side only.
      */
-    default void activateDrugPresences(String type, EntityPlayer player) {
+    default void activateDrug(String type, EntityPlayer player, boolean serverOnly) {
         HashMap<String, ArrayList<DrugPresence>> table = this.getPresenceTable();
-        long tick = player.getCapability(DrugCap.Provider.CAP,null).getClientTick();
         if (table.containsKey(type)) {
-            if (player.world.isRemote) {
-                table.get(type).forEach(presence -> {
-                    presence.activate(tick);
-                });
+            if (serverOnly) {
+                NetworkHandler.INSTANCE.sendTo(new MsgDrugPresence(table.get(type)), (EntityPlayerMP) player);
             } else {
-                NetworkHandler.INSTANCE.sendTo(new MsgDrugPresence(tick, table.get(type)), (EntityPlayerMP) player);
+                if (player.world.isRemote) {
+                    table.get(type).forEach(presence -> {
+                        presence.activate(player.getCapability(DrugCap.Provider.CAP,null).getClientTick());
+                    });
+                }
             }
-        }
+        } else System.out.println("Drug "+this+" does not have any DrugPresences attached with type: '"+type+"'.");
     }
 
     /**

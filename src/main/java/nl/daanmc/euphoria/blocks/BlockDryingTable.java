@@ -45,7 +45,7 @@ public class BlockDryingTable extends Block implements IDrug {
 
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        this.activateDrugPresences(playerIn);
+        activateDrug(playerIn,false);
         return true;
     }
 

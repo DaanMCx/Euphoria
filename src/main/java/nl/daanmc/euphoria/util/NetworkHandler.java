@@ -14,8 +14,6 @@ import nl.daanmc.euphoria.util.messages.MsgReqConfDrugCap;
 import nl.daanmc.euphoria.util.messages.MsgReqConfDrugCap.Type;
 import nl.daanmc.euphoria.util.messages.MsgSyncDrugCap;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 public final class NetworkHandler {
     public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(Euphoria.MODID);
 
@@ -71,19 +69,7 @@ public final class NetworkHandler {
     public static class DrugPresenceMH implements IMessageHandler<MsgDrugPresence,MsgDrugPresence> {
         @Override
         public MsgDrugPresence onMessage(MsgDrugPresence message, MessageContext ctx) {
-            AtomicInteger presencesFound = new AtomicInteger();
-            Minecraft.getMinecraft().player.getCapability(DrugCap.Provider.CAP,null).getActivePresences().forEach((presence, tick) -> {
-                if (tick == message.tick) {
-                    message.presenceList.forEach(newPresence -> {
-                        if (newPresence.equals(presence)) {
-                            presencesFound.incrementAndGet();
-                        }
-                    });
-                }
-            });
-            if (presencesFound.get() < message.presenceList.size()) {
-                message.presenceList.forEach(drugPresence -> drugPresence.activate(message.tick));
-            }
+            message.presenceList.forEach(drugPresence -> drugPresence.activate(Minecraft.getMinecraft().player.getCapability(DrugCap.Provider.CAP,null).getClientTick()));
             return null;
         }
     }

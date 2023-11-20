@@ -41,7 +41,7 @@ public class ItemDrug extends Item implements IDrug {
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
-        this.activateDrugPresences(playerIn);
+        activateDrug(playerIn,false);
         return new ActionResult<>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
     }
 
@@ -49,7 +49,7 @@ public class ItemDrug extends Item implements IDrug {
     public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
         stack.damageItem(1, entityLiving);
         if (entityLiving instanceof EntityPlayer) {
-            this.activateDrugPresences((EntityPlayer) entityLiving);
+            activateDrug((EntityPlayer) entityLiving,false);
         }
         return super.onItemUseFinish(stack, worldIn, entityLiving);
     }

@@ -11,16 +11,13 @@ import java.util.ArrayList;
 
 public class MsgDrugPresence implements IMessage {
     public MsgDrugPresence() {}
-    public long tick;
-    public ArrayList<DrugPresence> presenceList;
-    public MsgDrugPresence(long tick, ArrayList<DrugPresence> presenceList) {
-        this.tick=tick;
+    public ArrayList<DrugPresence> presenceList = new ArrayList<>();
+    public MsgDrugPresence(ArrayList<DrugPresence> presenceList) {
         this.presenceList=presenceList;
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeLong(tick);
         buf.writeInt(presenceList.size());
         presenceList.forEach(presence -> {
             byte[] stringBytes = presence.substance.getRegistryName().toString().getBytes(CharsetUtil.UTF_8);
@@ -34,7 +31,6 @@ public class MsgDrugPresence implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        tick = buf.readLong();
         int listLength = buf.readInt();
         for (int i = 0; i < listLength; i++) {
             int length = buf.readInt();
