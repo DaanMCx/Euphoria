@@ -105,7 +105,7 @@ public interface IDrug {
     HashMap<String, ArrayList<DrugPresence>> getPresenceTable();
 
     /**
-     * @return Should return {@code true} if drug can be smoked; {@code false} if not.
+     * @return Should return {@code true} if drug can be put in and smoked using ItemSmokingTools; {@code false} if not.
      */
-    boolean isSmokable();
+    boolean isSmokableInTool();
 }

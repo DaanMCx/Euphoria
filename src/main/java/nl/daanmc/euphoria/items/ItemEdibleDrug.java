@@ -35,7 +35,7 @@ public class ItemEdibleDrug extends ItemFood implements IDrug {
     }
 
     @Override
-    public boolean isSmokable() {
+    public boolean isSmokableInTool() {
         return false;
     }
 }

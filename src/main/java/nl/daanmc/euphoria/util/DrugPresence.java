@@ -6,8 +6,6 @@ import nl.daanmc.euphoria.util.capabilities.IDrugCap;
 import nl.daanmc.euphoria.util.tasks.TaskDrugBreakdown;
 import nl.daanmc.euphoria.util.tasks.TaskDrugPresence;
 
-import java.util.Objects;
-
 public class DrugPresence {
     public DrugSubstance substance;
     public float amount;
@@ -35,23 +33,15 @@ public class DrugPresence {
     void activate(long aTick) {
         IDrugCap drugCap = Minecraft.getMinecraft().player.getCapability(DrugCap.Provider.CAP,null);
         long tick = drugCap.getClientTick();
+        //todo remove
         System.out.println("IDrug activating s: "+substance.getRegistryName()+"; a: "+amount+"; i: "+incubation+"; d: "+delay);
+        //
         if (tick < aTick+incubation+delay) {
             for (long i = Math.max(aTick+incubation-tick, 0); i < aTick+incubation+delay-tick; i++) {
                 drugCap.addClientTask(new TaskDrugPresence(substance, amount / delay), tick + i + 1);
             }
             drugCap.addClientTask(new TaskDrugBreakdown(substance), aTick + incubation + delay +1);
             drugCap.getActivePresences().put(this, aTick);
-            //TODO remove
-            System.out.println(substance.getRegistryName()+" tasks added +breakdown "+(aTick + incubation + delay +1));
         }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DrugPresence that = (DrugPresence) o;
-        return Float.compare(amount, that.amount) == 0 && incubation == that.incubation && delay == that.delay && Objects.equals(substance, that.substance);
     }
 }

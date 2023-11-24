@@ -7,10 +7,8 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import nl.daanmc.euphoria.blocks.BlockDryingTable;
+import nl.daanmc.euphoria.items.*;
 import nl.daanmc.euphoria.util.DrugSubstance;
-import nl.daanmc.euphoria.items.ItemDrug;
-import nl.daanmc.euphoria.items.ItemEdibleDrug;
-import nl.daanmc.euphoria.items.ItemSmokingTool;
 
 import java.util.ArrayList;
 
@@ -18,23 +16,23 @@ public final class Elements {
     @ObjectHolder(Euphoria.MODID)
     public static final class Items {
         public static final Item CANNABIS_BUD = null;
-        public static final Item CANNABIS_BUD_DRIED = null;
         public static final Item CANNABIS_LEAF = null;
         public static final Item CANNABIS_SEEDS = null;
         public static final Item COCA_LEAF = null;
         public static final Item COCA_SEEDS = null;
         public static final Item HOP_CONE = null;
         public static final Item HOP_SEEDS = null;
-        public static final Item TOBACCO = null;
         public static final Item TOBACCO_LEAF = null;
         public static final Item TOBACCO_LEAF_DRIED = null;
         public static final Item TOBACCO_SEEDS = null;
+        public static final ItemDrug CANNABIS_BUD_DRIED = null;
+        public static final ItemDrug TOBACCO = null;
         public static final ItemSmokingTool BONG = null;
         public static final ItemSmokingTool SMOKING_PIPE = null;
-        public static final ItemDrug CIGAR = null;
-        public static final ItemDrug CIGARETTE = null;
-        public static final ItemDrug JOINT = null;
-        public static final ItemDrug COCAINE = null;
+        public static final ItemDrugRollable CIGAR = null;
+        public static final ItemDrugRollable CIGARETTE = null;
+        public static final ItemDrugRollable JOINT = null;
+        public static final ItemCocaine COCAINE = null;
         public static final ItemEdibleDrug SUSPICIOUS_MUFFIN = null;
         public static final ItemEdibleDrug DRIED_RED_MUSHROOM = null;
         public static final ItemBlock DRYING_TABLE = null;
