@@ -1,6 +1,7 @@
 package nl.daanmc.euphoria;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -42,6 +43,7 @@ public final class Elements {
     @ObjectHolder(Euphoria.MODID)
     public static final class Blocks {
         public static final BlockDryingTable DRYING_TABLE = null;
+        public static final Block TESTBLOCK = new Block(Material.GRASS).setRegistryName("testblock").setTranslationKey("testblock");
     }
     public static ArrayList<Block> BLOCKS = new ArrayList<>();
 
