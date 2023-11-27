@@ -9,7 +9,7 @@
   "updateUrl": "",
   "authorList": ["DaanMC"],
   "credits": "DaanMC",
-  "logoFile": "",
+  "logoFile": "logo.png",
   "screenshots": [],
   "dependencies": []
 }
