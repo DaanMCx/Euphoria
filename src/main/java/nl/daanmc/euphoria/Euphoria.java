@@ -15,6 +15,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
 import nl.daanmc.euphoria.Elements.Blocks;
 import nl.daanmc.euphoria.Elements.DrugSubstances;
@@ -29,6 +30,7 @@ import nl.daanmc.euphoria.util.NetworkHandler;
 import nl.daanmc.euphoria.util.capabilities.DrugCap;
 import nl.daanmc.euphoria.util.capabilities.IDrugCap;
 import nl.daanmc.euphoria.util.proxy.IProxy;
+import nl.daanmc.euphoria.worldgen.WorldGenBlockDryingTable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -55,6 +57,7 @@ public final class Euphoria {
         CapabilityManager.INSTANCE.register(IDrugCap.class, new DrugCap.Storage(), DrugCap::new);
         MinecraftForge.EVENT_BUS.register(new EventHandler());
         NetworkHandler.init();
+        GameRegistry.registerWorldGenerator(new WorldGenBlockDryingTable(), 0);
     }
 
     @Mod.EventHandler
