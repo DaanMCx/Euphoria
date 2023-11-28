@@ -30,7 +30,7 @@ import nl.daanmc.euphoria.util.NetworkHandler;
 import nl.daanmc.euphoria.util.capabilities.DrugCap;
 import nl.daanmc.euphoria.util.capabilities.IDrugCap;
 import nl.daanmc.euphoria.util.proxy.IProxy;
-import nl.daanmc.euphoria.worldgen.WorldGenBlockTest;
+import nl.daanmc.euphoria.worldgen.WorldGenDrugPlants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -57,7 +57,7 @@ public final class Euphoria {
         CapabilityManager.INSTANCE.register(IDrugCap.class, new DrugCap.Storage(), DrugCap::new);
         MinecraftForge.EVENT_BUS.register(new EventHandler());
         NetworkHandler.init();
-        GameRegistry.registerWorldGenerator(new WorldGenBlockTest(), 0);
+        GameRegistry.registerWorldGenerator(new WorldGenDrugPlants(), 0);
     }
 
     @Mod.EventHandler
@@ -120,7 +120,7 @@ public final class Euphoria {
         };
         event.getRegistry().registerAll(BLOCKS);
         Elements.BLOCKS.addAll(Arrays.asList(BLOCKS));
-        event.getRegistry().register(Blocks.TESTBLOCK);
+        event.getRegistry().register(Blocks.CANNABIS_PLANT);
     }
 
     @SubscribeEvent

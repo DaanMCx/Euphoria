@@ -1,12 +1,12 @@
 package nl.daanmc.euphoria;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import nl.daanmc.euphoria.blocks.BlockDrugPlant;
 import nl.daanmc.euphoria.blocks.BlockDryingTable;
 import nl.daanmc.euphoria.items.*;
 import nl.daanmc.euphoria.util.DrugSubstance;
@@ -43,7 +43,7 @@ public final class Elements {
     @ObjectHolder(Euphoria.MODID)
     public static final class Blocks {
         public static final BlockDryingTable DRYING_TABLE = null;
-        public static final Block TESTBLOCK = new Block(Material.GRASS).setRegistryName("testblock").setTranslationKey("testblock");
+        public static final BlockDrugPlant CANNABIS_PLANT = new BlockDrugPlant("cannabis_plant");
     }
     public static ArrayList<Block> BLOCKS = new ArrayList<>();
 

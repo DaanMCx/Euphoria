@@ -1,28 +1,6 @@
 {
 	"parent": "block/block",
 	"textures": {
-		"0": "euphoria:blocks/drying_table_bottom",
-		"particle": "euphoria:blocks/drying_table_bottom"
-	},
-	"elements": [
-		{
-			"from": [0, 0, 0],
-			"to": [16, 12, 16],
-			"faces": {
-				"north": {"uv": [0, 4, 16, 16], "texture": "#0"},
-				"east": {"uv": [0, 4, 16, 16], "texture": "#0"},
-				"south": {"uv": [0, 4, 16, 16], "texture": "#0"},
-				"west": {"uv": [0, 4, 16, 16], "texture": "#0"},
-				"up": {"uv": [0, 0, 16, 16], "texture": "#0"},
-				"down": {"uv": [0, 0, 16, 16], "texture": "#0"}
-			}
-		}
-	],
-	"groups": [
-		{
-			"name": "bone",
-			"origin": [0, 0, 0],
-			"children": [0]
-		}
-	]
+		"all": "euphoria:blocks/drying_table_bottom"
+	}
 }
