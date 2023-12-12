@@ -21,7 +21,7 @@ import nl.daanmc.euphoria.Elements.Blocks;
 import nl.daanmc.euphoria.Elements.DrugSubstances;
 import nl.daanmc.euphoria.Elements.Items;
 import nl.daanmc.euphoria.Elements.Tabs;
-import nl.daanmc.euphoria.blocks.BlockCannabisPlant;
+import nl.daanmc.euphoria.blocks.BlockDrugPlant;
 import nl.daanmc.euphoria.blocks.BlockDryingTable;
 import nl.daanmc.euphoria.items.*;
 import nl.daanmc.euphoria.util.DrugPresence;
@@ -121,7 +121,7 @@ public final class Euphoria {
     public static void onBlockRegister(RegistryEvent.Register<Block> event) {
         Block[] BLOCKS = {
                 new BlockDryingTable(),
-                new BlockCannabisPlant("cannabis_plant")
+                new BlockDrugPlant("cannabis_plant")
         };
         event.getRegistry().registerAll(BLOCKS);
         Elements.BLOCKS.addAll(Arrays.asList(BLOCKS));

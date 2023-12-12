@@ -17,10 +17,10 @@ import nl.daanmc.euphoria.Elements;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class BlockCannabisPlant extends BlockBush implements IGrowable {
+public class BlockDrugPlant extends BlockBush implements IGrowable {
     public static final PropertyEnum<EnumBlockHalf> HALF = PropertyEnum.create("half", EnumBlockHalf.class);
     public static final PropertyInteger AGE = PropertyInteger.create("age", 0, 4);
-    public BlockCannabisPlant(String name) {
+    public BlockDrugPlant(String name) {
         super(Material.VINE);
         this.setRegistryName(name);
         this.setTranslationKey(name);
