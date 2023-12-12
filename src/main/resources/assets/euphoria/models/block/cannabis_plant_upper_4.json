@@ -1,0 +1,6 @@
+{
+	"parent": "block/cross",
+	"textures": {
+		"cross": "euphoria:blocks/cannabis_plant_upper_2"
+	}
+}

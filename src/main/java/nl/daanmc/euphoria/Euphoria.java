@@ -21,6 +21,7 @@ import nl.daanmc.euphoria.Elements.Blocks;
 import nl.daanmc.euphoria.Elements.DrugSubstances;
 import nl.daanmc.euphoria.Elements.Items;
 import nl.daanmc.euphoria.Elements.Tabs;
+import nl.daanmc.euphoria.blocks.BlockCannabisPlant;
 import nl.daanmc.euphoria.blocks.BlockDryingTable;
 import nl.daanmc.euphoria.items.*;
 import nl.daanmc.euphoria.util.DrugPresence;
@@ -30,7 +31,7 @@ import nl.daanmc.euphoria.util.NetworkHandler;
 import nl.daanmc.euphoria.util.capabilities.DrugCap;
 import nl.daanmc.euphoria.util.capabilities.IDrugCap;
 import nl.daanmc.euphoria.util.proxy.IProxy;
-import nl.daanmc.euphoria.worldgen.WorldGenDrugPlants;
+import nl.daanmc.euphoria.worldgen.WorldGenCannabisPlant;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -54,19 +55,21 @@ public final class Euphoria {
     //CommonProxy methods here
     @Mod.EventHandler
     void preInit(FMLPreInitializationEvent event) {
+        proxy.preInit(event);
         CapabilityManager.INSTANCE.register(IDrugCap.class, new DrugCap.Storage(), DrugCap::new);
         MinecraftForge.EVENT_BUS.register(new EventHandler());
         NetworkHandler.init();
-        GameRegistry.registerWorldGenerator(new WorldGenDrugPlants(), 0);
+        GameRegistry.registerWorldGenerator(new WorldGenCannabisPlant(), 0);
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
-
+        proxy.init(event);
     }
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
+        proxy.postInit(event);
         Elements.SUBSTANCES.forEach((substance) -> DrugSubstance.REGISTRY.put(substance.getRegistryName(), substance));
         Items.COCAINE.attachDrugPresence(new DrugPresence(DrugSubstances.COCAINE, 20, 100, 500));
         Items.CIGARETTE.attachDrugPresence(new DrugPresence(DrugSubstances.NICOTINE, 5,100,200));
@@ -107,7 +110,8 @@ public final class Euphoria {
                 new ItemCocaine("cocaine", 5, 30),
                 new ItemEdibleDrug("suspicious_muffin", 4, 5F),
                 new ItemEdibleDrug("dried_red_mushroom", 2, 3F),
-                new ItemBlock(Blocks.DRYING_TABLE).setRegistryName(Blocks.DRYING_TABLE.getRegistryName())
+                new ItemBlock(Blocks.DRYING_TABLE).setRegistryName(Blocks.DRYING_TABLE.getRegistryName()),
+                new ItemBlock(Blocks.CANNABIS_PLANT).setRegistryName(Blocks.CANNABIS_PLANT.getRegistryName())
         };
         event.getRegistry().registerAll(ITEMS);
         Elements.ITEMS.addAll(Arrays.asList(ITEMS));
@@ -116,11 +120,11 @@ public final class Euphoria {
     @SubscribeEvent
     public static void onBlockRegister(RegistryEvent.Register<Block> event) {
         Block[] BLOCKS = {
-                new BlockDryingTable()
+                new BlockDryingTable(),
+                new BlockCannabisPlant("cannabis_plant")
         };
         event.getRegistry().registerAll(BLOCKS);
         Elements.BLOCKS.addAll(Arrays.asList(BLOCKS));
-        event.getRegistry().register(Blocks.CANNABIS_PLANT);
     }
 
     @SubscribeEvent

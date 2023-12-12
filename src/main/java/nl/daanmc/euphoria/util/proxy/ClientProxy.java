@@ -9,6 +9,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import nl.daanmc.euphoria.Elements;
 
 public class ClientProxy implements IProxy {
     @Override
@@ -25,7 +26,9 @@ public class ClientProxy implements IProxy {
     public void preInit(FMLPreInitializationEvent event) {}
 
     @Override
-    public void init(FMLInitializationEvent event) {}
+    public void init(FMLInitializationEvent event) {
+        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler((state, worldIn, pos, tintIndex) -> worldIn.getBiome(pos).getFoliageColorAtPos(pos), Elements.Blocks.CANNABIS_PLANT);
+    }
 
     @Override
     public void postInit(FMLPostInitializationEvent event) {}

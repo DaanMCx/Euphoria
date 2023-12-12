@@ -1,6 +1,0 @@
-{
-	"parent": "block/block",
-	"textures": {
-		"all": "euphoria:blocks/drying_table_bottom"
-	}
-}
