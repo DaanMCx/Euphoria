@@ -14,7 +14,7 @@ public class WorldGenCannabisPlant implements IWorldGenerator {
 
     @Override
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
-        if (world.provider.getDimension() == 0 && random.nextInt(50)==0) {
+        if (world.provider.getDimension() == 0 && random.nextInt(2)==0) {
             for (int i = 0; i < random.nextInt(6); i++) {
                 int x = chunkX * 16 + 8 + random.nextInt(8) - random.nextInt(8);
                 int z = chunkZ * 16 + 8 + random.nextInt(8) - random.nextInt(8);

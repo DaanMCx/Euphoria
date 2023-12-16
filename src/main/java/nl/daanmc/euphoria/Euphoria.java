@@ -1,8 +1,11 @@
 package nl.daanmc.euphoria;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemSeeds;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -17,10 +20,8 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
-import nl.daanmc.euphoria.Elements.Blocks;
 import nl.daanmc.euphoria.Elements.DrugSubstances;
-import nl.daanmc.euphoria.Elements.Items;
-import nl.daanmc.euphoria.Elements.Tabs;
+import nl.daanmc.euphoria.blocks.BlockCannabisCrop;
 import nl.daanmc.euphoria.blocks.BlockDrugPlant;
 import nl.daanmc.euphoria.blocks.BlockDryingTable;
 import nl.daanmc.euphoria.items.*;
@@ -71,8 +72,8 @@ public final class Euphoria {
     public void postInit(FMLPostInitializationEvent event) {
         proxy.postInit(event);
         Elements.SUBSTANCES.forEach((substance) -> DrugSubstance.REGISTRY.put(substance.getRegistryName(), substance));
-        Items.COCAINE.attachDrugPresence(new DrugPresence(DrugSubstances.COCAINE, 20, 100, 500));
-        Items.CIGARETTE.attachDrugPresence(new DrugPresence(DrugSubstances.NICOTINE, 5,100,200));
+        Elements.Items.COCAINE.attachDrugPresence(new DrugPresence(DrugSubstances.COCAINE, 20, 100, 500));
+        Elements.Items.CIGARETTE.attachDrugPresence(new DrugPresence(DrugSubstances.NICOTINE, 5,100,200));
     }
     
     @SubscribeEvent
@@ -90,16 +91,16 @@ public final class Euphoria {
     @SubscribeEvent
     public static void onItemRegister(RegistryEvent.Register<Item> event) {
         Item[] ITEMS = {
-                new Item().setRegistryName("cannabis_bud").setTranslationKey("cannabis_bud").setCreativeTab(Tabs.EUPHORIA),
-                new Item().setRegistryName("cannabis_leaf").setTranslationKey("cannabis_leaf").setCreativeTab(Tabs.EUPHORIA),
-                new Item().setRegistryName("cannabis_seeds").setTranslationKey("cannabis_seeds").setCreativeTab(Tabs.EUPHORIA),
-                new Item().setRegistryName("coca_leaf").setTranslationKey("coca_leaf").setCreativeTab(Tabs.EUPHORIA),
-                new Item().setRegistryName("coca_seeds").setTranslationKey("coca_seeds").setCreativeTab(Tabs.EUPHORIA),
-                new Item().setRegistryName("hop_cone").setTranslationKey("hop_cone").setCreativeTab(Tabs.EUPHORIA),
-                new Item().setRegistryName("hop_seeds").setTranslationKey("hop_seeds").setCreativeTab(Tabs.EUPHORIA),
-                new Item().setRegistryName("tobacco_leaf").setTranslationKey("tobacco_leaf").setCreativeTab(Tabs.EUPHORIA),
-                new Item().setRegistryName("tobacco_leaf_dried").setTranslationKey("tobacco_leaf_dried").setCreativeTab(Tabs.EUPHORIA),
-                new Item().setRegistryName("tobacco_seeds").setTranslationKey("tobacco_seeds").setCreativeTab(Tabs.EUPHORIA),
+                new Item().setRegistryName("cannabis_bud").setTranslationKey("cannabis_bud").setCreativeTab(Elements.Tabs.EUPHORIA),
+                new Item().setRegistryName("cannabis_leaf").setTranslationKey("cannabis_leaf").setCreativeTab(Elements.Tabs.EUPHORIA),
+                new ItemSeeds(Elements.Blocks.CANNABIS_PLANT, Blocks.FARMLAND).setRegistryName("cannabis_seeds").setTranslationKey("cannabis_seeds").setCreativeTab(Elements.Tabs.EUPHORIA),
+                new Item().setRegistryName("coca_leaf").setTranslationKey("coca_leaf").setCreativeTab(Elements.Tabs.EUPHORIA),
+                new Item().setRegistryName("coca_seeds").setTranslationKey("coca_seeds").setCreativeTab(Elements.Tabs.EUPHORIA),
+                new Item().setRegistryName("hop_cone").setTranslationKey("hop_cone").setCreativeTab(Elements.Tabs.EUPHORIA),
+                new Item().setRegistryName("hop_seeds").setTranslationKey("hop_seeds").setCreativeTab(Elements.Tabs.EUPHORIA),
+                new Item().setRegistryName("tobacco_leaf").setTranslationKey("tobacco_leaf").setCreativeTab(Elements.Tabs.EUPHORIA),
+                new Item().setRegistryName("tobacco_leaf_dried").setTranslationKey("tobacco_leaf_dried").setCreativeTab(Elements.Tabs.EUPHORIA),
+                new Item().setRegistryName("tobacco_seeds").setTranslationKey("tobacco_seeds").setCreativeTab(Elements.Tabs.EUPHORIA),
                 new ItemDrug("cannabis_bud_dried", 2, 30, true),
                 new ItemDrug("tobacco", 4,30, true),
                 new ItemSmokingTool("bong", 2, 64),
@@ -110,8 +111,8 @@ public final class Euphoria {
                 new ItemCocaine("cocaine", 5, 30),
                 new ItemEdibleDrug("suspicious_muffin", 4, 5F),
                 new ItemEdibleDrug("dried_red_mushroom", 2, 3F),
-                new ItemBlock(Blocks.DRYING_TABLE).setRegistryName(Blocks.DRYING_TABLE.getRegistryName()),
-                new ItemBlock(Blocks.CANNABIS_PLANT).setRegistryName(Blocks.CANNABIS_PLANT.getRegistryName())
+                new ItemBlock(Elements.Blocks.DRYING_TABLE).setRegistryName(Elements.Blocks.DRYING_TABLE.getRegistryName()),
+                new ItemBlock(Elements.Blocks.CANNABIS_PLANT).setRegistryName(Elements.Blocks.CANNABIS_PLANT.getRegistryName())
         };
         event.getRegistry().registerAll(ITEMS);
         Elements.ITEMS.addAll(Arrays.asList(ITEMS));
@@ -121,7 +122,8 @@ public final class Euphoria {
     public static void onBlockRegister(RegistryEvent.Register<Block> event) {
         Block[] BLOCKS = {
                 new BlockDryingTable(),
-                new BlockDrugPlant("cannabis_plant")
+                new BlockDrugPlant("cannabis_plant", new ItemStack(Elements.Items.CANNABIS_SEEDS)),
+                new BlockCannabisCrop()
         };
         event.getRegistry().registerAll(BLOCKS);
         Elements.BLOCKS.addAll(Arrays.asList(BLOCKS));

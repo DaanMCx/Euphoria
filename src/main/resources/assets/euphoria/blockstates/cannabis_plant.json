@@ -1,7 +1,7 @@
 {
   "variants": {
-    "half=lower,size=small": {"model": "euphoria:cannabis_plant_lower_small"},
-    "half=lower,size=large": {"model": "euphoria:cannabis_plant_lower_large"},
-    "half=upper,size=large": {"model": "euphoria:cannabis_plant_upper_large"}
+    "half=lower,isdouble=false": {"model": "euphoria:cannabis_plant_lower_small"},
+    "half=lower,isdouble=true": {"model": "euphoria:cannabis_plant_lower_large"},
+    "half=upper,isdouble=true": {"model": "euphoria:cannabis_plant_upper_large"}
   }
 }
