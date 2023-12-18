@@ -6,6 +6,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import nl.daanmc.euphoria.blocks.BlockCannabisCrop;
 import nl.daanmc.euphoria.blocks.BlockDrugPlant;
 import nl.daanmc.euphoria.blocks.BlockDryingTable;
 import nl.daanmc.euphoria.items.*;
@@ -37,6 +38,8 @@ public final class Elements {
         public static final ItemEdibleDrug SUSPICIOUS_MUFFIN = null;
         public static final ItemEdibleDrug DRIED_RED_MUSHROOM = null;
         public static final ItemBlock DRYING_TABLE = null;
+        public static final ItemBlock CANNABIS_PLANT = null;
+        public static final ItemBlock CANNABIS_CROP = null;
     }
     public static ArrayList<Item> ITEMS = new ArrayList<>();
 
@@ -44,6 +47,7 @@ public final class Elements {
     public static final class Blocks {
         public static final BlockDryingTable DRYING_TABLE = null;
         public static final BlockDrugPlant CANNABIS_PLANT = null;
+        public static final BlockCannabisCrop CANNABIS_CROP = null;
     }
     public static ArrayList<Block> BLOCKS = new ArrayList<>();
 

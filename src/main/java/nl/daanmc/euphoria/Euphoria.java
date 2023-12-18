@@ -93,7 +93,7 @@ public final class Euphoria {
         Item[] ITEMS = {
                 new Item().setRegistryName("cannabis_bud").setTranslationKey("cannabis_bud").setCreativeTab(Elements.Tabs.EUPHORIA),
                 new Item().setRegistryName("cannabis_leaf").setTranslationKey("cannabis_leaf").setCreativeTab(Elements.Tabs.EUPHORIA),
-                new ItemSeeds(Elements.Blocks.CANNABIS_PLANT, Blocks.FARMLAND).setRegistryName("cannabis_seeds").setTranslationKey("cannabis_seeds").setCreativeTab(Elements.Tabs.EUPHORIA),
+                new ItemSeeds(Elements.Blocks.CANNABIS_CROP, Blocks.FARMLAND).setRegistryName("cannabis_seeds").setTranslationKey("cannabis_seeds"),
                 new Item().setRegistryName("coca_leaf").setTranslationKey("coca_leaf").setCreativeTab(Elements.Tabs.EUPHORIA),
                 new Item().setRegistryName("coca_seeds").setTranslationKey("coca_seeds").setCreativeTab(Elements.Tabs.EUPHORIA),
                 new Item().setRegistryName("hop_cone").setTranslationKey("hop_cone").setCreativeTab(Elements.Tabs.EUPHORIA),
@@ -112,7 +112,8 @@ public final class Euphoria {
                 new ItemEdibleDrug("suspicious_muffin", 4, 5F),
                 new ItemEdibleDrug("dried_red_mushroom", 2, 3F),
                 new ItemBlock(Elements.Blocks.DRYING_TABLE).setRegistryName(Elements.Blocks.DRYING_TABLE.getRegistryName()),
-                new ItemBlock(Elements.Blocks.CANNABIS_PLANT).setRegistryName(Elements.Blocks.CANNABIS_PLANT.getRegistryName())
+                new ItemBlock(Elements.Blocks.CANNABIS_PLANT).setRegistryName(Elements.Blocks.CANNABIS_PLANT.getRegistryName()),
+                new ItemBlock(Elements.Blocks.CANNABIS_CROP).setRegistryName(Elements.Blocks.CANNABIS_CROP.getRegistryName())
         };
         event.getRegistry().registerAll(ITEMS);
         Elements.ITEMS.addAll(Arrays.asList(ITEMS));
