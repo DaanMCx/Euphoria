@@ -10,14 +10,9 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import nl.daanmc.euphoria.Elements.Tabs;
-import nl.daanmc.euphoria.util.DrugPresence;
 import nl.daanmc.euphoria.util.IDrug;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 public class ItemDrug extends Item implements IDrug {
-    private final HashMap<String, ArrayList<DrugPresence>> presenceTable = new HashMap<>();
     private final int maxUseDuration;
     private final boolean isSmokableInTool;
     public ItemDrug(String name, int maxFullUses, int maxUseDuration, boolean isSmokableInTool) {
@@ -75,11 +70,6 @@ public class ItemDrug extends Item implements IDrug {
             activateDrug((EntityPlayer) entityLiving,multiplier,false);
         }
         super.onPlayerStoppedUsing(stack, worldIn, entityLiving, timeLeft);
-    }
-
-    @Override
-    public HashMap<String, ArrayList<DrugPresence>> getPresenceTable() {
-        return presenceTable;
     }
 
     @Override

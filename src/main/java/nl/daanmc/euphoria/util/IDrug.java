@@ -11,30 +11,35 @@ import java.util.HashMap;
 
 public interface IDrug {
     /**
-     * DON'T OVERRIDE | Should be run in Common proxy {@code postInit()} for each presence you wish to attach to each drug.
+     * DON'T USE
+     */
+    HashMap<IDrug, HashMap<String, ArrayList<DrugPresence>>> drugPresenceTable = new HashMap<>();
+
+    /**
+     * DON'T OVERRIDE | Chainable | Should be run in Common proxy {@code postInit()} for each presence you wish to attach to each drug.
      * @param presence The {@code DrugPresence} to attach to the drug's default presences. You may attach multiple different presences to the default.
      */
-    default void attachDrugPresence(DrugPresence presence) {
-        HashMap<String, ArrayList<DrugPresence>> table = this.getPresenceTable();
+    default IDrug attachDrugPresence(DrugPresence presence) {
+        HashMap<String, ArrayList<DrugPresence>> table = drugPresenceTable.get(this);
         if (table.containsKey("")) {
             table.get("").add(presence);
         } else {
             table.put("", new ArrayList<>(Collections.singletonList(presence)));
-        }
+        } return this;
     }
 
     /**
-     * DON'T OVERRIDE | Should be run in Common proxy {@code postInit()} for each presence you wish to attach to each drug.
+     * DON'T OVERRIDE | Chainable | Should be run in Common proxy {@code postInit()} for each presence you wish to attach to each drug.
      * @param type A tag which you can use to specify which presence(s) you wish to attach. Use only if you want your drug to activate different presences for different situations.
      * @param presence The {@code DrugPresence} to attach to the drug's specified presences. You may attach multiple different presences per tag.
      */
-    default void attachDrugPresence(String type, DrugPresence presence) {
-        HashMap<String, ArrayList<DrugPresence>> table = this.getPresenceTable();
+    default IDrug attachDrugPresence(String type, DrugPresence presence) {
+        HashMap<String, ArrayList<DrugPresence>> table = drugPresenceTable.get(this);
         if (table.containsKey(type)) {
             table.get(type).add(presence);
         } else {
             table.put(type, new ArrayList<>(Collections.singletonList(presence)));
-        }
+        } return this;
     }
 
     /**
@@ -42,7 +47,7 @@ public interface IDrug {
      * @return An ArrayList containing the attached default {@code DrugPresence}(s).
      */
     default ArrayList<DrugPresence> getDrugPresences() {
-        return this.getPresenceTable().get("");
+        return drugPresenceTable.get(this).get("");
     }
 
     /**
@@ -51,7 +56,7 @@ public interface IDrug {
      * @return An ArrayList containing the attached specified {@code DrugPresence}(s).
      */
     default ArrayList<DrugPresence> getDrugPresences(String type) {
-        return this.getPresenceTable().get(type);
+        return drugPresenceTable.get(this).get(type);
     }
 
     /**
@@ -60,7 +65,7 @@ public interface IDrug {
      * @param serverOnly Put {@code true} if method is called on the server side only, put {@code false} if method is called on both sides or client side only.
      */
     default void activateDrug(EntityPlayer player, float multiplier, boolean serverOnly) {
-        HashMap<String, ArrayList<DrugPresence>> table = this.getPresenceTable();
+        HashMap<String, ArrayList<DrugPresence>> table = drugPresenceTable.get(this);
         if (table.containsKey("")) {
             ArrayList<DrugPresence> presences = new ArrayList<>(table.get("").size());
             table.get("").forEach(presence -> presences.add(new DrugPresence(presence.substance, presence.amount*multiplier, presence.incubation, Math.round(presence.delay*multiplier))));
@@ -83,7 +88,7 @@ public interface IDrug {
      * @param serverOnly Put {@code true} if method is called on the server side only, put {@code false} if method is called on both sides or client side only.
      */
     default void activateDrug(String type, EntityPlayer player, float multiplier, boolean serverOnly) {
-        HashMap<String, ArrayList<DrugPresence>> table = this.getPresenceTable();
+        HashMap<String, ArrayList<DrugPresence>> table = drugPresenceTable.get(this);
         if (table.containsKey(type)) {
             ArrayList<DrugPresence> presences = new ArrayList<>(table.get(type).size());
             table.get(type).forEach(presence -> presences.add(new DrugPresence(presence.substance, presence.amount*multiplier, presence.incubation, Math.round(presence.delay*multiplier))));
@@ -98,11 +103,6 @@ public interface IDrug {
             }
         } else System.out.println("Drug "+this+" does not have any DrugPresences attached with type: '"+type+"'.");
     }
-
-    /**
-     * @return Should return the {@code private final HashMap<String, ArrayList<DrugPresence>> NAME = new HashMap<>()} that you defined in your drug's class.
-     */
-    HashMap<String, ArrayList<DrugPresence>> getPresenceTable();
 
     /**
      * @return Should return {@code true} if drug can be put in and smoked using ItemSmokingTools; {@code false} if not.
