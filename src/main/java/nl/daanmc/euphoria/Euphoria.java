@@ -5,7 +5,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemSeeds;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -74,6 +73,7 @@ public final class Euphoria {
         Elements.SUBSTANCES.forEach((substance) -> DrugSubstance.REGISTRY.put(substance.getRegistryName(), substance));
         Elements.Items.COCAINE.attachDrugPresence(new DrugPresence(DrugSubstances.COCAINE, 20, 100, 500));
         Elements.Items.CIGARETTE.attachDrugPresence(new DrugPresence(DrugSubstances.NICOTINE, 5,100,200));
+        Elements.Blocks.CANNABIS_PLANT.setDrops(Elements.Items.CANNABIS_SEEDS);
     }
     
     @SubscribeEvent
@@ -112,8 +112,7 @@ public final class Euphoria {
                 new ItemEdibleDrug("suspicious_muffin", 4, 5F),
                 new ItemEdibleDrug("dried_red_mushroom", 2, 3F),
                 new ItemBlock(Elements.Blocks.DRYING_TABLE).setRegistryName(Elements.Blocks.DRYING_TABLE.getRegistryName()),
-                new ItemBlock(Elements.Blocks.CANNABIS_PLANT).setRegistryName(Elements.Blocks.CANNABIS_PLANT.getRegistryName()),
-                new ItemBlock(Elements.Blocks.CANNABIS_CROP).setRegistryName(Elements.Blocks.CANNABIS_CROP.getRegistryName())
+                new ItemBlock(Elements.Blocks.CANNABIS_PLANT).setRegistryName(Elements.Blocks.CANNABIS_PLANT.getRegistryName())
         };
         event.getRegistry().registerAll(ITEMS);
         Elements.ITEMS.addAll(Arrays.asList(ITEMS));
@@ -123,7 +122,7 @@ public final class Euphoria {
     public static void onBlockRegister(RegistryEvent.Register<Block> event) {
         Block[] BLOCKS = {
                 new BlockDryingTable(),
-                new BlockDrugPlant("cannabis_plant", new ItemStack(Elements.Items.CANNABIS_SEEDS)),
+                new BlockDrugPlant("cannabis_plant"),
                 new BlockCannabisCrop()
         };
         event.getRegistry().registerAll(BLOCKS);
