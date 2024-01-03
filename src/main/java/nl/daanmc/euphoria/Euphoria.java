@@ -23,11 +23,10 @@ import nl.daanmc.euphoria.Elements.DrugSubstances;
 import nl.daanmc.euphoria.blocks.BlockCannabisCrop;
 import nl.daanmc.euphoria.blocks.BlockDrugPlant;
 import nl.daanmc.euphoria.blocks.BlockDryingTable;
+import nl.daanmc.euphoria.entities.TileEntityCannabisStrain;
+import nl.daanmc.euphoria.entities.TileEntityDryingTable;
 import nl.daanmc.euphoria.items.*;
-import nl.daanmc.euphoria.util.DrugPresence;
-import nl.daanmc.euphoria.util.DrugSubstance;
-import nl.daanmc.euphoria.util.EventHandler;
-import nl.daanmc.euphoria.util.NetworkHandler;
+import nl.daanmc.euphoria.util.*;
 import nl.daanmc.euphoria.util.capabilities.DrugCap;
 import nl.daanmc.euphoria.util.capabilities.IDrugCap;
 import nl.daanmc.euphoria.util.proxy.IProxy;
@@ -60,6 +59,8 @@ public final class Euphoria {
         MinecraftForge.EVENT_BUS.register(new EventHandler());
         NetworkHandler.init();
         GameRegistry.registerWorldGenerator(new WorldGenCannabisPlant(), 0);
+        GameRegistry.registerTileEntity(TileEntityDryingTable.class, new ResourceLocation(MODID, "drying_table"));
+        GameRegistry.registerTileEntity(TileEntityCannabisStrain.class, new ResourceLocation(MODID, "cannabis_strain"));
     }
 
     @Mod.EventHandler

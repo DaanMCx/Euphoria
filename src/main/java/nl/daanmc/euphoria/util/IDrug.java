@@ -20,6 +20,9 @@ public interface IDrug {
      * @param presence The {@code DrugPresence} to attach to the drug's default presences. You may attach multiple different presences to the default.
      */
     default IDrug attachDrugPresence(DrugPresence presence) {
+        if (!drugPresenceTable.containsKey(this)) {
+            drugPresenceTable.put(this, new HashMap<>());
+        }
         HashMap<String, ArrayList<DrugPresence>> table = drugPresenceTable.get(this);
         if (table.containsKey("")) {
             table.get("").add(presence);
@@ -34,6 +37,9 @@ public interface IDrug {
      * @param presence The {@code DrugPresence} to attach to the drug's specified presences. You may attach multiple different presences per tag.
      */
     default IDrug attachDrugPresence(String type, DrugPresence presence) {
+        if (!drugPresenceTable.containsKey(this)) {
+            drugPresenceTable.put(this, new HashMap<>());
+        }
         HashMap<String, ArrayList<DrugPresence>> table = drugPresenceTable.get(this);
         if (table.containsKey(type)) {
             table.get(type).add(presence);
@@ -47,7 +53,15 @@ public interface IDrug {
      * @return An ArrayList containing the attached default {@code DrugPresence}(s).
      */
     default ArrayList<DrugPresence> getDrugPresences() {
-        return drugPresenceTable.get(this).get("");
+        if (!drugPresenceTable.containsKey(this)) {
+            System.out.println("Drug "+this+" does not have any DrugPresences attached.");
+            return new ArrayList<>();
+        } else if (!drugPresenceTable.get(this).containsKey("")) {
+            System.out.println("Drug "+this+" doesn't have any default DrugPresences attached.");
+            return new ArrayList<>();
+        } else {
+            return drugPresenceTable.get(this).get("");
+        }
     }
 
     /**
@@ -56,7 +70,16 @@ public interface IDrug {
      * @return An ArrayList containing the attached specified {@code DrugPresence}(s).
      */
     default ArrayList<DrugPresence> getDrugPresences(String type) {
-        return drugPresenceTable.get(this).get(type);
+        if (type.isEmpty()) return this.getDrugPresences();
+        if (!drugPresenceTable.containsKey(this)) {
+            System.out.println("Drug "+this+" does not have any DrugPresences attached.");
+            return new ArrayList<>();
+        } else if (!drugPresenceTable.get(this).containsKey(type)) {
+            System.out.println("Drug "+this+" doesn't have any DrugPresences attached with type: '"+type+"'.");
+            return new ArrayList<>();
+        } else {
+            return drugPresenceTable.get(this).get(type);
+        }
     }
 
     /**
@@ -65,6 +88,10 @@ public interface IDrug {
      * @param serverOnly Put {@code true} if method is called on the server side only, put {@code false} if method is called on both sides or client side only.
      */
     default void activateDrug(EntityPlayer player, float multiplier, boolean serverOnly) {
+        if (!drugPresenceTable.containsKey(this)) {
+            System.out.println("Drug "+this+" doesn't have any DrugPresences attached.");
+            return;
+        }
         HashMap<String, ArrayList<DrugPresence>> table = drugPresenceTable.get(this);
         if (table.containsKey("")) {
             ArrayList<DrugPresence> presences = new ArrayList<>(table.get("").size());
@@ -78,7 +105,7 @@ public interface IDrug {
                     });
                 }
             }
-        } else System.out.println("Drug "+this+" does not have any default DrugPresences attached.");
+        } else System.out.println("Drug "+this+" doesn't have any default DrugPresences attached.");
     }
 
     /**
@@ -88,6 +115,10 @@ public interface IDrug {
      * @param serverOnly Put {@code true} if method is called on the server side only, put {@code false} if method is called on both sides or client side only.
      */
     default void activateDrug(String type, EntityPlayer player, float multiplier, boolean serverOnly) {
+        if (!drugPresenceTable.containsKey(this)) {
+            System.out.println("Drug "+this+" doesn't have any DrugPresences attached.");
+            return;
+        }
         HashMap<String, ArrayList<DrugPresence>> table = drugPresenceTable.get(this);
         if (table.containsKey(type)) {
             ArrayList<DrugPresence> presences = new ArrayList<>(table.get(type).size());
@@ -101,7 +132,7 @@ public interface IDrug {
                     });
                 }
             }
-        } else System.out.println("Drug "+this+" does not have any DrugPresences attached with type: '"+type+"'.");
+        } else System.out.println("Drug "+this+" doesn't have any DrugPresences attached with type: '"+type+"'.");
     }
 
     /**

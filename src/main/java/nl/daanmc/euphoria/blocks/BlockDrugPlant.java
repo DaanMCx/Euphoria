@@ -21,11 +21,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import nl.daanmc.euphoria.util.ICannabis;
 
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class BlockDrugPlant extends BlockBush {
+public class BlockDrugPlant extends BlockBush implements ICannabis {
     public static final PropertyEnum<EnumBlockHalf> HALF = PropertyEnum.create("half", EnumBlockHalf.class);
     public static final PropertyBool ISDOUBLE = PropertyBool.create("isdouble");
     private Item drops;
@@ -62,6 +63,17 @@ public class BlockDrugPlant extends BlockBush {
             return 1;
         } else return state.getValue(HALF)==EnumBlockHalf.LOWER? 2 : 3;
     }
+
+//    @Override
+//    public boolean hasTileEntity(IBlockState state) {
+//        return state.getValue(HALF)==EnumBlockHalf.LOWER;
+//    }
+//
+//    @Nullable
+//    @Override
+//    public TileEntity createTileEntity(World world, IBlockState state) {
+//        return new TileEntityCannabisStrain();
+//    }
 
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
@@ -160,5 +172,36 @@ public class BlockDrugPlant extends BlockBush {
         if (state.getValue(ISDOUBLE)) {
             worldIn.setBlockState(pos.up(), this.getDefaultState().withProperty(HALF, EnumBlockHalf.UPPER).withProperty(ISDOUBLE, true), 2);
         }
+    }
+
+    //ICannabis
+    @Override
+    public float getSativa() {
+        return 0;
+    }
+
+    @Override
+    public void setSativa(float v) {
+
+    }
+
+    @Override
+    public float getIndica() {
+        return 0;
+    }
+
+    @Override
+    public void setIndica(float v) {
+
+    }
+
+    @Override
+    public boolean getAutoFlower() {
+        return false;
+    }
+
+    @Override
+    public void setAutoFlower(boolean v) {
+
     }
 }
