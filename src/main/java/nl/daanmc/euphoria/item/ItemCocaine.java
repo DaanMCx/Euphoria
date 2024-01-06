@@ -1,4 +1,4 @@
-package nl.daanmc.euphoria.items;
+package nl.daanmc.euphoria.item;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;

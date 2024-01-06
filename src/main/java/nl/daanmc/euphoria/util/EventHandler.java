@@ -71,9 +71,8 @@ public class EventHandler {
             }
             //TODO remove
             if (drugCap.getClientTick()%100 == 0) {
-                System.out.println("Client tick "+drugCap.getClientTick());
+                System.out.println("Client tick " + drugCap.getClientTick());
             }
-
             drugCap.doClientTick();
             //TODO: Update DrugInfluences
         }

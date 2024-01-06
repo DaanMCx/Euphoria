@@ -1,4 +1,4 @@
-package nl.daanmc.euphoria.items;
+package nl.daanmc.euphoria.item;
 
 import net.minecraft.item.ItemPotion;
 import nl.daanmc.euphoria.util.IDrug;

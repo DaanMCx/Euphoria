@@ -1,4 +1,4 @@
-package nl.daanmc.euphoria.entities;
+package nl.daanmc.euphoria.tileentity;
 
 import net.minecraft.tileentity.TileEntity;
 

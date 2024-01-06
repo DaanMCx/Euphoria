@@ -1,4 +1,4 @@
-package nl.daanmc.euphoria.blocks;
+package nl.daanmc.euphoria.block;
 
 import net.minecraft.block.BlockCrops;
 import net.minecraft.block.BlockDoublePlant.EnumBlockHalf;

@@ -7,10 +7,10 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemSeeds;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
-import nl.daanmc.euphoria.blocks.BlockCannabisCrop;
-import nl.daanmc.euphoria.blocks.BlockDrugPlant;
-import nl.daanmc.euphoria.blocks.BlockDryingTable;
-import nl.daanmc.euphoria.items.*;
+import nl.daanmc.euphoria.block.BlockCannabisCrop;
+import nl.daanmc.euphoria.block.BlockDrugPlant;
+import nl.daanmc.euphoria.block.BlockDryingTable;
+import nl.daanmc.euphoria.item.*;
 import nl.daanmc.euphoria.util.DrugSubstance;
 
 import java.util.ArrayList;

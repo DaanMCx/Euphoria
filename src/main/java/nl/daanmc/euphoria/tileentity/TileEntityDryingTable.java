@@ -1,4 +1,4 @@
-package nl.daanmc.euphoria.entities;
+package nl.daanmc.euphoria.tileentity;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -13,11 +13,12 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import nl.daanmc.euphoria.inventory.ContainerDryingTable;
 
 public class TileEntityDryingTable extends TileEntityLockable implements ITickable, ISidedInventory {
     public TileEntityDryingTable() {}
 
-    private NonNullList<ItemStack> dryingTableItemStacks = NonNullList.withSize(3, ItemStack.EMPTY);
+    private NonNullList<ItemStack> dryingTableItemStacks = NonNullList.withSize(2, ItemStack.EMPTY);
     private String dryingTableCustomName;
 
     @Override
@@ -25,26 +26,31 @@ public class TileEntityDryingTable extends TileEntityLockable implements ITickab
         super.readFromNBT(compound);
         this.dryingTableItemStacks = NonNullList.withSize(this.getSizeInventory(), ItemStack.EMPTY);
         ItemStackHelper.loadAllItems(compound, this.dryingTableItemStacks);
+        //todo
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
+        //todo
         return compound;
     }
 
     @Override
     public int[] getSlotsForFace(EnumFacing side) {
+        //todo
         return new int[0];
     }
 
     @Override
     public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
+        //todo
         return false;
     }
 
     @Override
     public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
+        //todo
         return false;
     }
 
@@ -69,42 +75,46 @@ public class TileEntityDryingTable extends TileEntityLockable implements ITickab
 
     @Override
     public ItemStack decrStackSize(int index, int count) {
-        return null;
+        return ItemStackHelper.getAndSplit(this.dryingTableItemStacks, index, count);
     }
 
     @Override
     public ItemStack removeStackFromSlot(int index) {
-        return null;
+        return ItemStackHelper.getAndRemove(this.dryingTableItemStacks, index);
     }
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
-
+        //todo
     }
 
     @Override
     public int getInventoryStackLimit() {
-        return 0;
+        return 64;
     }
 
     @Override
     public boolean isUsableByPlayer(EntityPlayer player) {
-        return false;
+        if (this.world.getTileEntity(this.pos) != this) {
+            return false;
+        } else {
+            return player.getDistanceSq((double)this.pos.getX() + 0.5D, (double)this.pos.getY() + 0.5D, (double)this.pos.getZ() + 0.5D) <= 64.0D;
+        }
     }
 
     @Override
     public void openInventory(EntityPlayer player) {
-
+        //todo??
     }
 
     @Override
     public void closeInventory(EntityPlayer player) {
-
+        //todo??
     }
 
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
-        return false;
+        return index==0;
     }
 
     @Override
@@ -124,17 +134,17 @@ public class TileEntityDryingTable extends TileEntityLockable implements ITickab
 
     @Override
     public void clear() {
-
+        this.dryingTableItemStacks.clear();
     }
 
     @Override
     public void update() {
-
+        //todo
     }
 
     @Override
     public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn) {
-        return null;
+        return new ContainerDryingTable(playerInventory, this);
     }
 
     @Override

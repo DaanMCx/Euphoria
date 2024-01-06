@@ -20,17 +20,17 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
 import nl.daanmc.euphoria.Elements.DrugSubstances;
-import nl.daanmc.euphoria.blocks.BlockCannabisCrop;
-import nl.daanmc.euphoria.blocks.BlockDrugPlant;
-import nl.daanmc.euphoria.blocks.BlockDryingTable;
-import nl.daanmc.euphoria.entities.TileEntityCannabisStrain;
-import nl.daanmc.euphoria.entities.TileEntityDryingTable;
-import nl.daanmc.euphoria.items.*;
+import nl.daanmc.euphoria.block.BlockCannabisCrop;
+import nl.daanmc.euphoria.block.BlockDrugPlant;
+import nl.daanmc.euphoria.block.BlockDryingTable;
+import nl.daanmc.euphoria.tileentity.TileEntityCannabisStrain;
+import nl.daanmc.euphoria.tileentity.TileEntityDryingTable;
+import nl.daanmc.euphoria.item.*;
 import nl.daanmc.euphoria.util.*;
 import nl.daanmc.euphoria.util.capabilities.DrugCap;
 import nl.daanmc.euphoria.util.capabilities.IDrugCap;
 import nl.daanmc.euphoria.util.proxy.IProxy;
-import nl.daanmc.euphoria.worldgen.WorldGenCannabisPlant;
+import nl.daanmc.euphoria.world.gen.feature.WorldGenCannabisPlant;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -113,7 +113,8 @@ public final class Euphoria {
                 new ItemEdibleDrug("suspicious_muffin", 4, 5F),
                 new ItemEdibleDrug("dried_red_mushroom", 2, 3F),
                 new ItemBlock(Elements.Blocks.DRYING_TABLE).setRegistryName(Elements.Blocks.DRYING_TABLE.getRegistryName()),
-                new ItemBlock(Elements.Blocks.CANNABIS_PLANT).setRegistryName(Elements.Blocks.CANNABIS_PLANT.getRegistryName())
+                new ItemBlock(Elements.Blocks.CANNABIS_PLANT).setRegistryName(Elements.Blocks.CANNABIS_PLANT.getRegistryName()),
+                new ItemBlock(Elements.Blocks.CANNABIS_CROP).setRegistryName(Elements.Blocks.CANNABIS_CROP.getRegistryName())
         };
         event.getRegistry().registerAll(ITEMS);
         Elements.ITEMS.addAll(Arrays.asList(ITEMS));
