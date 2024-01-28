@@ -30,7 +30,7 @@ import nl.daanmc.euphoria.util.*;
 import nl.daanmc.euphoria.util.capabilities.DrugCap;
 import nl.daanmc.euphoria.util.capabilities.IDrugCap;
 import nl.daanmc.euphoria.util.proxy.IProxy;
-import nl.daanmc.euphoria.world.gen.feature.WorldGenCannabisPlant;
+import nl.daanmc.euphoria.worldgen.feature.WorldGenCannabisPlant;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

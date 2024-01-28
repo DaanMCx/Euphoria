@@ -1,4 +1,4 @@
-package nl.daanmc.euphoria.world.gen.feature;
+package nl.daanmc.euphoria.worldgen.feature;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

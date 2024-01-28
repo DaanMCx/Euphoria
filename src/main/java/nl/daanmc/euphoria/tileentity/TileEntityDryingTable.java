@@ -11,14 +11,15 @@ import net.minecraft.tileentity.TileEntityLockable;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import nl.daanmc.euphoria.inventory.ContainerDryingTable;
+import nl.daanmc.euphoria.tileentity.inventory.ContainerDryingTable;
 
 public class TileEntityDryingTable extends TileEntityLockable implements ITickable, ISidedInventory {
     public TileEntityDryingTable() {}
 
     private NonNullList<ItemStack> dryingTableItemStacks = NonNullList.withSize(2, ItemStack.EMPTY);
+    private int dryingSpeed;
+    private int dryingProgress;
+    private int totalDried;
     private String dryingTableCustomName;
 
     @Override
@@ -26,32 +27,48 @@ public class TileEntityDryingTable extends TileEntityLockable implements ITickab
         super.readFromNBT(compound);
         this.dryingTableItemStacks = NonNullList.withSize(this.getSizeInventory(), ItemStack.EMPTY);
         ItemStackHelper.loadAllItems(compound, this.dryingTableItemStacks);
-        //todo
+        this.dryingSpeed = compound.getInteger("Speed");
+        this.dryingProgress = compound.getInteger("Progress");
+        this.totalDried = compound.getInteger("TotalDried");
+        if (compound.hasKey("CustomName", 8)) {
+            this.dryingTableCustomName = compound.getString("CustomName");
+        }
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
-        //todo
+        compound.setInteger("Speed", this.dryingSpeed);
+        compound.setInteger("Progress", this.dryingProgress);
+        compound.setInteger("TotalDried", this.totalDried);
+        ItemStackHelper.saveAllItems(compound, this.dryingTableItemStacks);
+        if (this.hasCustomName()) {
+            compound.setString("CustomName", this.dryingTableCustomName);
+        }
         return compound;
     }
 
     @Override
     public int[] getSlotsForFace(EnumFacing side) {
-        //todo
-        return new int[0];
+        if (side == EnumFacing.DOWN) {
+            return new int[] {1};
+        } else {
+            return new int[] {0};
+        }
     }
 
     @Override
     public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
-        //todo
-        return false;
+        if (index != 0) {
+            return false;
+        } else {
+            return this.isItemValidForSlot(index, itemStackIn);
+        }
     }
 
     @Override
     public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
-        //todo
-        return false;
+        return index == 1 && direction == EnumFacing.DOWN;
     }
 
     @Override
@@ -85,7 +102,19 @@ public class TileEntityDryingTable extends TileEntityLockable implements ITickab
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
-        //todo
+        ItemStack itemstack = this.dryingTableItemStacks.get(index);
+        boolean flag = !stack.isEmpty() && stack.isItemEqual(itemstack) && ItemStack.areItemStackTagsEqual(stack, itemstack);
+        this.dryingTableItemStacks.set(index, stack);
+
+        if (stack.getCount() > this.getInventoryStackLimit()) {
+            stack.setCount(this.getInventoryStackLimit());
+        }
+
+        if (index == 0 && !flag) {
+            //this.totalCookTime = this.getCookTime(stack);
+            //this.cookTime = 0;
+            this.markDirty();
+        }
     }
 
     @Override
@@ -119,17 +148,35 @@ public class TileEntityDryingTable extends TileEntityLockable implements ITickab
 
     @Override
     public int getField(int id) {
-        return 0;
+        switch (id) {
+            case 0:
+                return this.dryingSpeed;
+            case 1:
+                return this.dryingProgress;
+            case 2:
+                return this.totalDried;
+            default:
+                return 0;
+        }
     }
 
     @Override
     public void setField(int id, int value) {
-
+        switch (id) {
+            case 0:
+                this.dryingSpeed = value;
+                break;
+            case 1:
+                this.dryingProgress = value;
+                break;
+            case 2:
+                this.totalDried = value;
+        }
     }
 
     @Override
     public int getFieldCount() {
-        return 0;
+        return 3;
     }
 
     @Override
@@ -149,22 +196,22 @@ public class TileEntityDryingTable extends TileEntityLockable implements ITickab
 
     @Override
     public String getGuiID() {
-        return null;
+        return "euphoria:drying_table";
     }
 
     @Override
     public String getName() {
-        return null;
+        return this.hasCustomName() ? this.dryingTableCustomName : "container.drying_table";
     }
 
     @Override
     public boolean hasCustomName() {
-        return false;
+        return this.dryingTableCustomName != null && !this.dryingTableCustomName.isEmpty();
     }
 
-    public float getSunLevel(World worldIn, BlockPos pos) {
-        if (worldIn.canBlockSeeSky(pos)) {
-            return (float) Math.max(0.0F, Math.sin((Math.PI*worldIn.getWorldTime())/12000));
+    public float getSunLevel() {
+        if (this.world.canBlockSeeSky(this.pos)) {
+            return (float) Math.max(0.0F, Math.sin((Math.PI*this.world.getWorldTime())/12000));
         } else return 0.0F;
     }
 }
