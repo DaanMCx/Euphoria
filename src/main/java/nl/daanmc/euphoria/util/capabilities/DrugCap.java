@@ -9,9 +9,9 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.fml.common.Mod;
-import nl.daanmc.euphoria.Elements;
-import nl.daanmc.euphoria.util.DrugSubstance;
+import nl.daanmc.euphoria.Euphoria;
 import nl.daanmc.euphoria.util.DrugPresence;
+import nl.daanmc.euphoria.util.DrugSubstance;
 import nl.daanmc.euphoria.util.tasks.ITask;
 
 import javax.annotation.Nonnull;
@@ -138,7 +138,7 @@ public class DrugCap implements IDrugCap {
                 tag.setLong("dpcap:ap:"+count.get()+":t", tick);
             });
             tag.setInteger("dpcap:ap", count.get());
-            Elements.SUBSTANCES.forEach(drugSubstance -> {
+            Euphoria.Content.SUBSTANCES.forEach(drugSubstance -> {
                 tag.setFloat("dpcap:dp:"+drugSubstance.getRegistryName().toString(), instance.getDrugs().getOrDefault(drugSubstance, 0F));
                 tag.setFloat("dpcap:ba:"+drugSubstance.getRegistryName().toString(), instance.getBreakdownAmounts().getOrDefault(drugSubstance, 0F));
                 tag.setFloat("dpcap:bt:"+drugSubstance.getRegistryName().toString(), instance.getBreakdownTicks().getOrDefault(drugSubstance, 0L));
@@ -160,7 +160,7 @@ public class DrugCap implements IDrugCap {
                     instance.getActivePresences().put(new DrugPresence(substance, amount, incubation, delay), tick);
                 }
             }
-            Elements.SUBSTANCES.forEach(drugSubstance -> {
+            Euphoria.Content.SUBSTANCES.forEach(drugSubstance -> {
                 instance.getDrugs().put(drugSubstance, tag.getFloat("dpcap:dp:"+drugSubstance.getRegistryName().toString()));
                 instance.getBreakdownAmounts().put(drugSubstance, tag.getFloat("dpcap:ba:"+drugSubstance.getRegistryName().toString()));
                 instance.getBreakdownTicks().put(drugSubstance, tag.getLong("dpcap:bt:"+drugSubstance.getRegistryName().toString()));

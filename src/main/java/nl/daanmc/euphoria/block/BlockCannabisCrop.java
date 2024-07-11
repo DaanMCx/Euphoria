@@ -9,7 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import nl.daanmc.euphoria.Elements;
+import nl.daanmc.euphoria.Euphoria;
 
 import java.util.Random;
 
@@ -113,12 +113,12 @@ public class BlockCannabisCrop extends BlockCrops {
 
     @Override
     protected Item getSeed() {
-        return Elements.Items.CANNABIS_SEEDS;
+        return Euphoria.Content.Items.CANNABIS_SEEDS;
     }
 
     @Override
     protected Item getCrop() {
-        return Elements.Items.CANNABIS_BUD;
+        return Euphoria.Content.Items.CANNABIS_BUD;
     }
 
     public static boolean isDoubleCropFullyGrown(World worldin, BlockPos pos, IBlockState state) {

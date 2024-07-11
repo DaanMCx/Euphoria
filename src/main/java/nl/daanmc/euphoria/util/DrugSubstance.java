@@ -2,7 +2,7 @@ package nl.daanmc.euphoria.util;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistryEntry;
-import nl.daanmc.euphoria.Elements;
+import nl.daanmc.euphoria.Euphoria;
 
 import java.util.HashMap;
 
@@ -11,7 +11,7 @@ public class DrugSubstance extends IForgeRegistryEntry.Impl<DrugSubstance> {
     private final int breakdownTime;
     public DrugSubstance(int breakdownTime) {
         this.breakdownTime = breakdownTime;
-        Elements.SUBSTANCES.add(this);
+        Euphoria.Content.SUBSTANCES.add(this);
     }
 
     public int getBreakdownTime() {return this.breakdownTime;}

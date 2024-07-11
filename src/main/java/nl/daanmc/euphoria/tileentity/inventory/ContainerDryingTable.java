@@ -76,10 +76,7 @@ public class ContainerDryingTable extends Container {
         if (slot != null && slot.getHasStack()) {
             ItemStack itemstack1 = slot.getStack();
             itemstack = itemstack1.copy();
-            if (index == 2) {
-                if (!this.mergeItemStack(itemstack1, 3, 39, true)) {
-                    return ItemStack.EMPTY;
-                }
+            if (index == 2 && !this.mergeItemStack(itemstack1, 3, 39, true)) {
                 slot.onSlotChange(itemstack1, itemstack);
             } else if (index != 1 && index != 0) {
                 if (!FurnaceRecipes.instance().getSmeltingResult(itemstack1).isEmpty()) {

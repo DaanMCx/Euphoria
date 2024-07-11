@@ -9,7 +9,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
-import nl.daanmc.euphoria.Elements.Tabs;
+import nl.daanmc.euphoria.Euphoria;
 import nl.daanmc.euphoria.util.IDrug;
 
 public class ItemDrug extends Item implements IDrug {
@@ -18,7 +18,7 @@ public class ItemDrug extends Item implements IDrug {
     public ItemDrug(String name, int maxFullUses, int maxUseDuration, boolean isSmokableInTool) {
         setTranslationKey(name);
         setRegistryName(name);
-        setCreativeTab(Tabs.EUPHORIA);
+        setCreativeTab(Euphoria.Content.Tabs.EUPHORIA);
         setMaxDamage(maxFullUses * maxUseDuration);
         setMaxStackSize(1);
         setHasSubtypes(false);

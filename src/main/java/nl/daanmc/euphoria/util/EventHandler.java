@@ -13,7 +13,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import nl.daanmc.euphoria.Elements;
 import nl.daanmc.euphoria.Euphoria;
 import nl.daanmc.euphoria.util.capabilities.DrugCap;
 import nl.daanmc.euphoria.util.capabilities.IDrugCap;
@@ -88,7 +87,7 @@ public class EventHandler {
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         IDrugCap drugCap = event.player.getCapability(DrugCap.Provider.CAP,null);
-        Elements.SUBSTANCES.forEach(drugSubstance -> {
+        Euphoria.Content.SUBSTANCES.forEach(drugSubstance -> {
             drugCap.getDrugs().putIfAbsent(drugSubstance, 0F);
             drugCap.getBreakdownTicks().putIfAbsent(drugSubstance, 0L);
             drugCap.getBreakdownAmounts().putIfAbsent(drugSubstance, 0F);

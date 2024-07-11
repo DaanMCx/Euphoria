@@ -5,7 +5,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.fml.common.IWorldGenerator;
-import nl.daanmc.euphoria.Elements.Blocks;
+import nl.daanmc.euphoria.Euphoria.Content.Blocks;
 
 import java.util.Random;
 

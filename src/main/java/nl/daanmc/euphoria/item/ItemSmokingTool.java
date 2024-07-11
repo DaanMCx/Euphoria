@@ -7,14 +7,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
-import nl.daanmc.euphoria.Elements.Tabs;
+import nl.daanmc.euphoria.Euphoria;
 
 public class ItemSmokingTool extends Item {
     private final int useDuration;
     public ItemSmokingTool(String name, int maxUses, int itemUseDuration) {
         setTranslationKey(name);
         setRegistryName(name);
-        setCreativeTab(Tabs.EUPHORIA);
+        setCreativeTab(Euphoria.Content.Tabs.EUPHORIA);
         setMaxDamage(maxUses);
         setMaxStackSize(1);
         setHasSubtypes(false);
