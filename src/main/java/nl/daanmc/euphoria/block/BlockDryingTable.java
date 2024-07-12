@@ -3,8 +3,11 @@ package nl.daanmc.euphoria.block;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -19,13 +22,29 @@ import nl.daanmc.euphoria.tileentity.TileEntityDryingTable;
 import javax.annotation.Nullable;
 
 public class BlockDryingTable extends Block implements ITileEntityProvider {
+    public static final PropertyBool ACTIVE = PropertyBool.create("active");
     public BlockDryingTable() {
         super(Material.WOOD);
         setTranslationKey("drying_table");
         setRegistryName("drying_table");
         setCreativeTab(Euphoria.Content.Tabs.EUPHORIA);
         setHardness(10);
-        setLightLevel(1);
+        setDefaultState(this.blockState.getBaseState().withProperty(ACTIVE, false));
+    }
+
+    @Override
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, ACTIVE);
+    }
+
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return meta == 2 ? getDefaultState().withProperty(ACTIVE, true) : getDefaultState();
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return state==getDefaultState() ? 1 : 2;
     }
 
     @Override
@@ -41,6 +60,13 @@ public class BlockDryingTable extends Block implements ITileEntityProvider {
     @Override
     public boolean isOpaqueCube(IBlockState state) {
         return false;
+    }
+
+    @Override
+    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+        TileEntityDryingTable tileEntity = (TileEntityDryingTable)worldIn.getTileEntity(pos);
+        InventoryHelper.dropInventoryItems(worldIn, pos, tileEntity);
+        super.breakBlock(worldIn, pos, state);
     }
 
     @Override
@@ -67,6 +93,6 @@ public class BlockDryingTable extends Block implements ITileEntityProvider {
     @Nullable
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return null;
+        return new TileEntityDryingTable();
     }
 }

@@ -2,18 +2,22 @@ package nl.daanmc.euphoria.block;
 
 import net.minecraft.block.BlockCrops;
 import net.minecraft.block.BlockDoublePlant.EnumBlockHalf;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import nl.daanmc.euphoria.Euphoria;
+import nl.daanmc.euphoria.tileentity.TileEntityCannabisStrain;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 
-public class BlockCannabisCrop extends BlockCrops {
+public class BlockCannabisCrop extends BlockCrops implements ITileEntityProvider {
     public static final PropertyEnum<EnumBlockHalf> HALF = PropertyEnum.create("half", EnumBlockHalf.class);
     public BlockCannabisCrop() {
         this.setRegistryName("cannabis_crop");
@@ -129,5 +133,11 @@ public class BlockCannabisCrop extends BlockCrops {
         } else {
             return state.getValue(AGE)==7;
         }
+    }
+
+    @Nullable
+    @Override
+    public TileEntity createNewTileEntity(World worldIn, int meta) {
+        return new TileEntityCannabisStrain();
     }
 }

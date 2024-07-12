@@ -1,5 +1,6 @@
 {
   "variants": {
-    "normal": {"model": "euphoria:drying_table"}
+    "active=true": {"model": "euphoria:drying_table_active"},
+    "active=false": {"model":  "euphoria:drying_table_inactive"}
   }
 }

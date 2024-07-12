@@ -21,21 +21,21 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import nl.daanmc.euphoria.util.ICannabis;
 
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class BlockDrugPlant extends BlockBush implements ICannabis {
+public class BlockDrugPlant extends BlockBush {
     public static final PropertyEnum<EnumBlockHalf> HALF = PropertyEnum.create("half", EnumBlockHalf.class);
-    public static final PropertyBool ISDOUBLE = PropertyBool.create("isdouble");
+    public static final PropertyBool DOUBLE = PropertyBool.create("double");
     private Item drops;
+
     public BlockDrugPlant(String name) {
         super(Material.PLANTS);
         this.setRegistryName(name);
         this.setTranslationKey(name);
         this.setSoundType(SoundType.PLANT);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(ISDOUBLE, false).withProperty(HALF, EnumBlockHalf.LOWER));
+        this.setDefaultState(this.blockState.getBaseState().withProperty(DOUBLE, false).withProperty(HALF, EnumBlockHalf.LOWER));
     }
 
     public void setDrops(Item drops) {
@@ -44,7 +44,7 @@ public class BlockDrugPlant extends BlockBush implements ICannabis {
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, HALF, ISDOUBLE);
+        return new BlockStateContainer(this, HALF, DOUBLE);
     }
 
     @Override
@@ -52,28 +52,15 @@ public class BlockDrugPlant extends BlockBush implements ICannabis {
         switch (meta) {
             default: return null;
             case 1: return getDefaultState();
-            case 2: return getDefaultState().withProperty(ISDOUBLE, true).withProperty(HALF, EnumBlockHalf.LOWER);
-            case 3: return getDefaultState().withProperty(ISDOUBLE, true).withProperty(HALF, EnumBlockHalf.UPPER);
+            case 2: return getDefaultState().withProperty(DOUBLE, true).withProperty(HALF, EnumBlockHalf.LOWER);
+            case 3: return getDefaultState().withProperty(DOUBLE, true).withProperty(HALF, EnumBlockHalf.UPPER);
         }
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        if (state==getDefaultState()) {
-            return 1;
-        } else return state.getValue(HALF)==EnumBlockHalf.LOWER? 2 : 3;
+        return state==getDefaultState() ? 1 : state.getValue(HALF)==EnumBlockHalf.LOWER ? 2 : 3;
     }
-
-//    @Override
-//    public boolean hasTileEntity(IBlockState state) {
-//        return state.getValue(HALF)==EnumBlockHalf.LOWER;
-//    }
-//
-//    @Nullable
-//    @Override
-//    public TileEntity createTileEntity(World world, IBlockState state) {
-//        return new TileEntityCannabisStrain();
-//    }
 
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
@@ -92,9 +79,9 @@ public class BlockDrugPlant extends BlockBush implements ICannabis {
                 worldIn.setBlockState(pos, this.getDefaultState());
             } else {
                 for (int i = 0; i < height-1; i++) {
-                    worldIn.setBlockState(pos.up(i), this.getDefaultState().withProperty(HALF, EnumBlockHalf.LOWER).withProperty(ISDOUBLE, true));
+                    worldIn.setBlockState(pos.up(i), this.getDefaultState().withProperty(HALF, EnumBlockHalf.LOWER).withProperty(DOUBLE, true));
                 }
-                worldIn.setBlockState(pos.up(height-1), this.getDefaultState().withProperty(HALF, EnumBlockHalf.UPPER).withProperty(ISDOUBLE, true));
+                worldIn.setBlockState(pos.up(height-1), this.getDefaultState().withProperty(HALF, EnumBlockHalf.UPPER).withProperty(DOUBLE, true));
             }
         }
     }
@@ -154,7 +141,7 @@ public class BlockDrugPlant extends BlockBush implements ICannabis {
 
     @Override
     protected boolean canSustainBush(IBlockState state) {
-        return state.getBlock() == Blocks.GRASS || state.getBlock() == Blocks.DIRT || state.getBlock() == Blocks.FARMLAND || state.equals(this.getDefaultState().withProperty(ISDOUBLE, true).withProperty(HALF, EnumBlockHalf.LOWER));
+        return state.getBlock() == Blocks.GRASS || state.getBlock() == Blocks.DIRT || state.getBlock() == Blocks.FARMLAND || state.equals(this.getDefaultState().withProperty(DOUBLE, true).withProperty(HALF, EnumBlockHalf.LOWER));
     }
 
     @Override
@@ -164,44 +151,13 @@ public class BlockDrugPlant extends BlockBush implements ICannabis {
 
     @Override
     public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
-        return world.getBiome(pos).getTemperature(pos)>0.6F? this.getDefaultState().withProperty(ISDOUBLE, true) : this.getDefaultState();
+        return world.getBiome(pos).getTemperature(pos)>0.6F? this.getDefaultState().withProperty(DOUBLE, true) : this.getDefaultState();
     }
 
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        if (state.getValue(ISDOUBLE)) {
-            worldIn.setBlockState(pos.up(), this.getDefaultState().withProperty(HALF, EnumBlockHalf.UPPER).withProperty(ISDOUBLE, true), 2);
+        if (state.getValue(DOUBLE)) {
+            worldIn.setBlockState(pos.up(), this.getDefaultState().withProperty(HALF, EnumBlockHalf.UPPER).withProperty(DOUBLE, true), 2);
         }
-    }
-
-    //ICannabis
-    @Override
-    public float getSativa() {
-        return 0;
-    }
-
-    @Override
-    public void setSativa(float v) {
-
-    }
-
-    @Override
-    public float getIndica() {
-        return 0;
-    }
-
-    @Override
-    public void setIndica(float v) {
-
-    }
-
-    @Override
-    public boolean getAutoFlower() {
-        return false;
-    }
-
-    @Override
-    public void setAutoFlower(boolean v) {
-
     }
 }

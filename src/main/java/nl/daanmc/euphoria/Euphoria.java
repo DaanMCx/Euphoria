@@ -24,10 +24,13 @@ import net.minecraftforge.registries.RegistryBuilder;
 import nl.daanmc.euphoria.block.BlockCannabisCrop;
 import nl.daanmc.euphoria.block.BlockDrugPlant;
 import nl.daanmc.euphoria.block.BlockDryingTable;
+import nl.daanmc.euphoria.item.*;
 import nl.daanmc.euphoria.tileentity.TileEntityCannabisStrain;
 import nl.daanmc.euphoria.tileentity.TileEntityDryingTable;
-import nl.daanmc.euphoria.item.*;
-import nl.daanmc.euphoria.util.*;
+import nl.daanmc.euphoria.util.DrugPresence;
+import nl.daanmc.euphoria.util.DrugSubstance;
+import nl.daanmc.euphoria.util.EventHandler;
+import nl.daanmc.euphoria.util.NetworkHandler;
 import nl.daanmc.euphoria.util.capabilities.DrugCap;
 import nl.daanmc.euphoria.util.capabilities.IDrugCap;
 import nl.daanmc.euphoria.util.proxy.IProxy;
@@ -76,7 +79,7 @@ public final class Euphoria {
         Content.SUBSTANCES.forEach((substance) -> DrugSubstance.REGISTRY.put(substance.getRegistryName(), substance));
         Content.Items.COCAINE.attachDrugPresence(new DrugPresence(Content.DrugSubstances.COCAINE, 20, 100, 500));
         Content.Items.CIGARETTE.attachDrugPresence(new DrugPresence(Content.DrugSubstances.NICOTINE, 5,100,200));
-        Content.Blocks.CANNABIS_PLANT.setDrops(Content.Items.CANNABIS_SEEDS);
+        //Content.Blocks.TOBACCO_PLANT.setDrops(Content.Items.TOBACCO_SEEDS);
     }
     
     @SubscribeEvent

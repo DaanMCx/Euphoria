@@ -3,8 +3,8 @@
 	"textures": {
 		"0": "euphoria:blocks/drying_table_bottom",
 		"1": "euphoria:blocks/drying_table_side",
-		"2": "euphoria:blocks/drying_table_top",
-		"particle": "euphoria:blocks/drying_table_bottom"
+		"2": "euphoria:blocks/drying_table_top_active",
+		"particle": "euphoria:blocks/drying_table_top_active"
 	},
 	"elements": [
 		{
