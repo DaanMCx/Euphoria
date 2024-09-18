@@ -35,8 +35,8 @@ public class MsgSyncDrugCap implements IMessage {
             buf.writeInt(stringBytes.length);
             buf.writeBytes(stringBytes);
             buf.writeFloat(presence.amount);
-            buf.writeInt(presence.incubation);
             buf.writeInt(presence.delay);
+            buf.writeInt(presence.comeUp);
             buf.writeLong(tick);
         }));
         buf.writeInt(capability.getDrugs().size());

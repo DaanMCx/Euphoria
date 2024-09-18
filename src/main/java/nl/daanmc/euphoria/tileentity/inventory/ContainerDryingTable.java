@@ -6,14 +6,15 @@ import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class ContainerDryingTable extends Container {
-    private final IInventory tileDryingTable;
+    private final IItemHandlerModifiable tileDryingTable;
     private int dryingSpeed;
     private int dryingProgress;
     private int totalDried;
 
-    public ContainerDryingTable(InventoryPlayer playerInventory, IInventory dryingTableInventory) {
+    public ContainerDryingTable(InventoryPlayer playerInventory, IItemHandlerModifiable dryingTableInventory) {
         this.dryingSpeed = 0;
         this.dryingProgress = 0;
         this.totalDried = 0;

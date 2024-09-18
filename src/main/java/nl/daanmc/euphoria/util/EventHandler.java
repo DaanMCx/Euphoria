@@ -42,7 +42,7 @@ public class EventHandler {
             //Filter activePresences for relevancy
             ArrayList<DrugPresence> oldPresences = new ArrayList<>();
             drugCap.getActivePresences().forEach((drugPresence, tick) -> {
-                if (tick + 2 * drugPresence.delay + 1 < drugCap.getClientTick()) {
+                if (tick + 2 * drugPresence.comeUp + 1 < drugCap.getClientTick()) {
                     oldPresences.add(drugPresence);
                 }
             });
@@ -118,8 +118,9 @@ public class EventHandler {
     //Common
     @SubscribeEvent
     public void attachCapability(AttachCapabilitiesEvent<Entity> event) {
-        if(!(event.getObject() instanceof EntityPlayer)) return;
-        EntityPlayer player = (EntityPlayer) event.getObject();
-        event.addCapability(new ResourceLocation(Euphoria.MODID, "drug_cap"), new DrugCap.Provider(player));
+        if(event.getObject() instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) event.getObject();
+            event.addCapability(new ResourceLocation(Euphoria.MODID, "drug_cap"), new DrugCap.Provider(player));
+        }
     }
 }

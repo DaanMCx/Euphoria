@@ -4,6 +4,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.items.CapabilityItemHandler;
 import nl.daanmc.euphoria.Euphoria;
 import nl.daanmc.euphoria.tileentity.TileEntityDryingTable;
 import nl.daanmc.euphoria.tileentity.inventory.ContainerDryingTable;
@@ -14,7 +15,7 @@ public class GuiDryingTable extends GuiContainer {
     private final TileEntityDryingTable tileEntity;
 
     public GuiDryingTable(InventoryPlayer playerInv, TileEntityDryingTable dryingTable) {
-        super(new ContainerDryingTable(playerInv, dryingTable));
+        super(new ContainerDryingTable(playerInv, dryingTable.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).));
         this.playerInventory = playerInv;
         this.tileEntity = dryingTable;
     }

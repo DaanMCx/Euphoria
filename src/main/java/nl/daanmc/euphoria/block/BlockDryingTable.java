@@ -1,13 +1,11 @@
 package nl.daanmc.euphoria.block;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -21,7 +19,7 @@ import nl.daanmc.euphoria.tileentity.TileEntityDryingTable;
 
 import javax.annotation.Nullable;
 
-public class BlockDryingTable extends Block implements ITileEntityProvider {
+public class BlockDryingTable extends BlockContainer {
     public static final PropertyBool ACTIVE = PropertyBool.create("active");
     public BlockDryingTable() {
         super(Material.WOOD);
@@ -63,18 +61,10 @@ public class BlockDryingTable extends Block implements ITileEntityProvider {
     }
 
     @Override
-    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-        TileEntityDryingTable tileEntity = (TileEntityDryingTable)worldIn.getTileEntity(pos);
-        InventoryHelper.dropInventoryItems(worldIn, pos, tileEntity);
-        super.breakBlock(worldIn, pos, state);
-    }
-
-    @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (!worldIn.isRemote) {
-            TileEntity tileEntity = worldIn.getTileEntity(pos);
-            if (tileEntity instanceof TileEntityDryingTable) {
-                System.out.println("checking if is");
+            if (worldIn.getTileEntity(pos) instanceof TileEntityDryingTable) {
+                System.out.println("Opening DryingTable GUI");
             }
         }
         return true;
@@ -88,6 +78,11 @@ public class BlockDryingTable extends Block implements ITileEntityProvider {
     @Override
     public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
         return new ItemStack(this);
+    }
+
+    @Override
+    public boolean hasTileEntity(IBlockState state) {
+        return true;
     }
 
     @Nullable

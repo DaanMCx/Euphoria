@@ -133,8 +133,8 @@ public class DrugCap implements IDrugCap {
             instance.getActivePresences().forEach((presence, tick) -> {
                 tag.setString("dpcap:ap:"+count.incrementAndGet()+":s", presence.substance.getRegistryName().toString());
                 tag.setFloat("dpcap:ap:"+count.get()+":a", presence.amount);
-                tag.setInteger("dpcap:ap:"+count.get()+":i", presence.incubation);
-                tag.setInteger("dpcap:ap:"+count.get()+":d", presence.delay);
+                tag.setInteger("dpcap:ap:"+count.get()+":i", presence.delay);
+                tag.setInteger("dpcap:ap:"+count.get()+":d", presence.comeUp);
                 tag.setLong("dpcap:ap:"+count.get()+":t", tick);
             });
             tag.setInteger("dpcap:ap", count.get());
