@@ -118,6 +118,7 @@ public class EventHandler {
     //Common
     @SubscribeEvent
     public void attachCapability(AttachCapabilitiesEvent<Entity> event) {
+        //Attach Drug capability to players
         if(event.getObject() instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) event.getObject();
             event.addCapability(new ResourceLocation(Euphoria.MODID, "drug_cap"), new DrugCap.Provider(player));

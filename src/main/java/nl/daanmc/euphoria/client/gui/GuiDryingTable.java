@@ -1,4 +1,4 @@
-package nl.daanmc.euphoria.tileentity.inventory.gui;
+package nl.daanmc.euphoria.client.gui;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -15,7 +15,7 @@ public class GuiDryingTable extends GuiContainer {
     private final TileEntityDryingTable tileEntity;
 
     public GuiDryingTable(InventoryPlayer playerInv, TileEntityDryingTable dryingTable) {
-        super(new ContainerDryingTable(playerInv, dryingTable.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).));
+        super(new ContainerDryingTable(playerInv, dryingTable.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)));
         this.playerInventory = playerInv;
         this.tileEntity = dryingTable;
     }

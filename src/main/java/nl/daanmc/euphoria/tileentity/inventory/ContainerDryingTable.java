@@ -6,10 +6,11 @@ import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class ContainerDryingTable extends Container {
-    private final IItemHandlerModifiable tileDryingTable;
+    private final IItemHandler inventory;
     private int dryingSpeed;
     private int dryingProgress;
     private int totalDried;
@@ -19,9 +20,9 @@ public class ContainerDryingTable extends Container {
         this.dryingProgress = 0;
         this.totalDried = 0;
 
-        this.tileDryingTable = dryingTableInventory;
-        this.addSlotToContainer(new Slot(dryingTableInventory, 0, 10, 10));
-        this.addSlotToContainer(new SlotFurnaceOutput(playerInventory.player, dryingTableInventory, 1, 100, 10));
+        this.inventory = dryingTableInventory;
+//        this.addSlotToContainer(new Slot(dryingTableInventory, 0, 10, 10));
+//        this.addSlotToContainer(new SlotFurnaceOutput(playerInventory.player, dryingTableInventory, 1, 100, 10));
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 9; ++j) {
                 this.addSlotToContainer(new Slot(playerInventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
@@ -35,38 +36,38 @@ public class ContainerDryingTable extends Container {
     @Override
     public void addListener(IContainerListener listener) {
         super.addListener(listener);
-        listener.sendAllWindowProperties(this, this.tileDryingTable);
+//        listener.sendAllWindowProperties(this, this.inventory);
     }
 
     @Override
     public void detectAndSendChanges() {
-        super.detectAndSendChanges();
-        for (IContainerListener icontainerlistener : this.listeners) {
-            if (this.dryingSpeed != this.tileDryingTable.getField(0)) {
-                icontainerlistener.sendWindowProperty(this, 0, this.tileDryingTable.getField(0));
-            }
-
-            if (this.dryingProgress != this.tileDryingTable.getField(1)) {
-                icontainerlistener.sendWindowProperty(this, 1, this.tileDryingTable.getField(1));
-            }
-
-            if (this.totalDried != this.tileDryingTable.getField(2)) {
-                icontainerlistener.sendWindowProperty(this, 2, this.tileDryingTable.getField(2));
-            }
-        }
-        this.dryingSpeed = this.tileDryingTable.getField(0);
-        this.dryingProgress = this.tileDryingTable.getField(1);
-        this.totalDried = this.tileDryingTable.getField(2);
+//        super.detectAndSendChanges();
+//        for (IContainerListener icontainerlistener : this.listeners) {
+//            if (this.dryingSpeed != this.inventory.getField(0)) {
+//                icontainerlistener.sendWindowProperty(this, 0, this.inventory.getField(0));
+//            }
+//
+//            if (this.dryingProgress != this.inventory.getField(1)) {
+//                icontainerlistener.sendWindowProperty(this, 1, this.inventory.getField(1));
+//            }
+//
+//            if (this.totalDried != this.inventory.getField(2)) {
+//                icontainerlistener.sendWindowProperty(this, 2, this.inventory.getField(2));
+//            }
+//        }
+//        this.dryingSpeed = this.inventory.getField(0);
+//        this.dryingProgress = this.inventory.getField(1);
+//        this.totalDried = this.inventory.getField(2);
     }
 
     @Override
     public void updateProgressBar(int id, int data) {
-        this.tileDryingTable.setField(id, data);
+//        this.inventory.setField(id, data);
     }
 
     @Override
     public boolean canInteractWith(EntityPlayer playerIn) {
-        return this.tileDryingTable.isUsableByPlayer(playerIn);
+//        return this.inventory.isUsableByPlayer(playerIn);
     }
 
     @Override
@@ -108,6 +109,7 @@ public class ContainerDryingTable extends Container {
             }
             slot.onTake(playerIn, itemstack1);
         }
+
         return itemstack;
     }
 }

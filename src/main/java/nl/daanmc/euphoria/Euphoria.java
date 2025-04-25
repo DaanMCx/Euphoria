@@ -217,5 +217,7 @@ public final class Euphoria {
             };
         }
         public static ArrayList<CreativeTabs> TABS = new ArrayList<>();
+
+        public static final int GUI_DRYING_TABLE = 2;
     }
 }
