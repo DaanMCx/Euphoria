@@ -12,12 +12,12 @@ import nl.daanmc.euphoria.tileentity.inventory.ContainerDryingTable;
 public class GuiDryingTable extends GuiContainer {
     private static final ResourceLocation DRYINGTABLE_GUI_TEXTURES = new ResourceLocation(Euphoria.MODID,"textures/gui/container/dryingtable.png");
     private final InventoryPlayer playerInventory;
-    private final TileEntityDryingTable tileEntity;
+    private final TileEntityDryingTable tileDryingTable;
 
     public GuiDryingTable(InventoryPlayer playerInv, TileEntityDryingTable dryingTable) {
         super(new ContainerDryingTable(playerInv, dryingTable.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)));
         this.playerInventory = playerInv;
-        this.tileEntity = dryingTable;
+        this.tileDryingTable = dryingTable;
     }
 
     @Override
@@ -27,9 +27,10 @@ public class GuiDryingTable extends GuiContainer {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        String tileName = this.tileEntity.getDisplayName().getUnformattedText();
+        String tileName = this.tileDryingTable.getDisplayName().getUnformattedText();
         this.fontRenderer.drawString(tileName, (this.xSize / 2 - this.fontRenderer.getStringWidth(tileName) / 2) + 3, 8, 4210752);
         this.fontRenderer.drawString(this.playerInventory.getDisplayName().getUnformattedText(), 122, this.ySize - 96 + 2, 4210752);
+        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     }
 
     @Override
@@ -40,13 +41,11 @@ public class GuiDryingTable extends GuiContainer {
     }
 
     private int getSunLevelScaled(int pixels) {
-        int i = this.tileEntity.getField(1);
-        return this.tileEntity.getField(0) * pixels / i;
+        return (int) (this.tileDryingTable.getSunLevel() * pixels);
     }
 
     private int getDryingProgressScaled(int pixels) {
-        int i = this.tileEntity.getField(2);
-        int j = this.tileEntity.getField(3);
-        return i != 0 && j != 0 ? 1 * pixels / j : 0;
+        float relativeProgress = (float) this.tileDryingTable.getDryingProgress() / this.tileDryingTable.getCurrentDryingTime();
+        return (int) (relativeProgress * pixels);
     }
 }

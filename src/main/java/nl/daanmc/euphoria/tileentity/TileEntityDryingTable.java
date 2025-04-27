@@ -31,12 +31,13 @@ public class TileEntityDryingTable extends TileEntity implements ITickable {
     private String customName;
 
     private int dryingProgress, totalDried;
-    private float sunLevel, dryingSpeed;
+    private float sunLevel;
 
     public static HashMap<Item, Item> DRYABLE_ITEMS = new HashMap<>();
 
     public TileEntityDryingTable() {
         DRYABLE_ITEMS.put(Euphoria.Content.Items.CANNABIS_BUD, Euphoria.Content.Items.CANNABIS_BUD_DRIED);
+//        this.sunLevel = this.getSunLevel();
         this.inputSlot = new ItemStackHandler(1) {
             @Override
             public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
@@ -112,7 +113,7 @@ public class TileEntityDryingTable extends TileEntity implements ITickable {
         this.dryingProgress = compound.getInteger("progress");
         this.totalDried = compound.getInteger("totalDried");
         if (compound.hasKey("customName", 8)) {
-            this.customName = compound.getString("CustomName");
+            this.customName = compound.getString("customName");
         }
     }
 
@@ -168,13 +169,10 @@ public class TileEntityDryingTable extends TileEntity implements ITickable {
         markDirty();
     }
 
-    public float getDryingSpeed() {
-        return dryingSpeed;
-    }
-
-    public void setDryingSpeed(float dryingSpeed) {
-        this.dryingSpeed = dryingSpeed;
-        markDirty();
+    public int getCurrentDryingTime() {
+        Item currentItem = this.inputSlot.getStackInSlot(0).getItem();
+        //TODO: get item drying time from recipe
+        return 200;
     }
 
     @Override
