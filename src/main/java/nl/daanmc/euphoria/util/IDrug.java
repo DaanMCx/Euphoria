@@ -2,7 +2,7 @@ package nl.daanmc.euphoria.util;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import nl.daanmc.euphoria.util.capabilities.DrugCap;
+import nl.daanmc.euphoria.util.capabilities.PlayerDrugsCap;
 import nl.daanmc.euphoria.util.messages.MsgDrugPresence;
 
 import java.util.ArrayList;
@@ -101,7 +101,7 @@ public interface IDrug {
             } else {
                 if (player.world.isRemote) {
                     presences.forEach(presence -> {
-                        presence.activate(player.getCapability(DrugCap.Provider.CAP,null).getClientTick());
+                        presence.activate(player.getCapability(PlayerDrugsCap.Provider.CAP,null).getClientTick());
                     });
                 }
             }
@@ -128,7 +128,7 @@ public interface IDrug {
             } else {
                 if (player.world.isRemote) {
                     presences.forEach(presence -> {
-                        presence.activate(player.getCapability(DrugCap.Provider.CAP,null).getClientTick());
+                        presence.activate(player.getCapability(PlayerDrugsCap.Provider.CAP,null).getClientTick());
                     });
                 }
             }

@@ -32,8 +32,8 @@ import nl.daanmc.euphoria.util.DrugPresence;
 import nl.daanmc.euphoria.util.DrugSubstance;
 import nl.daanmc.euphoria.util.EventHandler;
 import nl.daanmc.euphoria.util.NetworkHandler;
-import nl.daanmc.euphoria.util.capabilities.DrugCap;
-import nl.daanmc.euphoria.util.capabilities.IDrugCap;
+import nl.daanmc.euphoria.util.capabilities.PlayerDrugsCap;
+import nl.daanmc.euphoria.util.capabilities.IPlayerDrugsCap;
 import nl.daanmc.euphoria.util.proxy.IProxy;
 import nl.daanmc.euphoria.worldgen.feature.EuphoriaSurfaceGenerator;
 import org.apache.logging.log4j.LogManager;
@@ -61,7 +61,7 @@ public final class Euphoria {
     @Mod.EventHandler
     void preInit(FMLPreInitializationEvent event) {
         proxy.preInit(event);
-        CapabilityManager.INSTANCE.register(IDrugCap.class, new DrugCap.Storage(), DrugCap::new);
+        CapabilityManager.INSTANCE.register(IPlayerDrugsCap.class, new PlayerDrugsCap.Storage(), PlayerDrugsCap::new);
         MinecraftForge.EVENT_BUS.register(new EventHandler());
         NetworkHandler.init();
         GameRegistry.registerWorldGenerator(new EuphoriaSurfaceGenerator<>(Content.Blocks.CANNABIS_PLANT, 50, 6), 0);

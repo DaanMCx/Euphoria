@@ -14,11 +14,11 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import nl.daanmc.euphoria.Euphoria;
-import nl.daanmc.euphoria.util.capabilities.DrugCap;
-import nl.daanmc.euphoria.util.capabilities.IDrugCap;
-import nl.daanmc.euphoria.util.messages.MsgReqConfDrugCap;
-import nl.daanmc.euphoria.util.messages.MsgReqConfDrugCap.Type;
-import nl.daanmc.euphoria.util.messages.MsgSyncDrugCap;
+import nl.daanmc.euphoria.util.capabilities.PlayerDrugsCap;
+import nl.daanmc.euphoria.util.capabilities.IPlayerDrugsCap;
+import nl.daanmc.euphoria.util.messages.MsgReqConfPDCap;
+import nl.daanmc.euphoria.util.messages.MsgReqConfPDCap.Type;
+import nl.daanmc.euphoria.util.messages.MsgSyncPDCap;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -32,10 +32,10 @@ public class EventHandler {
     public static void onClientTick(TickEvent.ClientTickEvent event) {
         EntityPlayer player = Minecraft.getMinecraft().player;
         if (event.phase == TickEvent.Phase.END && player != null && !Minecraft.getMinecraft().isGamePaused()) {
-            IDrugCap drugCap = player.getCapability(DrugCap.Provider.CAP, null);
+            IPlayerDrugsCap drugCap = player.getCapability(PlayerDrugsCap.Provider.CAP, null);
             //Request DrugCap if this is initial player tick
             if (drugCap.getClientTick() == 0L) {
-                NetworkHandler.INSTANCE.sendToServer(new MsgReqConfDrugCap(Type.REQUEST_INITIAL));
+                NetworkHandler.INSTANCE.sendToServer(new MsgReqConfPDCap(Type.REQUEST_INITIAL));
             }
             //Execute tasks
             drugCap.executeClientTasks();
@@ -50,23 +50,23 @@ public class EventHandler {
             //Calculate the breakdown S-curve
             drugCap.getBreakdownTicks().forEach((drugSubstance, tick) -> {
                 if (tick > 0L && tick <= drugCap.getClientTick()) {
-                    float oldAmount = drugCap.getDrugs().get(drugSubstance);
+                    float oldAmount = drugCap.getPlayerDrugs().get(drugSubstance);
                     float A = drugCap.getBreakdownAmounts().get(drugSubstance);
                     int L = Math.round(drugSubstance.getBreakdownTime() * (drugCap.getBreakdownAmounts().get(drugSubstance)/100));
                     long X = drugCap.getClientTick() - tick;
-                    drugCap.getDrugs().put(drugSubstance, (oldAmount > 1 ? (float) ((-A / (1 + Math.exp((((Math.log((-A / (1 - A)) -1) -7) * X) / L) +7))) +A) : 0F));
-                    if (drugCap.getDrugs().get(drugSubstance) == 0F) {
+                    drugCap.getPlayerDrugs().put(drugSubstance, (oldAmount > 1 ? (float) ((-A / (1 + Math.exp((((Math.log((-A / (1 - A)) -1) -7) * X) / L) +7))) +A) : 0F));
+                    if (drugCap.getPlayerDrugs().get(drugSubstance) == 0F) {
                         drugCap.getBreakdownTicks().put(drugSubstance, 0L);
                     }
                     //TODO remove
                     if (drugCap.getClientTick() % 40 == 0) {
-                        System.out.println("S-curve: "+drugSubstance.getRegistryName()+" "+drugCap.getDrugs().get(drugSubstance));
+                        System.out.println("S-curve: "+drugSubstance.getRegistryName()+" "+drugCap.getPlayerDrugs().get(drugSubstance));
                     }
                 }
             });
             //Active sync DrugCap to server each 5 seconds
             if (drugCap.getClientTick()%200 == 0 && drugCap.getClientTick() > 0L) {
-                NetworkHandler.INSTANCE.sendToServer(new MsgSyncDrugCap(drugCap));
+                NetworkHandler.INSTANCE.sendToServer(new MsgSyncPDCap(drugCap));
             }
             //TODO remove
             if (drugCap.getClientTick()%100 == 0) {
@@ -80,15 +80,15 @@ public class EventHandler {
     //Server
     @SubscribeEvent
     public static void onPlayerSaveToFile(SaveToFile event) {
-        NetworkHandler.INSTANCE.sendTo(new MsgReqConfDrugCap(Type.REQUEST), (EntityPlayerMP) event.getEntityPlayer());
+        NetworkHandler.INSTANCE.sendTo(new MsgReqConfPDCap(Type.REQUEST), (EntityPlayerMP) event.getEntityPlayer());
     }
 
     //Server
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        IDrugCap drugCap = event.player.getCapability(DrugCap.Provider.CAP,null);
+        IPlayerDrugsCap drugCap = event.player.getCapability(PlayerDrugsCap.Provider.CAP,null);
         Euphoria.Content.SUBSTANCES.forEach(drugSubstance -> {
-            drugCap.getDrugs().putIfAbsent(drugSubstance, 0F);
+            drugCap.getPlayerDrugs().putIfAbsent(drugSubstance, 0F);
             drugCap.getBreakdownTicks().putIfAbsent(drugSubstance, 0L);
             drugCap.getBreakdownAmounts().putIfAbsent(drugSubstance, 0F);
         });
@@ -97,14 +97,14 @@ public class EventHandler {
     //Server
     @SubscribeEvent
     public static void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
-        NetworkHandler.INSTANCE.sendTo(new MsgSyncDrugCap(event.player.getCapability(DrugCap.Provider.CAP,null)), (EntityPlayerMP) event.player);
+        NetworkHandler.INSTANCE.sendTo(new MsgSyncPDCap(event.player.getCapability(PlayerDrugsCap.Provider.CAP,null)), (EntityPlayerMP) event.player);
     }
 
     //Client
     @SubscribeEvent
     public static void onClientSaveAndQuit(GuiScreenEvent.ActionPerformedEvent event) throws InterruptedException {
         if (event.getGui() instanceof GuiIngameMenu && event.getButton().id == 1) {
-            NetworkHandler.INSTANCE.sendToServer(new MsgSyncDrugCap(Minecraft.getMinecraft().player.getCapability(DrugCap.Provider.CAP, null)));
+            NetworkHandler.INSTANCE.sendToServer(new MsgSyncPDCap(Minecraft.getMinecraft().player.getCapability(PlayerDrugsCap.Provider.CAP, null)));
             //Send DrugCap to server and wait until confirmed
             confCap = false;
             AtomicInteger timeoutCount = new AtomicInteger(0);
@@ -121,7 +121,7 @@ public class EventHandler {
         //Attach Drug capability to players
         if(event.getObject() instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) event.getObject();
-            event.addCapability(new ResourceLocation(Euphoria.MODID, "drug_cap"), new DrugCap.Provider(player));
+            event.addCapability(new ResourceLocation(Euphoria.MODID, "drug_cap"), new PlayerDrugsCap.Provider(player));
         }
     }
 }

@@ -2,8 +2,8 @@ package nl.daanmc.euphoria.util.tasks;
 
 import net.minecraft.client.Minecraft;
 import nl.daanmc.euphoria.util.DrugSubstance;
-import nl.daanmc.euphoria.util.capabilities.DrugCap;
-import nl.daanmc.euphoria.util.capabilities.IDrugCap;
+import nl.daanmc.euphoria.util.capabilities.PlayerDrugsCap;
+import nl.daanmc.euphoria.util.capabilities.IPlayerDrugsCap;
 
 public class TaskDrugBreakdown implements ITask {
     private final DrugSubstance drugSubstance;
@@ -14,9 +14,9 @@ public class TaskDrugBreakdown implements ITask {
 
     @Override
     public void execute() {
-        IDrugCap drugCap = Minecraft.getMinecraft().player.getCapability(DrugCap.Provider.CAP,null);
+        IPlayerDrugsCap drugCap = Minecraft.getMinecraft().player.getCapability(PlayerDrugsCap.Provider.CAP,null);
         drugCap.getBreakdownTicks().put(drugSubstance, drugCap.getClientTick());
-        drugCap.getBreakdownAmounts().put(drugSubstance, drugCap.getDrugs().get(drugSubstance));
+        drugCap.getBreakdownAmounts().put(drugSubstance, drugCap.getPlayerDrugs().get(drugSubstance));
         //TODO remove
         System.out.println("BreakdownTask exec. for "+drugSubstance.getRegistryName());
     }

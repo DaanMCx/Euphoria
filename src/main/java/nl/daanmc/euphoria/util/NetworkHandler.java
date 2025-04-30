@@ -7,28 +7,28 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import nl.daanmc.euphoria.Euphoria;
-import nl.daanmc.euphoria.util.capabilities.DrugCap;
-import nl.daanmc.euphoria.util.capabilities.IDrugCap;
+import nl.daanmc.euphoria.util.capabilities.PlayerDrugsCap;
+import nl.daanmc.euphoria.util.capabilities.IPlayerDrugsCap;
 import nl.daanmc.euphoria.util.messages.MsgDrugPresence;
-import nl.daanmc.euphoria.util.messages.MsgReqConfDrugCap;
-import nl.daanmc.euphoria.util.messages.MsgReqConfDrugCap.Type;
-import nl.daanmc.euphoria.util.messages.MsgSyncDrugCap;
+import nl.daanmc.euphoria.util.messages.MsgReqConfPDCap;
+import nl.daanmc.euphoria.util.messages.MsgReqConfPDCap.Type;
+import nl.daanmc.euphoria.util.messages.MsgSyncPDCap;
 
 public final class NetworkHandler {
     public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(Euphoria.MODID);
 
     public static void init() {
-        INSTANCE.registerMessage(ReqConfDrugCapMH.class, MsgReqConfDrugCap.class, 0, Side.CLIENT);
-        INSTANCE.registerMessage(ReqConfDrugCapMH.class, MsgReqConfDrugCap.class, 0, Side.SERVER);
-        INSTANCE.registerMessage(SyncDrugCapMH.class, MsgSyncDrugCap.class, 1, Side.CLIENT);
-        INSTANCE.registerMessage(SyncDrugCapMH.class, MsgSyncDrugCap.class, 1, Side.SERVER);
+        INSTANCE.registerMessage(ReqConfDrugCapMH.class, MsgReqConfPDCap.class, 0, Side.CLIENT);
+        INSTANCE.registerMessage(ReqConfDrugCapMH.class, MsgReqConfPDCap.class, 0, Side.SERVER);
+        INSTANCE.registerMessage(SyncDrugCapMH.class, MsgSyncPDCap.class, 1, Side.CLIENT);
+        INSTANCE.registerMessage(SyncDrugCapMH.class, MsgSyncPDCap.class, 1, Side.SERVER);
         INSTANCE.registerMessage(DrugPresenceMH.class, MsgDrugPresence.class, 2, Side.CLIENT);
     }
 
-    public static class ReqConfDrugCapMH implements IMessageHandler<MsgReqConfDrugCap, MsgSyncDrugCap> {
+    public static class ReqConfDrugCapMH implements IMessageHandler<MsgReqConfPDCap, MsgSyncPDCap> {
         @Override
-        public MsgSyncDrugCap onMessage(MsgReqConfDrugCap message, MessageContext ctx) {
-            IDrugCap drugCap = Euphoria.proxy.getPlayerFromContext(ctx).getCapability(DrugCap.Provider.CAP, null);
+        public MsgSyncPDCap onMessage(MsgReqConfPDCap message, MessageContext ctx) {
+            IPlayerDrugsCap drugCap = Euphoria.proxy.getPlayerFromContext(ctx).getCapability(PlayerDrugsCap.Provider.CAP, null);
             if (ctx.side.isClient() && !(drugCap.getClientTick() > 0L)) {
                 return null;
             } else {
@@ -36,21 +36,21 @@ public final class NetworkHandler {
                     EventHandler.confCap = true;
                     return null;
                 } else {
-                    return new MsgSyncDrugCap(drugCap, message.type==Type.REQUEST_INITIAL);
+                    return new MsgSyncPDCap(drugCap, message.type==Type.REQUEST_INITIAL);
                 }
             }
         }
     }
 
-    public static class SyncDrugCapMH implements IMessageHandler<MsgSyncDrugCap, MsgReqConfDrugCap> {
+    public static class SyncDrugCapMH implements IMessageHandler<MsgSyncPDCap, MsgReqConfPDCap> {
         @Override
-        public MsgReqConfDrugCap onMessage(MsgSyncDrugCap message, MessageContext ctx) {
+        public MsgReqConfPDCap onMessage(MsgSyncPDCap message, MessageContext ctx) {
             if (Euphoria.proxy.getPlayerFromContext(ctx) != null) {
-                IDrugCap oldCap = Euphoria.proxy.getPlayerFromContext(ctx).getCapability(DrugCap.Provider.CAP, null);
-                IDrugCap newCap = message.capability;
+                IPlayerDrugsCap oldCap = Euphoria.proxy.getPlayerFromContext(ctx).getCapability(PlayerDrugsCap.Provider.CAP, null);
+                IPlayerDrugsCap newCap = message.capability;
                 oldCap.setClientTick(Math.max(newCap.getClientTick(), 1L));
-                oldCap.getDrugs().clear();
-                oldCap.getDrugs().putAll(newCap.getDrugs());
+                oldCap.getPlayerDrugs().clear();
+                oldCap.getPlayerDrugs().putAll(newCap.getPlayerDrugs());
                 oldCap.getBreakdownAmounts().clear();
                 oldCap.getBreakdownAmounts().putAll(newCap.getBreakdownAmounts());
                 oldCap.getBreakdownTicks().clear();
@@ -62,14 +62,14 @@ public final class NetworkHandler {
                     oldCap.getActivePresences().putAll(newCap.getActivePresences());
                 }
             }
-            return ctx.side.isServer() ? new MsgReqConfDrugCap(Type.CONFIRM) : null;
+            return ctx.side.isServer() ? new MsgReqConfPDCap(Type.CONFIRM) : null;
         }
     }
 
     public static class DrugPresenceMH implements IMessageHandler<MsgDrugPresence,MsgDrugPresence> {
         @Override
         public MsgDrugPresence onMessage(MsgDrugPresence message, MessageContext ctx) {
-            message.presenceList.forEach(drugPresence -> drugPresence.activate(Minecraft.getMinecraft().player.getCapability(DrugCap.Provider.CAP,null).getClientTick()));
+            message.presenceList.forEach(drugPresence -> drugPresence.activate(Minecraft.getMinecraft().player.getCapability(PlayerDrugsCap.Provider.CAP,null).getClientTick()));
             return null;
         }
     }

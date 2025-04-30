@@ -3,13 +3,13 @@ package nl.daanmc.euphoria.util.messages;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
-public class MsgReqConfDrugCap implements IMessage {
-    public MsgReqConfDrugCap(){};
+public class MsgReqConfPDCap implements IMessage {
+    public MsgReqConfPDCap(){};
 
     public enum Type {REQUEST_INITIAL, REQUEST, CONFIRM}
     public Type type;
 
-    public MsgReqConfDrugCap(Type type) {
+    public MsgReqConfPDCap(Type type) {
         this.type = type;
     }
 

@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Mod.EventBusSubscriber
-public class DrugCap implements IDrugCap {
+public class PlayerDrugsCap implements IPlayerDrugsCap {
     private long clientTick = 0L;
     private final ConcurrentHashMap<Long, ArrayList<ITask>> clientTasks = new ConcurrentHashMap<>();
     private final HashMap<DrugSubstance, Float> drugList = new HashMap<>();
@@ -70,7 +70,7 @@ public class DrugCap implements IDrugCap {
     }
 
     @Override
-    public HashMap<DrugSubstance, Float> getDrugs() {
+    public HashMap<DrugSubstance, Float> getPlayerDrugs() {
         return drugList;
     }
 
@@ -96,9 +96,9 @@ public class DrugCap implements IDrugCap {
             this.player = player;
         }
 
-        @CapabilityInject(IDrugCap.class)
-        public static final Capability<IDrugCap> CAP = null;
-        private IDrugCap instance = CAP.getDefaultInstance();
+        @CapabilityInject(IPlayerDrugsCap.class)
+        public static final Capability<IPlayerDrugsCap> CAP = null;
+        private IPlayerDrugsCap instance = CAP.getDefaultInstance();
 
         @Override
         public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
@@ -123,47 +123,47 @@ public class DrugCap implements IDrugCap {
     }
 
     //Capability storage
-    public static class Storage implements Capability.IStorage<IDrugCap> {
+    public static class Storage implements Capability.IStorage<IPlayerDrugsCap> {
         @Nullable
         @Override
-        public NBTBase writeNBT(Capability<IDrugCap> capability, IDrugCap instance, EnumFacing side) {
+        public NBTBase writeNBT(Capability<IPlayerDrugsCap> capability, IPlayerDrugsCap instance, EnumFacing side) {
             final NBTTagCompound tag = new NBTTagCompound();
-            tag.setLong("dpcap:ct", instance.getClientTick());
+            tag.setLong("pdcap:ct", instance.getClientTick());
             AtomicInteger count = new AtomicInteger();
             instance.getActivePresences().forEach((presence, tick) -> {
-                tag.setString("dpcap:ap:"+count.incrementAndGet()+":s", presence.substance.getRegistryName().toString());
-                tag.setFloat("dpcap:ap:"+count.get()+":a", presence.amount);
-                tag.setInteger("dpcap:ap:"+count.get()+":i", presence.delay);
-                tag.setInteger("dpcap:ap:"+count.get()+":d", presence.comeUp);
-                tag.setLong("dpcap:ap:"+count.get()+":t", tick);
+                tag.setString("pdcap:ap:"+count.incrementAndGet()+":s", presence.substance.getRegistryName().toString());
+                tag.setFloat("pdcap:ap:"+count.get()+":a", presence.amount);
+                tag.setInteger("pdcap:ap:"+count.get()+":i", presence.delay);
+                tag.setInteger("pdcap:ap:"+count.get()+":d", presence.comeUp);
+                tag.setLong("pdcap:ap:"+count.get()+":t", tick);
             });
-            tag.setInteger("dpcap:ap", count.get());
+            tag.setInteger("pdcap:ap", count.get());
             Euphoria.Content.SUBSTANCES.forEach(drugSubstance -> {
-                tag.setFloat("dpcap:dp:"+drugSubstance.getRegistryName().toString(), instance.getDrugs().getOrDefault(drugSubstance, 0F));
-                tag.setFloat("dpcap:ba:"+drugSubstance.getRegistryName().toString(), instance.getBreakdownAmounts().getOrDefault(drugSubstance, 0F));
-                tag.setFloat("dpcap:bt:"+drugSubstance.getRegistryName().toString(), instance.getBreakdownTicks().getOrDefault(drugSubstance, 0L));
+                tag.setFloat("pdcap:dp:"+drugSubstance.getRegistryName().toString(), instance.getPlayerDrugs().getOrDefault(drugSubstance, 0F));
+                tag.setFloat("pdcap:ba:"+drugSubstance.getRegistryName().toString(), instance.getBreakdownAmounts().getOrDefault(drugSubstance, 0F));
+                tag.setFloat("pdcap:bt:"+drugSubstance.getRegistryName().toString(), instance.getBreakdownTicks().getOrDefault(drugSubstance, 0L));
             });
             return tag;
         }
 
         @Override
-        public void readNBT(Capability<IDrugCap> capability, IDrugCap instance, EnumFacing side, NBTBase nbt) {
+        public void readNBT(Capability<IPlayerDrugsCap> capability, IPlayerDrugsCap instance, EnumFacing side, NBTBase nbt) {
             final NBTTagCompound tag = (NBTTagCompound) nbt;
-            instance.setClientTick(tag.getLong("dpcap:ct"));
-            if (tag.hasKey("dpcap:ap")) {
-                for (int i = 1; i <= tag.getInteger("dpcap:ap"); i++) {
-                    DrugSubstance substance = DrugSubstance.REGISTRY.get(new ResourceLocation(tag.getString("dpcap:ap:"+i+":s")));
-                    float amount = tag.getFloat("dpcap:ap:"+i+":a");
-                    int incubation = tag.getInteger("dpcap:ap:"+i+":i");
-                    int delay = tag.getInteger("dpcap:ap:"+i+":d");
-                    long tick = tag.getLong("dpcap:ap:"+i+":t");
+            instance.setClientTick(tag.getLong("pdcap:ct"));
+            if (tag.hasKey("pdcap:ap")) {
+                for (int i = 1; i <= tag.getInteger("pdcap:ap"); i++) {
+                    DrugSubstance substance = DrugSubstance.REGISTRY.get(new ResourceLocation(tag.getString("pdcap:ap:"+i+":s")));
+                    float amount = tag.getFloat("pdcap:ap:"+i+":a");
+                    int incubation = tag.getInteger("pdcap:ap:"+i+":i");
+                    int delay = tag.getInteger("pdcap:ap:"+i+":d");
+                    long tick = tag.getLong("pdcap:ap:"+i+":t");
                     instance.getActivePresences().put(new DrugPresence(substance, amount, incubation, delay), tick);
                 }
             }
             Euphoria.Content.SUBSTANCES.forEach(drugSubstance -> {
-                instance.getDrugs().put(drugSubstance, tag.getFloat("dpcap:dp:"+drugSubstance.getRegistryName().toString()));
-                instance.getBreakdownAmounts().put(drugSubstance, tag.getFloat("dpcap:ba:"+drugSubstance.getRegistryName().toString()));
-                instance.getBreakdownTicks().put(drugSubstance, tag.getLong("dpcap:bt:"+drugSubstance.getRegistryName().toString()));
+                instance.getPlayerDrugs().put(drugSubstance, tag.getFloat("pdcap:dp:"+drugSubstance.getRegistryName().toString()));
+                instance.getBreakdownAmounts().put(drugSubstance, tag.getFloat("pdcap:ba:"+drugSubstance.getRegistryName().toString()));
+                instance.getBreakdownTicks().put(drugSubstance, tag.getLong("pdcap:bt:"+drugSubstance.getRegistryName().toString()));
             });
         }
     }

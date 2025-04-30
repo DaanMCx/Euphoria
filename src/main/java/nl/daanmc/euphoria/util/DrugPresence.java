@@ -1,8 +1,8 @@
 package nl.daanmc.euphoria.util;
 
 import net.minecraft.client.Minecraft;
-import nl.daanmc.euphoria.util.capabilities.DrugCap;
-import nl.daanmc.euphoria.util.capabilities.IDrugCap;
+import nl.daanmc.euphoria.util.capabilities.PlayerDrugsCap;
+import nl.daanmc.euphoria.util.capabilities.IPlayerDrugsCap;
 import nl.daanmc.euphoria.util.tasks.TaskDrugBreakdown;
 import nl.daanmc.euphoria.util.tasks.TaskDrugPresence;
 
@@ -31,7 +31,7 @@ public class DrugPresence {
     }
 
     void activate(long aTick) {
-        IDrugCap drugCap = Minecraft.getMinecraft().player.getCapability(DrugCap.Provider.CAP,null);
+        IPlayerDrugsCap drugCap = Minecraft.getMinecraft().player.getCapability(PlayerDrugsCap.Provider.CAP,null);
         long tick = drugCap.getClientTick();
         //todo remove
         System.out.println("IDrug activating s: "+substance.getRegistryName()+"; a: "+amount+"; i: "+ delay +"; d: "+ comeUp);

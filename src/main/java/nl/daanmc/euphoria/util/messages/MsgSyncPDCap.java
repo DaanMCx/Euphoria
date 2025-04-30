@@ -6,21 +6,21 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import nl.daanmc.euphoria.util.DrugPresence;
 import nl.daanmc.euphoria.util.DrugSubstance;
-import nl.daanmc.euphoria.util.capabilities.DrugCap;
-import nl.daanmc.euphoria.util.capabilities.IDrugCap;
+import nl.daanmc.euphoria.util.capabilities.PlayerDrugsCap;
+import nl.daanmc.euphoria.util.capabilities.IPlayerDrugsCap;
 
-public class MsgSyncDrugCap implements IMessage {
-    public MsgSyncDrugCap() {}
+public class MsgSyncPDCap implements IMessage {
+    public MsgSyncPDCap() {}
 
-    public IDrugCap capability = new DrugCap();
+    public IPlayerDrugsCap capability = new PlayerDrugsCap();
     public boolean isInitialSync;
 
-    public MsgSyncDrugCap(IDrugCap capability) {
+    public MsgSyncPDCap(IPlayerDrugsCap capability) {
         this.capability = capability;
         this.isInitialSync = false;
     }
 
-    public MsgSyncDrugCap(IDrugCap capability, boolean isInitialSync) {
+    public MsgSyncPDCap(IPlayerDrugsCap capability, boolean isInitialSync) {
         this.capability = capability;
         this.isInitialSync = isInitialSync;
     }
@@ -39,8 +39,8 @@ public class MsgSyncDrugCap implements IMessage {
             buf.writeInt(presence.comeUp);
             buf.writeLong(tick);
         }));
-        buf.writeInt(capability.getDrugs().size());
-        capability.getDrugs().forEach((drugSubstance, amount) -> {
+        buf.writeInt(capability.getPlayerDrugs().size());
+        capability.getPlayerDrugs().forEach((drugSubstance, amount) -> {
             byte[] stringBytes = drugSubstance.getRegistryName().toString().getBytes(CharsetUtil.UTF_8);
             buf.writeInt(stringBytes.length);
             buf.writeBytes(stringBytes);
@@ -74,7 +74,7 @@ public class MsgSyncDrugCap implements IMessage {
             buf.readBytes(stringData);
             DrugSubstance substance = DrugSubstance.REGISTRY.get(new ResourceLocation(new String(stringData, CharsetUtil.UTF_8)));
             float amount = buf.readFloat();
-            capability.getDrugs().put(substance, amount);
+            capability.getPlayerDrugs().put(substance, amount);
             amount = buf.readFloat();
             capability.getBreakdownAmounts().put(substance, amount);
             long tick = buf.readLong();
