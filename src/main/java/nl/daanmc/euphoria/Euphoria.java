@@ -24,6 +24,7 @@ import net.minecraftforge.registries.RegistryBuilder;
 import nl.daanmc.euphoria.block.BlockCannabisCrop;
 import nl.daanmc.euphoria.block.BlockDrugPlant;
 import nl.daanmc.euphoria.block.BlockDryingTable;
+import nl.daanmc.euphoria.block.BlockLargeDrugPlant;
 import nl.daanmc.euphoria.item.*;
 import nl.daanmc.euphoria.tileentity.TileEntityCannabisStrain;
 import nl.daanmc.euphoria.tileentity.TileEntityDryingTable;
@@ -34,7 +35,7 @@ import nl.daanmc.euphoria.util.NetworkHandler;
 import nl.daanmc.euphoria.util.capabilities.DrugCap;
 import nl.daanmc.euphoria.util.capabilities.IDrugCap;
 import nl.daanmc.euphoria.util.proxy.IProxy;
-import nl.daanmc.euphoria.worldgen.feature.WorldGenCannabisPlant;
+import nl.daanmc.euphoria.worldgen.feature.EuphoriaSurfaceGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -63,7 +64,8 @@ public final class Euphoria {
         CapabilityManager.INSTANCE.register(IDrugCap.class, new DrugCap.Storage(), DrugCap::new);
         MinecraftForge.EVENT_BUS.register(new EventHandler());
         NetworkHandler.init();
-        GameRegistry.registerWorldGenerator(new WorldGenCannabisPlant(), 0);
+        GameRegistry.registerWorldGenerator(new EuphoriaSurfaceGenerator<>(Content.Blocks.CANNABIS_PLANT, 50, 6), 0);
+        GameRegistry.registerWorldGenerator(new EuphoriaSurfaceGenerator<>(Content.Blocks.CANNABIS_PLANT_SMALL, 100, 3), 0);
         GameRegistry.registerTileEntity(TileEntityDryingTable.class, new ResourceLocation(MODID, "drying_table"));
         GameRegistry.registerTileEntity(TileEntityCannabisStrain.class, new ResourceLocation(MODID, "cannabis_strain"));
     }
@@ -77,6 +79,8 @@ public final class Euphoria {
     public void postInit(FMLPostInitializationEvent event) {
         proxy.postInit(event);
         Content.SUBSTANCES.forEach((substance) -> DrugSubstance.REGISTRY.put(substance.getRegistryName(), substance));
+        Content.Blocks.CANNABIS_PLANT.setDrops(Content.Items.CANNABIS_SEEDS);
+        Content.Blocks.CANNABIS_PLANT_SMALL.setDrops(Content.Items.CANNABIS_SEEDS);
         Content.Items.COCAINE.attachDrugPresence(new DrugPresence(Content.DrugSubstances.COCAINE, 20, 100, 500));
         Content.Items.CIGARETTE.attachDrugPresence(new DrugPresence(Content.DrugSubstances.NICOTINE, 5,100,200));
         //Content.Blocks.TOBACCO_PLANT.setDrops(Content.Items.TOBACCO_SEEDS);
@@ -119,6 +123,7 @@ public final class Euphoria {
                 new ItemEdibleDrug("dried_red_mushroom", 2, 3F),
                 new ItemBlock(Content.Blocks.DRYING_TABLE).setRegistryName(Content.Blocks.DRYING_TABLE.getRegistryName()),
                 new ItemBlock(Content.Blocks.CANNABIS_PLANT).setRegistryName(Content.Blocks.CANNABIS_PLANT.getRegistryName()),
+                new ItemBlock(Content.Blocks.CANNABIS_PLANT_SMALL).setRegistryName(Content.Blocks.CANNABIS_PLANT_SMALL.getRegistryName()),
                 new ItemBlock(Content.Blocks.CANNABIS_CROP).setRegistryName(Content.Blocks.CANNABIS_CROP.getRegistryName())
         };
         event.getRegistry().registerAll(ITEMS);
@@ -129,7 +134,8 @@ public final class Euphoria {
     public static void onBlockRegister(RegistryEvent.Register<Block> event) {
         Block[] BLOCKS = {
                 new BlockDryingTable(),
-                new BlockDrugPlant("cannabis_plant"),
+                new BlockLargeDrugPlant("cannabis_plant"),
+                new BlockDrugPlant("cannabis_plant_small"),
                 new BlockCannabisCrop()
         };
         event.getRegistry().registerAll(BLOCKS);
@@ -184,13 +190,15 @@ public final class Euphoria {
             public static final ItemEdibleDrug DRIED_RED_MUSHROOM = null;
             public static final ItemBlock DRYING_TABLE = null;
             public static final ItemBlock CANNABIS_PLANT = null;
+            public static final ItemBlock CANNABIS_PLANT_SMALL = null;
         }
         public static ArrayList<Item> ITEMS = new ArrayList<>();
 
         @GameRegistry.ObjectHolder(MODID)
         public static final class Blocks {
             public static final BlockDryingTable DRYING_TABLE = null;
-            public static final BlockDrugPlant CANNABIS_PLANT = null;
+            public static final BlockLargeDrugPlant CANNABIS_PLANT = null;
+            public static final BlockDrugPlant CANNABIS_PLANT_SMALL = null;
             public static final BlockCannabisCrop CANNABIS_CROP = null;
         }
         public static ArrayList<Block> BLOCKS = new ArrayList<>();

@@ -1,12 +1,8 @@
 package nl.daanmc.euphoria.block;
 
 import net.minecraft.block.BlockBush;
-import net.minecraft.block.BlockDoublePlant.EnumBlockHalf;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,13 +17,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.IChunkGenerator;
+import nl.daanmc.euphoria.worldgen.IGeneratable;
 
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-public class BlockDrugPlant extends BlockBush {
-    public static final PropertyEnum<EnumBlockHalf> HALF = PropertyEnum.create("half", EnumBlockHalf.class);
-    public static final PropertyBool DOUBLE = PropertyBool.create("double");
+public class BlockDrugPlant extends BlockBush implements IGeneratable {
     private Item drops;
 
     public BlockDrugPlant(String name) {
@@ -35,7 +30,6 @@ public class BlockDrugPlant extends BlockBush {
         this.setRegistryName(name);
         this.setTranslationKey(name);
         this.setSoundType(SoundType.PLANT);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(DOUBLE, false).withProperty(HALF, EnumBlockHalf.LOWER));
     }
 
     public void setDrops(Item drops) {
@@ -43,47 +37,8 @@ public class BlockDrugPlant extends BlockBush {
     }
 
     @Override
-    protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, HALF, DOUBLE);
-    }
-
-    @Override
-    public IBlockState getStateFromMeta(int meta) {
-        switch (meta) {
-            default: return null;
-            case 1: return getDefaultState();
-            case 2: return getDefaultState().withProperty(DOUBLE, true).withProperty(HALF, EnumBlockHalf.LOWER);
-            case 3: return getDefaultState().withProperty(DOUBLE, true).withProperty(HALF, EnumBlockHalf.UPPER);
-        }
-    }
-
-    @Override
-    public int getMetaFromState(IBlockState state) {
-        return state==getDefaultState() ? 1 : state.getValue(HALF)==EnumBlockHalf.LOWER ? 2 : 3;
-    }
-
-    @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         return FULL_BLOCK_AABB;
-    }
-
-    public void placeAt(World worldIn, BlockPos pos, int height) {
-        AtomicBoolean canFit = new AtomicBoolean(true);
-        for (int i = 0; i < height; i++) {
-            if (!worldIn.isAirBlock(pos.up(i)) && !(worldIn.getBlockState(pos).getMaterial()==Material.PLANTS) && !(worldIn.getBlockState(pos).getMaterial()==Material.VINE)) {
-                canFit.set(false);
-            }
-        }
-        if (canFit.get() && worldIn.getBlockState(pos.down()).getBlock()==Blocks.GRASS) {
-            if (height==1) {
-                worldIn.setBlockState(pos, this.getDefaultState());
-            } else {
-                for (int i = 0; i < height-1; i++) {
-                    worldIn.setBlockState(pos.up(i), this.getDefaultState().withProperty(HALF, EnumBlockHalf.LOWER).withProperty(DOUBLE, true));
-                }
-                worldIn.setBlockState(pos.up(height-1), this.getDefaultState().withProperty(HALF, EnumBlockHalf.UPPER).withProperty(DOUBLE, true));
-            }
-        }
     }
 
     @Override
@@ -96,41 +51,19 @@ public class BlockDrugPlant extends BlockBush {
     @Override
     public void onExplosionDestroy(World worldIn, BlockPos pos, Explosion explosionIn) {
         IBlockState state = worldIn.getBlockState(pos);
-        if (state.getBlock()==this && state.getValue(HALF)==EnumBlockHalf.LOWER) {
+        if (state.getBlock()==this) {
             this.dropBlockAsItem(worldIn, pos, state, 0);
         }
     }
 
     @Override
     public void onBlockHarvested(World worldIn, BlockPos pos, IBlockState state, EntityPlayer player) {
-        if (state.getValue(HALF) == EnumBlockHalf.UPPER) {
-            if (worldIn.getBlockState(pos.down()).getBlock() == this) {
-                if (player.capabilities.isCreativeMode) {
-                    worldIn.setBlockToAir(pos.down());
-                } else {
-                    if (worldIn.isRemote) {
-                        worldIn.setBlockToAir(pos.down());
-                    } else if (!player.getHeldItemMainhand().isEmpty() && player.getHeldItemMainhand().getItem() == Items.SHEARS) {
-                        spawnAsEntity(worldIn, pos, new ItemStack(Item.getItemFromBlock(this)));
-                        worldIn.setBlockToAir(pos.down());
-                    } else {
-                        worldIn.destroyBlock(pos.down(), true);
-                    }
-                }
-            }
+        if (worldIn.isRemote || player.capabilities.isCreativeMode) {
+            worldIn.setBlockToAir(pos);
+        } else if (player.getHeldItemMainhand().getItem() == Items.SHEARS) {
+            spawnAsEntity(worldIn, pos, new ItemStack(this));
         } else {
-            if (player.capabilities.isCreativeMode) {
-                worldIn.setBlockToAir(pos);
-            } else {
-                if (worldIn.isRemote) {
-                    worldIn.setBlockToAir(pos);
-                } else if (!player.getHeldItemMainhand().isEmpty() && player.getHeldItemMainhand().getItem() == Items.SHEARS) {
-                    spawnAsEntity(worldIn, pos, new ItemStack(Item.getItemFromBlock(this)));
-                    worldIn.setBlockToAir(pos);
-                } else {
-                    worldIn.destroyBlock(pos, true);
-                }
-            }
+            worldIn.destroyBlock(pos, worldIn.rand.nextInt(3) == 0);
         }
     }
 
@@ -141,7 +74,7 @@ public class BlockDrugPlant extends BlockBush {
 
     @Override
     protected boolean canSustainBush(IBlockState state) {
-        return state.getBlock() == Blocks.GRASS || state.getBlock() == Blocks.DIRT || state.getBlock() == Blocks.FARMLAND || state.equals(this.getDefaultState().withProperty(DOUBLE, true).withProperty(HALF, EnumBlockHalf.LOWER));
+        return state.getBlock() == Blocks.GRASS || state.getBlock() == Blocks.DIRT;
     }
 
     @Override
@@ -151,13 +84,11 @@ public class BlockDrugPlant extends BlockBush {
 
     @Override
     public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
-        return world.getBiome(pos).getTemperature(pos)>0.6F? this.getDefaultState().withProperty(DOUBLE, true) : this.getDefaultState();
+        return this.getDefaultState();
     }
 
     @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        if (state.getValue(DOUBLE)) {
-            worldIn.setBlockState(pos.up(), this.getDefaultState().withProperty(HALF, EnumBlockHalf.UPPER).withProperty(DOUBLE, true), 2);
-        }
+    public boolean canSpawnHere(World worldIn, BlockPos pos, IChunkGenerator chunkGenerator) {
+        return worldIn.isAirBlock(pos) && worldIn.getBlockState(pos.down()).getBlock()== Blocks.GRASS;
     }
 }

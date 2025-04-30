@@ -2,6 +2,7 @@ package nl.daanmc.euphoria.util.proxy;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;
@@ -27,7 +28,9 @@ public class ClientProxy implements IProxy {
 
     @Override
     public void init(FMLInitializationEvent event) {
-        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler((state, worldIn, pos, tintIndex) -> worldIn.getBiome(pos).getFoliageColorAtPos(pos), Euphoria.Content.Blocks.CANNABIS_PLANT);
+        BlockColors blockColors = Minecraft.getMinecraft().getBlockColors();
+        blockColors.registerBlockColorHandler((state, worldIn, pos, tintIndex) -> worldIn.getBiome(pos).getFoliageColorAtPos(pos), Euphoria.Content.Blocks.CANNABIS_PLANT);
+        blockColors.registerBlockColorHandler((state, worldIn, pos, tintIndex) -> worldIn.getBiome(pos).getFoliageColorAtPos(pos), Euphoria.Content.Blocks.CANNABIS_PLANT_SMALL);
     }
 
     @Override

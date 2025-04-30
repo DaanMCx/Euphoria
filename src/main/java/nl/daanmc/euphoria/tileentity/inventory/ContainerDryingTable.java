@@ -9,14 +9,8 @@ import net.minecraftforge.items.SlotItemHandler;
 
 public class ContainerDryingTable extends Container {
     private final IItemHandler inventory;
-    private int dryingSpeed;
-    private int dryingProgress;
-    private int totalDried;
 
     public ContainerDryingTable(InventoryPlayer playerInventory, IItemHandler dryingTableInventory) {
-        this.dryingSpeed = 0;
-        this.dryingProgress = 0;
-        this.totalDried = 0;
         this.inventory = dryingTableInventory;
 
         this.addSlotToContainer(new SlotItemHandler(this.inventory, 0, 10, 10));
