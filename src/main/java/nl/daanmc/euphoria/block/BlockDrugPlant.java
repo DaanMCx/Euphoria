@@ -62,6 +62,7 @@ public class BlockDrugPlant extends BlockBush implements IGeneratable {
             worldIn.setBlockToAir(pos);
         } else if (player.getHeldItemMainhand().getItem() == Items.SHEARS) {
             spawnAsEntity(worldIn, pos, new ItemStack(this));
+            worldIn.setBlockToAir(pos);
         } else {
             worldIn.destroyBlock(pos, worldIn.rand.nextInt(3) == 0);
         }
