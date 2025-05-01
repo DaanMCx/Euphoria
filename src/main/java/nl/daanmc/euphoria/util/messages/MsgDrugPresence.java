@@ -4,8 +4,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.util.CharsetUtil;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import nl.daanmc.euphoria.util.Drug;
 import nl.daanmc.euphoria.util.DrugPresence;
-import nl.daanmc.euphoria.util.DrugSubstance;
 
 import java.util.ArrayList;
 
@@ -20,7 +20,7 @@ public class MsgDrugPresence implements IMessage {
     public void toBytes(ByteBuf buf) {
         buf.writeInt(presenceList.size());
         presenceList.forEach(presence -> {
-            byte[] stringBytes = presence.substance.getRegistryName().toString().getBytes(CharsetUtil.UTF_8);
+            byte[] stringBytes = presence.drug.getRegistryName().toString().getBytes(CharsetUtil.UTF_8);
             buf.writeInt(stringBytes.length);
             buf.writeBytes(stringBytes);
             buf.writeFloat(presence.amount);
@@ -36,11 +36,11 @@ public class MsgDrugPresence implements IMessage {
             int length = buf.readInt();
             byte[] stringData = new byte[length];
             buf.readBytes(stringData);
-            DrugSubstance substance = DrugSubstance.REGISTRY.get(new ResourceLocation(new String(stringData, CharsetUtil.UTF_8)));
+            Drug drug = Drug.REGISTRY.get(new ResourceLocation(new String(stringData, CharsetUtil.UTF_8)));
             float amount = buf.readFloat();
             int incubation = buf.readInt();
             int delay = buf.readInt();
-            presenceList.add(new DrugPresence(substance, amount, incubation, delay));
+            presenceList.add(new DrugPresence(drug, amount, incubation, delay));
         }
     }
 }

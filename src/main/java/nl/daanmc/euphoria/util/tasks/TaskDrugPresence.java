@@ -1,25 +1,25 @@
 package nl.daanmc.euphoria.util.tasks;
 
 import net.minecraft.client.Minecraft;
-import nl.daanmc.euphoria.util.DrugSubstance;
+import nl.daanmc.euphoria.util.Drug;
 import nl.daanmc.euphoria.util.capabilities.PlayerDrugsCap;
 import nl.daanmc.euphoria.util.capabilities.IPlayerDrugsCap;
 
 public class TaskDrugPresence implements ITask {
-    private final DrugSubstance drugSubstance;
+    private final Drug drug;
     private final float amount;
 
-    public TaskDrugPresence(DrugSubstance drugSubstance, float amount) {
-        this.drugSubstance = drugSubstance;
+    public TaskDrugPresence(Drug drug, float amount) {
+        this.drug = drug;
         this.amount = amount;
     }
 
     @Override
     public void execute() {
         IPlayerDrugsCap drugCap = Minecraft.getMinecraft().player.getCapability(PlayerDrugsCap.Provider.CAP,null);
-        drugCap.getBreakdownTicks().put(drugSubstance, 0L);
-        drugCap.getPlayerDrugs().put(drugSubstance, Math.min(Math.max(drugCap.getPlayerDrugs().getOrDefault(drugSubstance, 0F) + amount, 0F), 100F));
+        drugCap.getBreakdownTicks().put(drug, 0L);
+        drugCap.getPlayerDrugs().put(drug, Math.min(Math.max(drugCap.getPlayerDrugs().getOrDefault(drug, 0F) + amount, 0F), 100F));
         //TODO remove
-        System.out.println("Added: "+drugSubstance.getRegistryName()+" by "+amount+" to "+drugCap.getPlayerDrugs().get(drugSubstance));
+        System.out.println("Added: "+ drug.getRegistryName()+" by "+amount+" to "+drugCap.getPlayerDrugs().get(drug));
     }
 }

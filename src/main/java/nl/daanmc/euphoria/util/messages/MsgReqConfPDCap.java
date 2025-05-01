@@ -2,6 +2,12 @@ package nl.daanmc.euphoria.util.messages;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import nl.daanmc.euphoria.Euphoria;
+import nl.daanmc.euphoria.util.EventHandler;
+import nl.daanmc.euphoria.util.capabilities.IPlayerDrugsCap;
+import nl.daanmc.euphoria.util.capabilities.PlayerDrugsCap;
 
 public class MsgReqConfPDCap implements IMessage {
     public MsgReqConfPDCap(){};
@@ -43,6 +49,23 @@ public class MsgReqConfPDCap implements IMessage {
             case 2:
                 setType(Type.CONFIRM);
                 break;
+        }
+    }
+
+    public static class Handler implements IMessageHandler<MsgReqConfPDCap, MsgSyncPDCap> {
+        @Override
+        public MsgSyncPDCap onMessage(MsgReqConfPDCap message, MessageContext ctx) {
+            IPlayerDrugsCap PDCap = Euphoria.proxy.getPlayerFromContext(ctx).getCapability(PlayerDrugsCap.Provider.CAP, null);
+            if (ctx.side.isClient() && !(PDCap.getClientTick() > 0L)) {
+                return null;
+            } else {
+                if (message.type == Type.CONFIRM) {
+                    EventHandler.confCap = true;
+                    return null;
+                } else {
+                    return new MsgSyncPDCap(PDCap, message.type==Type.REQUEST_INITIAL);
+                }
+            }
         }
     }
 }

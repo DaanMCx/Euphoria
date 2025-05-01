@@ -1,21 +1,23 @@
 package nl.daanmc.euphoria.worldgen.feature;
 
 import net.minecraft.block.Block;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.fml.common.IWorldGenerator;
-import nl.daanmc.euphoria.worldgen.IGeneratable;
+import nl.daanmc.euphoria.worldgen.ISurfaceGen;
 
 import java.util.Random;
 
-public class EuphoriaSurfaceGenerator<T extends Block & IGeneratable> implements IWorldGenerator {
-    private final T block;
+public class EuphoriaSurfaceGenerator<T extends Block & ISurfaceGen> implements IWorldGenerator {
+    private final ResourceLocation blockName;
+    private T block = null;
     private final int chunkSpawnRate, maxGroupSize;
 
-    public EuphoriaSurfaceGenerator(T block, int chunkSpawnRate, int maxGroupSize) {
-        this.block = block;
+    public EuphoriaSurfaceGenerator(ResourceLocation blockRegistryName, int chunkSpawnRate, int maxGroupSize) {
+        this.blockName = blockRegistryName;
         this.chunkSpawnRate = chunkSpawnRate;
         this.maxGroupSize = maxGroupSize;
     }
@@ -34,5 +36,9 @@ public class EuphoriaSurfaceGenerator<T extends Block & IGeneratable> implements
                 }
             }
         }
+    }
+
+    public void postInitBlockUpdate() {
+        this.block = (T) Block.REGISTRY.getObject(this.blockName);
     }
 }

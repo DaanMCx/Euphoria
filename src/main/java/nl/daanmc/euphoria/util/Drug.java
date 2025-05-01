@@ -6,18 +6,18 @@ import nl.daanmc.euphoria.Euphoria;
 
 import java.util.HashMap;
 
-public class DrugSubstance extends IForgeRegistryEntry.Impl<DrugSubstance> {
-    public static HashMap<ResourceLocation, DrugSubstance> REGISTRY = new HashMap<>();
+public class Drug extends IForgeRegistryEntry.Impl<Drug> {
+    public static HashMap<ResourceLocation, Drug> REGISTRY = new HashMap<>();
     private final int breakdownTime;
-    public DrugSubstance(int breakdownTime) {
+    public Drug(int breakdownTime) {
         this.breakdownTime = breakdownTime;
-        Euphoria.Content.SUBSTANCES.add(this);
+        Euphoria.Content.DRUGS.add(this);
     }
 
     public int getBreakdownTime() {return this.breakdownTime;}
 
-    public static class PhantomDrugSubstance extends DrugSubstance {
-        public PhantomDrugSubstance() {
+    public static class PhantomDrug extends Drug {
+        public PhantomDrug() {
             super(0);
         }
     }

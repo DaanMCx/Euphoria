@@ -95,7 +95,7 @@ public interface IDrug {
         HashMap<String, ArrayList<DrugPresence>> table = drugPresenceTable.get(this);
         if (table.containsKey("")) {
             ArrayList<DrugPresence> presences = new ArrayList<>(table.get("").size());
-            table.get("").forEach(presence -> presences.add(new DrugPresence(presence.substance, presence.amount*multiplier, presence.delay, Math.round(presence.comeUp *multiplier))));
+            table.get("").forEach(presence -> presences.add(new DrugPresence(presence.drug, presence.amount*multiplier, presence.delay, Math.round(presence.comeUp *multiplier))));
             if (serverOnly) {
                 NetworkHandler.INSTANCE.sendTo(new MsgDrugPresence(presences), (EntityPlayerMP) player);
             } else {
@@ -122,7 +122,7 @@ public interface IDrug {
         HashMap<String, ArrayList<DrugPresence>> table = drugPresenceTable.get(this);
         if (table.containsKey(type)) {
             ArrayList<DrugPresence> presences = new ArrayList<>(table.get(type).size());
-            table.get(type).forEach(presence -> presences.add(new DrugPresence(presence.substance, presence.amount*multiplier, presence.delay, Math.round(presence.comeUp *multiplier))));
+            table.get(type).forEach(presence -> presences.add(new DrugPresence(presence.drug, presence.amount*multiplier, presence.delay, Math.round(presence.comeUp *multiplier))));
             if (serverOnly) {
                 NetworkHandler.INSTANCE.sendTo(new MsgDrugPresence(presences), (EntityPlayerMP) player);
             } else {

@@ -32,47 +32,47 @@ public class EventHandler {
     public static void onClientTick(TickEvent.ClientTickEvent event) {
         EntityPlayer player = Minecraft.getMinecraft().player;
         if (event.phase == TickEvent.Phase.END && player != null && !Minecraft.getMinecraft().isGamePaused()) {
-            IPlayerDrugsCap drugCap = player.getCapability(PlayerDrugsCap.Provider.CAP, null);
+            IPlayerDrugsCap PDCap = player.getCapability(PlayerDrugsCap.Provider.CAP, null);
             //Request DrugCap if this is initial player tick
-            if (drugCap.getClientTick() == 0L) {
+            if (PDCap.getClientTick() == 0L) {
                 NetworkHandler.INSTANCE.sendToServer(new MsgReqConfPDCap(Type.REQUEST_INITIAL));
             }
             //Execute tasks
-            drugCap.executeClientTasks();
+            PDCap.executeClientTasks();
             //Filter activePresences for relevancy
             ArrayList<DrugPresence> oldPresences = new ArrayList<>();
-            drugCap.getActivePresences().forEach((drugPresence, tick) -> {
-                if (tick + 2 * drugPresence.comeUp + 1 < drugCap.getClientTick()) {
+            PDCap.getActivePresences().forEach((drugPresence, tick) -> {
+                if (tick + 2 * drugPresence.comeUp + 1 < PDCap.getClientTick()) {
                     oldPresences.add(drugPresence);
                 }
             });
-            oldPresences.forEach(drugPresence -> drugCap.getActivePresences().remove(drugPresence));
+            oldPresences.forEach(drugPresence -> PDCap.getActivePresences().remove(drugPresence));
             //Calculate the breakdown S-curve
-            drugCap.getBreakdownTicks().forEach((drugSubstance, tick) -> {
-                if (tick > 0L && tick <= drugCap.getClientTick()) {
-                    float oldAmount = drugCap.getPlayerDrugs().get(drugSubstance);
-                    float A = drugCap.getBreakdownAmounts().get(drugSubstance);
-                    int L = Math.round(drugSubstance.getBreakdownTime() * (drugCap.getBreakdownAmounts().get(drugSubstance)/100));
-                    long X = drugCap.getClientTick() - tick;
-                    drugCap.getPlayerDrugs().put(drugSubstance, (oldAmount > 1 ? (float) ((-A / (1 + Math.exp((((Math.log((-A / (1 - A)) -1) -7) * X) / L) +7))) +A) : 0F));
-                    if (drugCap.getPlayerDrugs().get(drugSubstance) == 0F) {
-                        drugCap.getBreakdownTicks().put(drugSubstance, 0L);
+            PDCap.getBreakdownTicks().forEach((drug, tick) -> {
+                if (tick > 0L && tick <= PDCap.getClientTick()) {
+                    float oldAmount = PDCap.getPlayerDrugs().get(drug);
+                    float A = PDCap.getBreakdownAmounts().get(drug);
+                    int L = Math.round(drug.getBreakdownTime() * (PDCap.getBreakdownAmounts().get(drug)/100));
+                    long X = PDCap.getClientTick() - tick;
+                    PDCap.getPlayerDrugs().put(drug, (oldAmount > 1 ? (float) ((-A / (1 + Math.exp((((Math.log((-A / (1 - A)) -1) -7) * X) / L) +7))) +A) : 0F));
+                    if (PDCap.getPlayerDrugs().get(drug) == 0F) {
+                        PDCap.getBreakdownTicks().put(drug, 0L);
                     }
                     //TODO remove
-                    if (drugCap.getClientTick() % 40 == 0) {
-                        System.out.println("S-curve: "+drugSubstance.getRegistryName()+" "+drugCap.getPlayerDrugs().get(drugSubstance));
+                    if (PDCap.getClientTick() % 40 == 0) {
+                        System.out.println("S-curve: "+drug.getRegistryName()+" "+PDCap.getPlayerDrugs().get(drug));
                     }
                 }
             });
             //Active sync DrugCap to server each 5 seconds
-            if (drugCap.getClientTick()%200 == 0 && drugCap.getClientTick() > 0L) {
-                NetworkHandler.INSTANCE.sendToServer(new MsgSyncPDCap(drugCap));
+            if (PDCap.getClientTick()%200 == 0 && PDCap.getClientTick() > 0L) {
+                NetworkHandler.INSTANCE.sendToServer(new MsgSyncPDCap(PDCap));
             }
             //TODO remove
-            if (drugCap.getClientTick()%100 == 0) {
-                System.out.println("Client tick " + drugCap.getClientTick());
+            if (PDCap.getClientTick()%100 == 0) {
+                System.out.println("Client tick " + PDCap.getClientTick());
             }
-            drugCap.doClientTick();
+            PDCap.doClientTick();
             //TODO: Update DrugInfluences
         }
     }
@@ -86,11 +86,11 @@ public class EventHandler {
     //Server
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        IPlayerDrugsCap drugCap = event.player.getCapability(PlayerDrugsCap.Provider.CAP,null);
-        Euphoria.Content.SUBSTANCES.forEach(drugSubstance -> {
-            drugCap.getPlayerDrugs().putIfAbsent(drugSubstance, 0F);
-            drugCap.getBreakdownTicks().putIfAbsent(drugSubstance, 0L);
-            drugCap.getBreakdownAmounts().putIfAbsent(drugSubstance, 0F);
+        IPlayerDrugsCap PDCap = event.player.getCapability(PlayerDrugsCap.Provider.CAP,null);
+        Euphoria.Content.DRUGS.forEach(drug -> {
+            PDCap.getPlayerDrugs().putIfAbsent(drug, 0F);
+            PDCap.getBreakdownTicks().putIfAbsent(drug, 0L);
+            PDCap.getBreakdownAmounts().putIfAbsent(drug, 0F);
         });
     }
 
@@ -121,7 +121,7 @@ public class EventHandler {
         //Attach Drug capability to players
         if(event.getObject() instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) event.getObject();
-            event.addCapability(new ResourceLocation(Euphoria.MODID, "drug_cap"), new PlayerDrugsCap.Provider(player));
+            event.addCapability(new ResourceLocation(Euphoria.MODID, "player_drugs_cap"), new PlayerDrugsCap.Provider(player));
         }
     }
 }

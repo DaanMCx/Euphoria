@@ -7,8 +7,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import nl.daanmc.euphoria.Euphoria;
-import nl.daanmc.euphoria.util.capabilities.PlayerDrugsCap;
 import nl.daanmc.euphoria.util.capabilities.IPlayerDrugsCap;
+import nl.daanmc.euphoria.util.capabilities.PlayerDrugsCap;
 import nl.daanmc.euphoria.util.messages.MsgDrugPresence;
 import nl.daanmc.euphoria.util.messages.MsgReqConfPDCap;
 import nl.daanmc.euphoria.util.messages.MsgReqConfPDCap.Type;
@@ -18,31 +18,14 @@ public final class NetworkHandler {
     public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(Euphoria.MODID);
 
     public static void init() {
-        INSTANCE.registerMessage(ReqConfDrugCapMH.class, MsgReqConfPDCap.class, 0, Side.CLIENT);
-        INSTANCE.registerMessage(ReqConfDrugCapMH.class, MsgReqConfPDCap.class, 0, Side.SERVER);
-        INSTANCE.registerMessage(SyncDrugCapMH.class, MsgSyncPDCap.class, 1, Side.CLIENT);
-        INSTANCE.registerMessage(SyncDrugCapMH.class, MsgSyncPDCap.class, 1, Side.SERVER);
+        INSTANCE.registerMessage(MsgReqConfPDCap.Handler.class, MsgReqConfPDCap.class, 0, Side.CLIENT);
+        INSTANCE.registerMessage(MsgReqConfPDCap.Handler.class, MsgReqConfPDCap.class, 0, Side.SERVER);
+        INSTANCE.registerMessage(SyncPDCapMH.class, MsgSyncPDCap.class, 1, Side.CLIENT);
+        INSTANCE.registerMessage(SyncPDCapMH.class, MsgSyncPDCap.class, 1, Side.SERVER);
         INSTANCE.registerMessage(DrugPresenceMH.class, MsgDrugPresence.class, 2, Side.CLIENT);
     }
 
-    public static class ReqConfDrugCapMH implements IMessageHandler<MsgReqConfPDCap, MsgSyncPDCap> {
-        @Override
-        public MsgSyncPDCap onMessage(MsgReqConfPDCap message, MessageContext ctx) {
-            IPlayerDrugsCap drugCap = Euphoria.proxy.getPlayerFromContext(ctx).getCapability(PlayerDrugsCap.Provider.CAP, null);
-            if (ctx.side.isClient() && !(drugCap.getClientTick() > 0L)) {
-                return null;
-            } else {
-                if (message.type == Type.CONFIRM) {
-                    EventHandler.confCap = true;
-                    return null;
-                } else {
-                    return new MsgSyncPDCap(drugCap, message.type==Type.REQUEST_INITIAL);
-                }
-            }
-        }
-    }
-
-    public static class SyncDrugCapMH implements IMessageHandler<MsgSyncPDCap, MsgReqConfPDCap> {
+    public static class SyncPDCapMH implements IMessageHandler<MsgSyncPDCap, MsgReqConfPDCap> {
         @Override
         public MsgReqConfPDCap onMessage(MsgSyncPDCap message, MessageContext ctx) {
             if (Euphoria.proxy.getPlayerFromContext(ctx) != null) {

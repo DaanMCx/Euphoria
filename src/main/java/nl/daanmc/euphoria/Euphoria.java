@@ -28,8 +28,8 @@ import nl.daanmc.euphoria.block.BlockLargeDrugPlant;
 import nl.daanmc.euphoria.item.*;
 import nl.daanmc.euphoria.tileentity.TileEntityCannabisStrain;
 import nl.daanmc.euphoria.tileentity.TileEntityDryingTable;
+import nl.daanmc.euphoria.util.Drug;
 import nl.daanmc.euphoria.util.DrugPresence;
-import nl.daanmc.euphoria.util.DrugSubstance;
 import nl.daanmc.euphoria.util.EventHandler;
 import nl.daanmc.euphoria.util.NetworkHandler;
 import nl.daanmc.euphoria.util.capabilities.PlayerDrugsCap;
@@ -64,8 +64,12 @@ public final class Euphoria {
         CapabilityManager.INSTANCE.register(IPlayerDrugsCap.class, new PlayerDrugsCap.Storage(), PlayerDrugsCap::new);
         MinecraftForge.EVENT_BUS.register(new EventHandler());
         NetworkHandler.init();
-        GameRegistry.registerWorldGenerator(new EuphoriaSurfaceGenerator<>(Content.Blocks.CANNABIS_PLANT, 50, 6), 0);
-        GameRegistry.registerWorldGenerator(new EuphoriaSurfaceGenerator<>(Content.Blocks.CANNABIS_PLANT_SMALL, 100, 3), 0);
+        EuphoriaSurfaceGenerator[] surfaceGens = {
+                new EuphoriaSurfaceGenerator<>(new ResourceLocation(MODID, "cannabis_plant"), 50, 6),
+                new EuphoriaSurfaceGenerator<>(new ResourceLocation(MODID, "cannabis_plant_small"), 100, 3),
+        };
+        Content.SURFACE_GENERATORS.addAll(Arrays.asList(surfaceGens));
+        Content.SURFACE_GENERATORS.forEach((gen) -> GameRegistry.registerWorldGenerator(gen, 0));
         GameRegistry.registerTileEntity(TileEntityDryingTable.class, new ResourceLocation(MODID, "drying_table"));
         GameRegistry.registerTileEntity(TileEntityCannabisStrain.class, new ResourceLocation(MODID, "cannabis_strain"));
     }
@@ -78,23 +82,24 @@ public final class Euphoria {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         proxy.postInit(event);
-        Content.SUBSTANCES.forEach((substance) -> DrugSubstance.REGISTRY.put(substance.getRegistryName(), substance));
+        Content.SURFACE_GENERATORS.forEach(EuphoriaSurfaceGenerator::postInitBlockUpdate);
+        Content.DRUGS.forEach((drug) -> Drug.REGISTRY.put(drug.getRegistryName(), drug));
         Content.Blocks.CANNABIS_PLANT.setDrops(Content.Items.CANNABIS_SEEDS);
         Content.Blocks.CANNABIS_PLANT_SMALL.setDrops(Content.Items.CANNABIS_SEEDS);
-        Content.Items.COCAINE.attachDrugPresence(new DrugPresence(Content.DrugSubstances.COCAINE, 20, 100, 500));
-        Content.Items.CIGARETTE.attachDrugPresence(new DrugPresence(Content.DrugSubstances.NICOTINE, 5,100,200));
+        Content.Items.COCAINE.attachDrugPresence(new DrugPresence(Content.Drugs.COCAINE, 20, 100, 500));
+        Content.Items.CIGARETTE.attachDrugPresence(new DrugPresence(Content.Drugs.NICOTINE, 5,100,200));
         //Content.Blocks.TOBACCO_PLANT.setDrops(Content.Items.TOBACCO_SEEDS);
     }
     
     @SubscribeEvent
     public static void onNewRegistry(RegistryEvent.NewRegistry event) {
-        RegistryBuilder<DrugSubstance> builder = new RegistryBuilder<>();
-        ResourceLocation key = new ResourceLocation(MODID, "drug_substance");
-        builder.setType(DrugSubstance.class)
+        RegistryBuilder<Drug> builder = new RegistryBuilder<>();
+        ResourceLocation key = new ResourceLocation(MODID, "drug");
+        builder.setType(Drug.class)
                 .setName(key)
                 .setDefaultKey(key)
-                .set(key1 -> new DrugSubstance.PhantomDrugSubstance().setRegistryName(key1))
-                .set((key12, isNetwork) -> new DrugSubstance.PhantomDrugSubstance().setRegistryName(key12))
+                .set(key1 -> new Drug.PhantomDrug().setRegistryName(key1))
+                .set((key12, isNetwork) -> new Drug.PhantomDrug().setRegistryName(key12))
                 .create();
     }
 
@@ -143,15 +148,15 @@ public final class Euphoria {
     }
 
     @SubscribeEvent
-    public static void onSubstanceRegister(RegistryEvent.Register<DrugSubstance> event) {
+    public static void onDrugRegister(RegistryEvent.Register<Drug> event) {
         event.getRegistry().registerAll(
-                new DrugSubstance(6000).setRegistryName("thc"),
-                new DrugSubstance(7200).setRegistryName("cbd"),
-                new DrugSubstance(12000).setRegistryName("alcohol"),
-                new DrugSubstance(3600).setRegistryName("cocaine"),
-                new DrugSubstance(12000).setRegistryName("psilocybin"),
-                new DrugSubstance(1200).setRegistryName("nicotine"),
-                new DrugSubstance(7200).setRegistryName("mescaline")
+                new Drug(6000).setRegistryName("thc"),
+                new Drug(7200).setRegistryName("cbd"),
+                new Drug(12000).setRegistryName("alcohol"),
+                new Drug(3600).setRegistryName("cocaine"),
+                new Drug(12000).setRegistryName("psilocybin"),
+                new Drug(1200).setRegistryName("nicotine"),
+                new Drug(7200).setRegistryName("mescaline")
         );
     }
     
@@ -204,16 +209,16 @@ public final class Euphoria {
         public static ArrayList<Block> BLOCKS = new ArrayList<>();
 
         @GameRegistry.ObjectHolder(MODID)
-        public static final class DrugSubstances {
-            public static final DrugSubstance THC = null;
-            public static final DrugSubstance CBD = null;
-            public static final DrugSubstance ALCOHOL = null;
-            public static final DrugSubstance COCAINE = null;
-            public static final DrugSubstance PSILOCYBIN = null;
-            public static final DrugSubstance NICOTINE = null;
-            public static final DrugSubstance MESCALINE = null;
+        public static final class Drugs {
+            public static final Drug THC = null;
+            public static final Drug CBD = null;
+            public static final Drug ALCOHOL = null;
+            public static final Drug COCAINE = null;
+            public static final Drug PSILOCYBIN = null;
+            public static final Drug NICOTINE = null;
+            public static final Drug MESCALINE = null;
         }
-        public static ArrayList<DrugSubstance> SUBSTANCES = new ArrayList<>();
+        public static ArrayList<Drug> DRUGS = new ArrayList<>();
 
         public static class Tabs {
             public static final CreativeTabs EUPHORIA = new CreativeTabs("euphoria") {
@@ -225,6 +230,8 @@ public final class Euphoria {
             };
         }
         public static ArrayList<CreativeTabs> TABS = new ArrayList<>();
+
+        public static ArrayList<EuphoriaSurfaceGenerator> SURFACE_GENERATORS = new ArrayList<>();
 
         public static final int GUI_DRYING_TABLE = 2;
     }

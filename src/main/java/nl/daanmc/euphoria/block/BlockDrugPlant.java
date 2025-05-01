@@ -18,11 +18,11 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.IChunkGenerator;
-import nl.daanmc.euphoria.worldgen.IGeneratable;
+import nl.daanmc.euphoria.worldgen.ISurfaceGen;
 
 import java.util.Random;
 
-public class BlockDrugPlant extends BlockBush implements IGeneratable {
+public class BlockDrugPlant extends BlockBush implements ISurfaceGen {
     private Item drops;
 
     public BlockDrugPlant(String name) {
