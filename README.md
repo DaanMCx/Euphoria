@@ -32,11 +32,13 @@ Open your terminal in the project root and run:
 To prepare the local testing server, you must follow this exact order:
 1.  **Initialize**: Run the `runServer` configuration once. It will immediately close.
 2.  **Accept EULA**: Navigate to `run/server/eula.txt` and set `eula=true`.
-3.  **Configure Properties**: Open `run/server/server.properties` and set:
-    * `online-mode=false` (Required for local debug connections).
-    * `gamemode=1` (Starts the player in Creative mode).
-    * `level-seed=700` (For a nice Plains environment).
-4.  **Launch**: You can now use the **"Debug Fullstack"** configuration for rigorous testing.
+3.  **Start the server again**: Run the `runServer` configuration a second time and let the server fully start. Once it has finished loading, stop/kill the server process.
+4.  **Configure Properties**: Open `run/server/server.properties` and set the following values. Note that only the first setting is required for local debugging — the others are optional conveniences.
+  * `online-mode=false` — Required for local debug connections (prevents Mojang auth checks).
+  * `gamemode=1` (optional) — Starts the player in Creative mode.
+  * `level-seed=700` (optional) — For a nice Plains environment.
+5.  **Delete world folder**: If you changed the `level-seed` in the previous step, make sure to delete the `run/server/world` folder that was already generated.
+5.  **Launch**: You can now use the **"Debug Fullstack"** configuration for rigorous testing.
 
 ### 5. Connecting
 Once both instances are loaded, join the server from the client using the IP address:

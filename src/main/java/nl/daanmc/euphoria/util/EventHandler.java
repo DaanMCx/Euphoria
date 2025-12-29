@@ -1,5 +1,7 @@
 package nl.daanmc.euphoria.util;
 
+import java.lang.management.ManagementFactory;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -35,6 +37,12 @@ public class EventHandler {
             PDCap.getBreakdownTicks().putIfAbsent(drug, 0L);
             PDCap.getBreakdownAmounts().putIfAbsent(drug, 0F);
         });
+
+        //Only run if we are in a development environment
+        if (ManagementFactory.getRuntimeMXBean().getInputArguments().toString().contains("-Dnet.minecraftforge.gradle.GradleStart.csvDir")) {
+            //Auto-op the player
+            event.player.getServer().getPlayerList().addOp(event.player.getGameProfile());
+        }
     }
 
     //Server
