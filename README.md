@@ -21,7 +21,7 @@ Open your terminal in the project root and run:
 ```
 
 ### 3. IDE Setup
-- **Visual Studio Code**: The repo is pre-configured for VS Code. Just open the folder.
+- **Visual Studio Code**: The repo is pre-configured for VS Code. Just open the folder and install the recommended extensions.
 - **IntelliJ IDEA**: If you prefer IntelliJ, run the following command before importing the project:
 
 ```
