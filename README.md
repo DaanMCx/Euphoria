@@ -9,26 +9,26 @@ Welcome to the **Euphoria** development repository. This mod is currently focuse
 To get the development environment running on your local machine, follow these steps.
 
 ### 1. Prerequisites
-- **Java 17**: Required to run the Gradle build system (the "engine"). 
+- **Java 17**: Required to run the Gradle build system. 
   - **Download here:** [Oracle JDK 17 Archive](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
-- **Java 8**: Required by Minecraft 1.12.2 (handled automatically via Gradle Toolchains).
 
 ### 2. Initializing the Workspace
-Open your terminal in the project root and run:
+- **Visual Studio Code**: The repo is pre-configured for VS Code. Just follow these steps to get the workspace ready:
+1.  Open the folder and install the recommended extensions.
+2.  It might not load correctly the first time, as some background stuff take a while to install. Just give it some time and restart VSCode on errors.
+3.  When you finally see `☕Java: Ready` in the bottom left, run the following command in the terminal:
 
 ```
 ./gradlew prepareRuns
 ```
 
-### 3. IDE Setup
-- **Visual Studio Code**: The repo is pre-configured for VS Code. Just open the folder and install the recommended extensions.
-- **IntelliJ IDEA**: If you prefer IntelliJ, run the following command before importing the project:
+- **IntelliJ IDEA**: If you prefer IntelliJ, run the following command in the terminal after importing the project:
 
 ```
 ./gradlew genIntellijRuns
 ```
 
-### 4. Server Configuration & First Run
+### 3. Server Configuration & First Run
 To prepare the local testing server, you must follow this exact order:
 1.  **Initialize**: Run the `runServer` configuration once. It will immediately close.
 2.  **Accept EULA**: Navigate to `run/server/eula.txt` and set `eula=true`.
@@ -40,7 +40,7 @@ To prepare the local testing server, you must follow this exact order:
 5.  **Delete world folder**: If you changed the `level-seed` in the previous step, make sure to delete the `run/server/world` folder that was already generated.
 5.  **Launch**: You can now use the **"Debug Fullstack"** configuration for rigorous testing.
 
-### 5. Connecting
+### 4. Connecting
 Once both instances are loaded, join the server from the client using the IP address:
 `localhost`
 
