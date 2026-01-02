@@ -38,7 +38,7 @@ To prepare the local testing server, you must follow this exact order:
   * `gamemode=1` (optional) — Starts the player in Creative mode.
   * `level-seed=700` (optional) — For a nice Plains environment.
 5.  **Delete world folder**: If you changed the `level-seed` in the previous step, make sure to delete the `run/server/world` folder that was already generated.
-5.  **Launch**: You can now use the **"Debug Fullstack"** configuration for rigorous testing.
+6.  **Launch**: You can now use the **"Debug Fullstack"** configuration for rigorous testing.
 
 ### 4. Connecting
 Once both instances are loaded, join the server from the client using the IP address:

@@ -118,25 +118,14 @@ CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
 
 
 # Determine the Java command to use to start the JVM.
-if [ -n "$JAVA_HOME" ] ; then
-    if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
-        # IBM's JDK on AIX uses strange locations for the executables
-        JAVACMD=$JAVA_HOME/jre/sh/java
-    else
-        JAVACMD=$JAVA_HOME/bin/java
-    fi
-    if [ ! -x "$JAVACMD" ] ; then
-        die "ERROR: JAVA_HOME is set to an invalid directory: $JAVA_HOME
-
-Please set the JAVA_HOME variable in your environment to match the
-location of your Java installation."
-    fi
+# Always use the project-local JDK installed by setup.sh in .jdk/current
+PROJECT_JDK="$APP_HOME/.jdk/current"
+if [ -x "$PROJECT_JDK/bin/java" ] ; then
+    JAVACMD="$PROJECT_JDK/bin/java"
 else
-    JAVACMD=java
-    which java >/dev/null 2>&1 || die "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
+    die "ERROR: Project JDK not found at $PROJECT_JDK
 
-Please set the JAVA_HOME variable in your environment to match the
-location of your Java installation."
+Please run ./setup.sh to install JDK 17 for this project."
 fi
 
 # Increase the maximum file descriptors if we can.

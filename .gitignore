@@ -10,6 +10,7 @@ classes/
 bin/
 .classpath
 .project
+.jdk
 
 # intellij
 .idea/
@@ -17,7 +18,7 @@ bin/
 *.ipr
 *.iws
 
-# apple: think different:tm:
+# apple
 *.DS_Store
 
 # run configurations
